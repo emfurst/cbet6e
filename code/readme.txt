@@ -15,6 +15,7 @@ CONTENTS
   thermo/                  reusable Python package (Peng-Robinson EOS, UNIFAC, mixtures)
   data/                    reference property data as plain CSV, with schema in data/README.md
   README.md                orientation and per-chapter guide
+  pyproject.toml           the Python environment (library requirements), used by uv
 
 HOW THE NOTEBOOKS ARE ORGANIZED
   Many topics appear twice: a self-contained notebook that builds the method from the
@@ -24,10 +25,16 @@ HOW THE NOTEBOOKS ARE ORGANIZED
   repository's thermo package and data/ directory.
 
 RUNNING THE CODE
-  Requires Python 3 with numpy, scipy, matplotlib, and pandas.
+  Requires Python 3.10+ with numpy, scipy, matplotlib, pandas, and Jupyter. The
+  recommended tool is uv (https://docs.astral.sh/uv/), which installs Python, creates
+  the virtual environment, and installs the libraries in one step:
     git clone https://github.com/emfurst/cbet6e.git
     cd cbet6e/code
-  Then open any notebook in Jupyter, or in an editor with an AI coding assistant.
+    uv run jupyter lab
+  The first run builds the environment from pyproject.toml; later runs just start
+  Jupyter. If you prefer the older route, python3 -m venv plus pip install works too
+  (see README.md). Notebooks can also be opened in an editor with an AI coding
+  assistant.
   Self-contained notebooks also run in Google Colab with nothing installed; see the
   chapter pages on the companion website for one-click links.
 

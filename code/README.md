@@ -12,19 +12,44 @@ chapter's page on the companion site.
 
 ## Requirements
 
-Python 3.10+ with Jupyter and the scientific stack:
+Python 3.10+ with Jupyter and the scientific stack — `numpy`, `scipy`, `pandas`,
+`matplotlib`, `jupyterlab`, `openpyxl`. These are declared in [`pyproject.toml`](pyproject.toml),
+so you do not have to install them one at a time.
 
-```
-numpy  scipy  pandas  matplotlib  jupyter  openpyxl
-```
+### Recommended: uv
 
-A ready-made virtual environment lives in `code/.venv/` (not distributed). To recreate:
+[uv](https://docs.astral.sh/uv/) is a single tool that installs Python itself, creates the
+virtual environment, and installs the libraries — replacing the older
+`conda`/`venv` + `pip` routine. Install it once:
 
 ```bash
-python3 -m venv .venv && source .venv/bin/activate
-pip install numpy scipy pandas matplotlib jupyter openpyxl
-jupyter lab        # or: jupyter notebook
+curl -LsSf https://astral.sh/uv/install.sh | sh          # macOS / Linux
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"   # Windows
 ```
+
+Then, from this directory, one command does everything:
+
+```bash
+uv run jupyter lab
+```
+
+The first run creates `.venv/` and installs the stack (a few seconds); later runs just
+start Jupyter. You never activate the environment by hand — `uv run <command>` uses it.
+To add a library for your own work: `uv add <package>`.
+
+<details>
+<summary>Without uv (python.org + venv + pip)</summary>
+
+```bash
+python3 -m venv .venv && source .venv/bin/activate    # Windows: .venv\Scripts\activate
+pip install numpy scipy pandas matplotlib jupyterlab openpyxl
+jupyter lab
+```
+
+</details>
+
+Nothing to install at all? Self-contained notebooks run in **Google Colab** — see the
+chapter pages on the companion website.
 
 ## Design: two computational levels
 

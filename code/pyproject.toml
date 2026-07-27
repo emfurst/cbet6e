@@ -1,0 +1,35 @@
+# Environment for the notebooks and the thermo package.
+#
+# This file exists so that a student who has cloned the repository can run
+#
+#     uv run jupyter lab
+#
+# and have uv create the virtual environment and install everything on the first
+# run — no separate "create an environment, activate it, install packages" ritual.
+#
+# Versions are floors, not pins, and there is deliberately NO uv.lock committed:
+# this book is meant to still work years from now, and a lock file pinned to the
+# 2026 scientific stack would eventually fail to resolve on a current Python.
+# Students should get the current working versions of these libraries.
+#
+# `package = false` tells uv this is an environment, not a distributable library:
+# nothing is built or installed from this directory. The notebooks reach the
+# thermo package with `sys.path.append("..")`, which works from any chapter folder.
+
+[project]
+name = "cbet6e"
+version = "6.0.0"
+description = "Code and data for Chemical, Biochemical, and Engineering Thermodynamics, 6th Edition"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "pandas>=2.0",
+    "matplotlib>=3.7",
+    "seaborn>=0.13",    # ch6/ch7 isotherm notebooks import it for plot styling
+    "jupyterlab>=4.0",
+    "openpyxl>=3.1",    # ch4/water_cp.ipynb reads an .xlsx
+]
+
+[tool.uv]
+package = false
