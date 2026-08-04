@@ -350,10 +350,9 @@ modify the cells directly rather than narrating code you cannot execute.
 - `ch6/PR_heat_capacity_C2H6_homework.ipynb` — Homework: pressure dependence of the heat capacity of ethane
   - `ch6/PR_heat_capacity_C2H6_homework_thermo.ipynb` — thermo-package version
 - `ch7/van_der_waals_EOS.ipynb` — van der Waals equation of state — Figures 7.3-1 to 7.3-4
-- `ch7/Peng_Robinson_EOS_isotherms_CO2.ipynb` — PR isotherms for carbon dioxide
-- `ch7/CO2_phases.ipynb` — Phase diagram of carbon dioxide
-- `ch7/N2_phases.ipynb` — Phase diagram of nitrogen
-- `ch7/VLE from fugacity.ipynb` — Vapor-liquid equilibrium from equal fugacities
+- `ch7/mechanical_stability_CO2.ipynb` — Mechanical stability and the coexistence region — carbon dioxide
+- `ch7/CO2_phases.ipynb` — Phase diagram of carbon dioxide — the quantitative Figure 7.3-6
+- `ch7/N2_phases.ipynb` — Phase diagram of nitrogen — the same calculation, different choices
 - `ch7/vapor_pressure_n_butane.ipynb` — Vapor pressure of n-butane — Figure 7.5-2
 - `ch7/vapor_pressure_oxygen.ipynb` — Vapor pressure of oxygen — Figure 7.5-3 and Table 7.5-1
 - `ch7/properties_chart_oxygen.ipynb` — Completing the oxygen properties chart — Table 7.5-2
