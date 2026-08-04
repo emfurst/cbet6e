@@ -333,6 +333,7 @@ modify the cells directly rather than narrating code you cannot execute.
 - `ch1/When_ideal.ipynb` — When is a gas ideal?
 - `ch1/Heat_capacity.ipynb` — Enthalpy and internal-energy changes from the heat capacity
 - `ch3/LJ_interaction_energy_figure.ipynb` — Figure 3.3-5: the interaction energy between two molecules
+- `ch6/vdW_isotherms_example.ipynb` — Figure 6.6-1: pressure–volume behavior of the van der Waals EOS
 - `ch6/PR_eos_reference.ipynb` — Generalized Peng-Robinson equation of state
 - `ch6/PR_isotherms_N2_example.ipynb` — Plotting PR isotherms (nitrogen)
   - `ch6/PR_isotherms_N2_example_thermo.ipynb` — thermo-package version
@@ -348,8 +349,14 @@ modify the cells directly rather than narrating code you cannot execute.
   - `ch6/PR_throttle_C2H6_homework_thermo.ipynb` — thermo-package version
 - `ch6/PR_heat_capacity_C2H6_homework.ipynb` — Homework: pressure dependence of the heat capacity of ethane
   - `ch6/PR_heat_capacity_C2H6_homework_thermo.ipynb` — thermo-package version
-- `ch7/van_der_waals_EOS.ipynb` — van der Waals equation of state
+- `ch7/van_der_waals_EOS.ipynb` — van der Waals equation of state — Figures 7.3-1 to 7.3-4
 - `ch7/Peng_Robinson_EOS_isotherms_CO2.ipynb` — PR isotherms for carbon dioxide
 - `ch7/CO2_phases.ipynb` — Phase diagram of carbon dioxide
 - `ch7/N2_phases.ipynb` — Phase diagram of nitrogen
 - `ch7/VLE from fugacity.ipynb` — Vapor-liquid equilibrium from equal fugacities
+- `ch7/vapor_pressure_n_butane.ipynb` — Vapor pressure of n-butane — Figure 7.5-2
+- `ch7/vapor_pressure_oxygen.ipynb` — Vapor pressure of oxygen — Figure 7.5-3 and Table 7.5-1
+- `ch7/properties_chart_oxygen.ipynb` — Completing the oxygen properties chart — Table 7.5-2
+- `ch7/clausius_clapeyron_isooctane.ipynb` — The Clausius-Clapeyron equation — Illustration 7.7-1 and Figure 7.7-1
+- `ch7/vapor_pressure_water.ipynb` — Vapor pressure of water — PR vs. PRSV, Illustration 7.5-3
+- `ch7/surface_effects_droplets.ipynb` — Surface effects on small drops — Figure 7.8-1

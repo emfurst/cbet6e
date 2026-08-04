@@ -26,6 +26,30 @@ def get_compound(key):
     raise KeyError(f"compound {key!r} not found in pure_property.csv")
 
 
+# --- the book's own ideal-gas heat capacities -------------------------------
+#
+# `pure_property.csv` carries the **Reid-Prausnitz-Poling** ideal-gas Cp
+# coefficients. Those are not the coefficients tabulated in the book's own
+# Appendix A.II, and below room temperature the two sets part company: for oxygen
+# they differ by 152 J/mol in H and 1.23 J/(mol K) in S at 73 K, referred to
+# 298.15 K. Illustrations 6.4-1, 7.5-1 and 7.5-2 are computed with **Appendix
+# A.II**, so a notebook that means to reproduce the printed tables must use these.
+#
+# Author decision 2026-08-03 (see revision_notes/c07.md): ch6 and ch7 both use
+# Appendix A.II, so the book's tables reproduce and the two chapters agree.
+#
+# Form: Cp* = a + b T + c T^2 + d T^3, J/(mol K), T in K.
+# Source: 5e Appendix A.II, verified against 9780470504796/pdf/bapp01.pdf p.3.
+# Appendix A.II states its validity as 273-1800 K; Illustration 6.4-1 uses it from
+# 73 K, an extrapolation that is the book's, not ours.
+#
+# Only the compounds the ch6/ch7 notebooks need are transcribed. Add rows from
+# Appendix A.II as later chapters require them.
+APPENDIX_A2_CP = {
+    "oxygen": (25.460, 1.519e-2, -0.715e-5, 1.311e-9),
+}
+
+
 def load_unifac_subgroups():
     """subgroup_no, main_group_no, subgroup_name, main_group_name, R, Q (modified R/Q)."""
     return pd.read_csv(DATA_DIR / "unifac_subgroups.csv")

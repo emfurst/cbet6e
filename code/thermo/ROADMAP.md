@@ -73,7 +73,10 @@ build on rather than a demo.
 | Property database (constants, $C_p^*$, $P^{vap}$, $\Delta_f G/\Delta_f H$) | `data.py` | ✅ done (`get_compound`, CSV loaders; `react_property.csv` has formation data) | all |
 | PR pure: props, fugacity, departures, $P^{vap}$ | `peng_robinson.py` | ✅ done | 6, 7 |
 | PR pure: P–H / P–S plots, VLE (T–V) envelope | `peng_robinson.py` | ⬜ to add (P–V isotherms exist as a notebook) | 6, 7 |
-| SRK / RK variants (a(T) swap) | generalize → `cubic.py` (PR/SRK/RK) | ⬜ to add | 6 |
+| **PRSV** (Stryjek–Vera $\kappa(T)$, Eqs. 7.5-1/7.5-2) | `peng_robinson.py` (`kappa1=`) | ✅ done (verified against Illustration 7.5-3) | 7 |
+| **van der Waals** | **`van_der_waals.py`** (new) | ✅ done (verified against the Fig. 7.5-2 notebook) | 6, 7 |
+| Shared cubic machinery: roots, fugacity, spinodals, $P^{vap}$ | **`cubic.py`** (new) | ✅ done (`CubicEOS`; bracketed Fig. 7.5-1 solver) | 6, 7 |
+| SRK / RK variants (a(T) swap) | `cubic.py` — subclass as vdW and PR now do | ⬜ to add | 6 |
 | PR **mixtures**: mixing rules + $k_{ij}$, mixture fugacity | **`pr_mixture.py`** (new) | ✅ done (`PRMixture`, vdW one-fluid + `ln_phi`, verified) | 9, 10 |
 | Bubble/dew T & P; iso-T flash | `pr_mixture.py` + phase-eq driver | ✅ bubble/dew P&T + Rachford-Rice flash done; iso-H/S flash ⬜ | 10 |
 | UNIFAC: $\gamma$ (modified) | `unifac.py` | ✅ modified works | 9, 10 |
@@ -93,8 +96,10 @@ Legend: ✅ done · ⚠️ partial · ⬜ to build
 ```
 thermo/
   data.py              ✅ property + reaction databases (code/data/*.csv)
-  peng_robinson.py     ✅ pure-fluid PR  (add P–H/P–S, VLE envelope)
-  cubic.py             ⬜ generalize PR/SRK/RK (a(T) variants)
+  cubic.py             ✅ CubicEOS base: roots, fugacity, spinodals, P^vap
+  peng_robinson.py     ✅ pure-fluid PR + PRSV  (add P–H/P–S, VLE envelope)
+  van_der_waals.py     ✅ pure-fluid vdW (Fig. 7.5-2 curve a)
+                       ⬜ SRK / RK: two more subclasses of CubicEOS
   pr_mixture.py        ✅ vdW mixing rules, mixture fugacity, bubble/dew/flash
   activity_models.py   ⬜ van Laar, Margules, Wilson, NRTL, Redlich–Kister + fitting
   unifac.py            ⚠️ modified done; original + VLE driver to add

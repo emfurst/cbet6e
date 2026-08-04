@@ -1,12 +1,13 @@
 # `thermo` — Aspen-optional Python substitutes
 
 A small, dependency-light package (numpy + scipy + pandas) providing the pure-fluid
-**Peng–Robinson EOS** and **UNIFAC** activity coefficients, for use when Aspen Plus is
-not available. Parameters and constants come from the tables in `code/data/`.
+**cubic equations of state** (Peng–Robinson, PRSV, van der Waals) and **UNIFAC**
+activity coefficients, for use when Aspen Plus is not available. Parameters and
+constants come from the tables in `code/data/`.
 
 ```python
 import sys; sys.path.append("..")      # so `import thermo` works from a chapter folder
-from thermo import PengRobinson, UNIFAC
+from thermo import PengRobinson, VanDerWaals, UNIFAC
 ```
 
 ## Peng–Robinson (pure fluids)
@@ -21,12 +22,70 @@ pr.vapor_pressure(250)                          # Pa, by equal fugacity
 ```
 
 SI units throughout (T in K, P in Pa, V in m³/mol). `from_database` reads
-`pure_property.csv` (converting its Pc from bar to Pa) and carries the Appendix A.II
-ideal-gas Cp coefficients. Verified: `vapor_pressure(Tb)` returns ≈ 1 atm for benzene,
-n-hexane, ammonia, and propane (within 1%).
+`pure_property.csv` (converting its Pc from bar to Pa). Verified:
+`vapor_pressure(Tb)` returns ≈ 1 atm for benzene, n-hexane, ammonia, and propane
+(within 1%).
+
+> **⚠️ The Cp coefficients in `pure_property.csv` are the Reid–Prausnitz–Poling set,
+> not the book's Appendix A.II set.** This README previously said Appendix A.II; that
+> was wrong, and the same mislabel is in two ch6 notebooks. It matters below room
+> temperature: for oxygen the two sets differ by 152 J/mol in H̲ and 1.23 J/(mol·K) in
+> S̲ at 73 K, which is the difference between reproducing printed Tables 7.5-1 and
+> 7.5-2 and not. Pass `cp=` explicitly when you need the book's numbers. See
+> `revision_notes/c07.md`, *ch6 heat-capacity inconsistency* — awaiting an author
+> decision.
 
 > Note: `departure_S` uses the correct `R·ln(Z−B)` (SIS 6.4-30); the ch6 throttle
 > notebook's `calc_depS` wrote `R·(Z−B)`, which looks like a typo to fix in that notebook.
+
+### PRSV
+
+Pass `kappa1` to switch the same class to the Stryjek–Vera modification (SIS
+Eqs. 7.5-1 and 7.5-2), where κ becomes temperature dependent:
+
+```python
+w = PengRobinson.from_database("water", kappa1=-0.0665)   # Illustration 7.5-3
+w.is_prsv        # True
+w.kappa_T(300)   # kappa at 300 K; kappa0 alone for standard PR
+```
+
+κ₀ is coded with the **minus** sign on ω², following Stryjek and Vera, *Can. J. Chem.
+Eng.* **64**, 323 (1986). The 5e prints a plus in Eq. 7.5-2, which is an erratum — see
+`revision_notes/c07_manuscript_edits_7.5-3.md`. Verified against Illustration 7.5-3:
+with the book's own Tc and Pc (SIS Table 6.6-1), κ₀ = 0.87188 and the printed PRSV
+column reproduces to four figures (0.6092 vs 0.6094 kPa at 273.15 K; 1550.1 vs 1550.0
+at 473.15 K). Note that PRSV with `kappa1=0` is **not** standard Peng–Robinson: κ₀ and
+the PR κ differ by 0.16% for water.
+
+## van der Waals (pure fluids)
+
+```python
+from thermo import VanDerWaals
+vdw = VanDerWaals.from_database("n-butane")
+vdw.vapor_pressure(300) / 1e5      # 7.93 bar — the book's Fig. 7.5-2, curve a
+```
+
+Same API as `PengRobinson`, so one calculation can be handed either equation; `a(T)`
+is a method here too, and `dadT` returns zero. Verified against
+`ch7/vapor_pressure_n_butane.ipynb`, which computes Fig. 7.5-2 from hand-coded
+equations: the vapor pressures agree at every tabulated temperature (7.930 bar at
+300 K, 29.62 bar at 400 K).
+
+## What the two share: `CubicEOS`
+
+Both classes inherit root selection, molar volume, fugacity, the spinodal pressures
+and the saturation solver from `thermo.CubicEOS` (`cubic.py`). A subclass supplies
+only `Tc`, `Pc`, `b`, `pressure(V, T)`, `compressibility(T, P)` and `ln_phi(T, P, phase)`.
+
+`vapor_pressure` is **the algorithm of SIS Figure 7.5-1 as redrawn for the 6e**: the
+equal-fugacity root is bracketed between the two turning points of the isotherm and
+found by Brent's method, so no initial guess is needed and the trivial solution cannot
+occur. `spinodal_bounds(T)` returns that bracket, or `None` at and above Tc.
+
+Verified: identical to the previous Newton-from-a-Pitzer-guess solver to 2×10⁻¹³
+relative over five fluids × 18 temperatures, and it converges for all of n-butane,
+water, oxygen, n-decane, methanol and ethanol at every Tr from 0.30 to 0.98, for both
+equations of state.
 
 ## Peng–Robinson (mixtures)
 

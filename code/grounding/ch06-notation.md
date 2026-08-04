@@ -240,6 +240,7 @@ modify the cells directly rather than narrating code you cannot execute.
 - `ch1/When_ideal.ipynb` — When is a gas ideal?
 - `ch1/Heat_capacity.ipynb` — Enthalpy and internal-energy changes from the heat capacity
 - `ch3/LJ_interaction_energy_figure.ipynb` — Figure 3.3-5: the interaction energy between two molecules
+- `ch6/vdW_isotherms_example.ipynb` — Figure 6.6-1: pressure–volume behavior of the van der Waals EOS
 - `ch6/PR_eos_reference.ipynb` — Generalized Peng-Robinson equation of state
 - `ch6/PR_isotherms_N2_example.ipynb` — Plotting PR isotherms (nitrogen)
   - `ch6/PR_isotherms_N2_example_thermo.ipynb` — thermo-package version
