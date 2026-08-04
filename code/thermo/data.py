@@ -39,14 +39,26 @@ def get_compound(key):
 # Appendix A.II, so the book's tables reproduce and the two chapters agree.
 #
 # Form: Cp* = a + b T + c T^2 + d T^3, J/(mol K), T in K.
-# Source: 5e Appendix A.II, verified against 9780470504796/pdf/bapp01.pdf p.3.
-# Appendix A.II states its validity as 273-1800 K; Illustration 6.4-1 uses it from
-# 73 K, an extrapolation that is the book's, not ours.
+# Source: 5e Appendix A.II, "Combustion Gases (Low Temperature Range)", printed page
+# 976 (= 9780470504796/pdf/bapp01.pdf p.4). The table gives b x 10^2, c x 10^5 and
+# d x 10^9, already scaled below. Appendix A.II states its validity as 273-1800 K;
+# Illustration 6.4-1 uses it from 73 K, an extrapolation that is the book's, not ours.
 #
-# Only the compounds the ch6/ch7 notebooks need are transcribed. Add rows from
+# Only the compounds the notebooks and problems need are transcribed. Add rows from
 # Appendix A.II as later chapters require them.
 APPENDIX_A2_CP = {
-    "oxygen": (25.460, 1.519e-2, -0.715e-5, 1.311e-9),
+    "oxygen":   (25.460,  1.519e-2, -0.715e-5,  1.311e-9),
+    # Added 2026-08-04 for Problems 7.33 and 7.34, which ask for Illustrations 6.4-1,
+    # 7.5-1 and 7.5-2 redone for nitrogen and for water. Without these, a student
+    # following the illustrations gets the database's Reid-Prausnitz-Poling set and
+    # silently works on a different basis from the book.
+    #   nitrogen MATTERS: over 77-300 K the two sets differ by 149 J/mol in H and
+    #     1.12 J/(mol K) in S (2.3% and 2.8%) -- the same size as the oxygen gap that
+    #     prompted the 2026-08-03 decision.
+    #   water does NOT: the two agree to 0.07%. Transcribed anyway so that Problem
+    #     7.34 rests on the book's own appendix rather than on a coincidence.
+    "nitrogen": (28.883, -0.157e-2,  0.808e-5, -2.871e-9),
+    "water":    (32.218,  0.192e-2,  1.055e-5, -3.593e-9),
 }
 
 
