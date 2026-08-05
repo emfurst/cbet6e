@@ -9,7 +9,9 @@ from .peng_robinson import PengRobinson
 from .van_der_waals import VanDerWaals
 from .pr_mixture import PRMixture
 from .unifac import UNIFAC
-from .data import get_compound, load_pure_properties, APPENDIX_A2_CP
+from .data import (get_compound, load_pure_properties, APPENDIX_A2_CP,
+                   APPENDIX_A2_CP_CRYO, TABLE_6_6_1)
 
 __all__ = ["CubicEOS", "PengRobinson", "VanDerWaals", "PRMixture", "UNIFAC",
-           "get_compound", "load_pure_properties", "APPENDIX_A2_CP"]
+           "get_compound", "load_pure_properties", "APPENDIX_A2_CP",
+           "APPENDIX_A2_CP_CRYO", "TABLE_6_6_1"]

@@ -153,4 +153,5 @@ modify the cells directly rather than narrating code you cannot execute.
 - `ch1/Heat_capacity_fitting_CHEG231.ipynb` — Curve fitting a heat-capacity polynomial
 - `ch1/When_ideal.ipynb` — When is a gas ideal?
 - `ch1/Heat_capacity.ipynb` — Enthalpy and internal-energy changes from the heat capacity
+- `ch3/Heat_capacity_range_of_validity.ipynb` — How far can a heat-capacity correlation be trusted?
 - `ch3/LJ_interaction_energy_figure.ipynb` — Figure 3.3-5: the interaction energy between two molecules

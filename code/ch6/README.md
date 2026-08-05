@@ -4,7 +4,7 @@
 
 Notebooks are named `PR_<topic>_<substance>_<role>.ipynb`:
 
-- **topic** — `eos`, `isotherms`, `throttle`, `heat_capacity`, …
+- **topic** — `eos`, `isotherms`, `throttle`, `heat_capacity`, `discharge`, …
 - **substance** — `CH4`, `C2H6`, `N2`, … (omitted for the general reference notebook)
 - **role** — `reference` (the general method), `example` (worked), or `homework`
 
@@ -20,6 +20,9 @@ A `_thermo` suffix marks the **package version** of a notebook (see below).
 | `PR_isotherms_O2_example.ipynb` | example | inline — recreates **Figure 6.4-3** (Illustration 6.4-1): oxygen isotherms on log–log $P$–$\underline V$ axes with the vapor–liquid saturation envelope and sub-critical tie lines (equal-fugacity), the same construction as the vdW Figure 7.3-4 notebook |
 | `PR_enthalpy_O2_example.ipynb` | example | inline — recreates **Figure 6.4-4** (Illustration 6.4-1): oxygen isotherms in the $P$–$\underline H$ plane; enthalpy = ideal-gas $C_P$ integral + PR enthalpy departure (Eq. 6.4-29), ref. ideal gas 25 °C/1 bar |
 | `PR_entropy_O2_example.ipynb` | example | inline — recreates **Figure 6.4-5** (Illustration 6.4-1): oxygen isobars in the $T$–$\underline S$ plane; entropy = ideal-gas $C_P/T$ integral $-R\ln(P/P_0)$ + PR entropy departure (Eq. 6.4-30) |
+| `PR_properties_table_O2_example.ipynb` | example | **package** — generates **Table 6.4-4** (Illustration 6.4-1): $Z$, $\underline V$, $\underline H$, $\underline S$ for oxygen at 13 pressures × 11 temperatures, written to `output/Table_6.4-4.{txt,csv}`. The tabulated form of the same calculation the three chart notebooks plot. **Unpaired** — see below |
+| `Helmholtz_fundamental_eos_O2_example.ipynb` | example | **package** — the chapter's only *fundamental* equation of state. Assembles $\underline A(T,\underline V)$ for oxygen from the book's own data (ideal-gas part from Appendix A.II $C_P^*$, residual part from one integration of the PR equation) and takes $P$, $Z$, $\underline S$, $\underline U$, $\underline H$, $\underline G$, $C_V$, $C_P$, $\phi$, $\alpha$, $\kappa_T$, $\mu$ from it **by finite differences**, quoting no property formula. Eqs. 6.4-2, 6.4-29, 6.4-30 and 6.2-35 are the *check*, as is all of Table 6.4-4 (worst 1.3e-3 J/mol vs. a printed 0.01). Backs **Illustration 6.2-4**. **Unpaired** — see below |
+| `PR_discharge_N2_example.ipynb` | example | **package** — works **Illustration 6.7-1**: nitrogen withdrawn from an insulated 0.15 m³ cylinder, solved from the isentropic condition $\underline S(t{=}50)=\underline S(0)$ at the molar volume the mass balance fixes. Reproduces the printed 134.66 K / 40.56 bar, runs the text's hand iteration alongside the direct solve, recomputes four of the five rows of Table 6.5-1, and writes `output/Illustration_6.7-1.txt`. **Unpaired** — see below |
 | `PR_throttle_CH4_example.ipynb` | example | inline — enthalpy/entropy departures for an isenthalpic (Joule–Thomson) throttle of methane |
 | `PR_throttle_C2H6_homework.ipynb` | homework | inline — outlet temperature of throttled ethane |
 | `PR_heat_capacity_C2H6_homework.ipynb` | homework | inline — pressure dependence of the heat capacity of ethane |
@@ -47,14 +50,38 @@ pr = PengRobinson.from_database("methane")   # Tc, Pc, omega, Cp from code/data/
 
 The **self-contained** version shows the method (the cubic, the departure-function
 formulas coded by hand); the **twin** shows the reuse — the book's "two ways to work."
-The reference notebook has no twin: it *is* the from-scratch method.
+Four notebooks have no twin. The reference notebook *is* the from-scratch method.
+`PR_properties_table_O2_example.ipynb` and `PR_discharge_N2_example.ipynb` are
+**production** notebooks — they generate numbers the book prints (Table 6.4-4; and
+Illustration 6.7-1's results, which also fill a row of Table 6.5-1 and of the Summary
+table in Illustration 6.5-1) — so each needs one authoritative implementation rather
+than two that differ in the last digit. `Helmholtz_fundamental_eos_O2_example.ipynb` has no
+twin for a different reason: a self-contained/`_thermo` pair contrasts *inline math* against
+*package reuse*, and this notebook's entire point is that the package's closed-form
+`departure_H`/`departure_S` are the **check** on a calculation that derives them. Splitting
+it would put the two halves of one argument in two files.
 
-> **Numbers differ slightly between a notebook and its twin.** The twins pull
+> **Numbers can differ slightly between a notebook and its twin.** The twins pull
 > $T_c$, $P_c$, $\omega$, and $C_p$ coefficients from `code/data/pure_property.csv`
 > via `from_database`, whereas the self-contained notebooks hard-code the SIS
 > Table 6.6-1 values. In practice the difference is tiny (e.g. the methane throttle
 > gives $P_2 = 41.46$ vs $41.45$ bar), but regenerate homework answer keys from the
 > twin if that is the version you assign.
+>
+> ✅ **The oxygen pair is fixed (2026-08-04).** `pure_property.csv` carries
+> $\omega = 0.025$ and $P_c = 50.4$ bar, against Table 6.6-1's $\omega = 0.021$
+> ($\kappa = 0.4069$, the value Illustration 6.4-1 prints) and $P_c = 5.046$ MPa —
+> a different parameter set, not a rounding, so `from_database("oxygen")` silently
+> worked on a different basis from the illustration. `thermo.data` now carries
+> **`TABLE_6_6_1`** beside `APPENDIX_A2_CP`, and the Figs. 6.4-3/-4/-5 twins build
+>
+> ```python
+> pr = PengRobinson(**TABLE_6_6_1["oxygen"], cp=APPENDIX_A2_CP_CRYO["oxygen"])
+> ```
+>
+> so each twin now matches its self-contained partner exactly. Any new notebook that
+> reproduces printed numbers should do the same — as `PR_discharge_N2_example.ipynb`
+> does with `TABLE_6_6_1["nitrogen"]`.
 
 ## Figure typography
 

@@ -32,8 +32,24 @@ SI units throughout (T in K, P in Pa, V in m³/mol). `from_database` reads
 > temperature: for oxygen the two sets differ by 152 J/mol in H̲ and 1.23 J/(mol·K) in
 > S̲ at 73 K, which is the difference between reproducing printed Tables 7.5-1 and
 > 7.5-2 and not. Pass `cp=` explicitly when you need the book's numbers. See
-> `revision_notes/c07.md`, *ch6 heat-capacity inconsistency* — awaiting an author
-> decision.
+> `revision_notes/c07.md`, *ch6 heat-capacity inconsistency* — **decided 2026-08-03**: ch6
+> uses the book's Appendix A.II set, via `cp=APPENDIX_A2_CP[...]`, so ch6 and ch7 sit on
+> one basis. `pure_property.csv` is left as the RPP table it is.
+
+> **⚠️ Below 273 K, use `APPENDIX_A2_CP_CRYO` — not `APPENDIX_A2_CP`.** Appendix A.II's
+> familiar row is valid **273–1800 K**, and Illustrations 6.4-1, 7.5-1 and 7.5-2 all run
+> below that. The extrapolation is *not* benign: for oxygen at 173 K it is 1.235 J/(mol·K)
+> (4.2%) low, worth **67 J/mol in H̲ and 0.32 J/(mol·K) in S̲** — a hundred times the error
+> from the gas constant or from the 5e's own arithmetic. `APPENDIX_A2_CP_CRYO` is the same
+> cubic form refitted to NIST-JANAF over 100–700 K (oxygen and nitrogen only), which cuts
+> those to 2.8 J/mol and 0.011 J/(mol·K). Derivation and accuracy table are in
+> `data.py`. **Appendix A.II must gain these rows in print** — until it does, the printed
+> book does not contain the constants these notebooks use.
+
+> **⚠️ For oxygen, `from_database` is not just a different Cp — it is a different EOS.**
+> `pure_property.csv` carries ω = 0.025 and Pc = 50.4 bar against the book's Table 6.6-1
+> values ω = **0.021** (κ = 0.4069, the number Illustration 6.4-1 prints) and
+> Pc = **5.046 MPa**. Build the object explicitly when reproducing a printed table.
 
 > Note: `departure_S` uses the correct `R·ln(Z−B)` (SIS 6.4-30); the ch6 throttle
 > notebook's `calc_depS` wrote `R·(Z−B)`, which looks like a typo to fix in that notebook.

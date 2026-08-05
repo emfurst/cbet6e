@@ -94,6 +94,12 @@ generated alongside the companion site (`6e_companion_site/build/grounding/chNN-
 | `When_ideal.ipynb` | $P$–$\underline{V}$ diagram (van der Waals vs. ideal gas): when is a gas ideal? |
 | `Heat_capacity.ipynb` | enthalpy and internal-energy changes by integrating $C_P^*(T)$ |
 
+**`ch3/` — energy, and the ideal-gas heat capacity**
+| Notebook | What it teaches |
+|---|---|
+| `Heat_capacity_range_of_validity.ipynb` | why a correlation's temperature range is part of its data: Appendix A.II's two O₂ rows against NIST-JANAF over 100–1800 K, and what each costs once you integrate it into $\underline{H}$ and $\underline{S}$. **Also derives** the cryogenic-range rows in `thermo.APPENDIX_A2_CP_CRYO` — run it to check those coefficients |
+| `LJ_interaction_energy_figure.ipynb` | Figure 3.3-5: the Lennard-Jones interaction energy between two molecules, for argon and methane |
+
 **`ch4/` — entropy**
 | Notebook | What it teaches |
 |---|---|

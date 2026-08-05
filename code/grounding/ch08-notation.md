@@ -332,6 +332,7 @@ modify the cells directly rather than narrating code you cannot execute.
 - `ch1/Heat_capacity_fitting_CHEG231.ipynb` — Curve fitting a heat-capacity polynomial
 - `ch1/When_ideal.ipynb` — When is a gas ideal?
 - `ch1/Heat_capacity.ipynb` — Enthalpy and internal-energy changes from the heat capacity
+- `ch3/Heat_capacity_range_of_validity.ipynb` — How far can a heat-capacity correlation be trusted?
 - `ch3/LJ_interaction_energy_figure.ipynb` — Figure 3.3-5: the interaction energy between two molecules
 - `ch6/vdW_isotherms_example.ipynb` — Figure 6.6-1: pressure–volume behavior of the van der Waals EOS
 - `ch6/PR_eos_reference.ipynb` — Generalized Peng-Robinson equation of state
@@ -339,10 +340,13 @@ modify the cells directly rather than narrating code you cannot execute.
   - `ch6/PR_isotherms_N2_example_thermo.ipynb` — thermo-package version
 - `ch6/PR_isotherms_O2_example.ipynb` — Figure 6.4-3: pressure–volume diagram for oxygen
   - `ch6/PR_isotherms_O2_example_thermo.ipynb` — thermo-package version
+- `ch6/PR_properties_table_O2_example.ipynb` — Table 6.4-4: thermodynamic properties of oxygen
 - `ch6/PR_enthalpy_O2_example.ipynb` — Figure 6.4-4: pressure–enthalpy diagram for oxygen
   - `ch6/PR_enthalpy_O2_example_thermo.ipynb` — thermo-package version
 - `ch6/PR_entropy_O2_example.ipynb` — Figure 6.4-5: temperature–entropy diagram for oxygen
   - `ch6/PR_entropy_O2_example_thermo.ipynb` — thermo-package version
+- `ch6/PR_discharge_N2_example.ipynb` — Illustration 6.7-1: discharging a nitrogen cylinder with the Peng-Robinson EOS
+- `ch6/Helmholtz_fundamental_eos_O2_example.ipynb` — A fundamental equation of state: every property of oxygen from one function
 - `ch6/PR_throttle_CH4_example.ipynb` — Departure functions and a throttling (Joule-Thomson) calculation for methane
   - `ch6/PR_throttle_CH4_example_thermo.ipynb` — thermo-package version
 - `ch6/PR_throttle_C2H6_homework.ipynb` — Homework: outlet temperature of throttled ethane
