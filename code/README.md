@@ -86,13 +86,19 @@ generated alongside the companion site (`6e_companion_site/build/grounding/chNN-
 ### Chapter notebooks
 
 **`ch1/` — getting started with Python (a skills ladder)**
+
+Work through these **in order**. The first two are read rather than run; each of the last
+four is the anchor for one printed problem (1.9–1.12) and ends with a *Your turn* cell.
+Rewritten 2026-08-05 — the previous course-era versions are in `ch1/archive/`.
+
 | Notebook | What it teaches |
 |---|---|
-| `First_Notebook_HW1_CHEG231.ipynb` | first notebook; solve the van der Waals EOS for molar volume by root-finding |
-| `SIS_Problem_1_2_CHEG231_EMF.ipynb` | reading and plotting tabulated data (water/mercury volumes, Perry's Handbook) |
-| `Heat_capacity_fitting_CHEG231.ipynb` | curve-fit the Appendix A.II ideal-gas $C_P^*$ polynomial to NIST CO₂ data; compare with the book's coefficients |
-| `When_ideal.ipynb` | $P$–$\underline{V}$ diagram (van der Waals vs. ideal gas): when is a gas ideal? |
-| `Heat_capacity.ipynb` | enthalpy and internal-energy changes by integrating $C_P^*(T)$ |
+| `Math_review.ipynb` | the calculus and algebra the book leans on, with a note beside each result saying where it turns up. Markdown only — no code to break |
+| `Getting_started_Python_Jupyter.ipynb` | the bridge from an introductory CS Python course to the scientific stack: how a notebook executes, why a list will not do arithmetic and a NumPy array will, the four steps behind every plot in this book, and the mistakes that cost the most time |
+| `vdW_molar_volume_CO2.ipynb` | root finding — rearrange to $f(\underline{V})=0$ and hand it to `brentq`. Finds where CO₂ stops behaving ideally (≈2.4 bar at 300 K), checks it against a hand calculation, and shows what three roots do to a root finder |
+| `Thermometer_water_mercury.ipynb` | tabulated data, plotting, and numerical differentiation on **unevenly spaced** points (water/mercury volumes, Perry's Handbook). Why mercury works and water cannot, and how many digits survive differencing a table |
+| `Heat_capacity_fitting_CO2.ipynb` | curve-fit the Appendix A.II ideal-gas $C_P^*$ polynomial to NIST CO₂ data and compare with the book's coefficients. Residuals, and why extrapolation fails |
+| `Heat_capacity_integration_N2.ipynb` | write your own trapezoidal rule, watch it converge against the exact polynomial integral, and measure that its error falls as $h^2$. Ends with $\Delta\underline{H}$ and $\Delta\underline{U}$ |
 
 **`ch3/` — energy, and the ideal-gas heat capacity**
 | Notebook | What it teaches |

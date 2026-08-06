@@ -327,11 +327,12 @@ Notation is written in LaTeX.
 Distributed from https://github.com/emfurst/cbet6e. When you open one in this editor, run and
 modify the cells directly rather than narrating code you cannot execute.
 
-- `ch1/First_Notebook_HW1_CHEG231.ipynb` — Your first Jupyter notebook: molar volume from the van der Waals EOS
-- `ch1/SIS_Problem_1_2_CHEG231_EMF.ipynb` — Reading and plotting data (Problem 1.2)
-- `ch1/Heat_capacity_fitting_CHEG231.ipynb` — Curve fitting a heat-capacity polynomial
-- `ch1/When_ideal.ipynb` — When is a gas ideal?
-- `ch1/Heat_capacity.ipynb` — Enthalpy and internal-energy changes from the heat capacity
+- `ch1/Math_review.ipynb` — Mathematics you will use in this book
+- `ch1/Getting_started_Python_Jupyter.ipynb` — Getting started with Python and Jupyter
+- `ch1/vdW_molar_volume_CO2.ipynb` — When is carbon dioxide an ideal gas?
+- `ch1/Thermometer_water_mercury.ipynb` — A mercury thermometer, and why not a water one
+- `ch1/Heat_capacity_fitting_CO2.ipynb` — Curve fitting a heat-capacity polynomial
+- `ch1/Heat_capacity_integration_N2.ipynb` — Integrating a heat capacity: how many intervals is enough?
 - `ch3/Heat_capacity_range_of_validity.ipynb` — How far can a heat-capacity correlation be trusted?
 - `ch3/LJ_interaction_energy_figure.ipynb` — Figure 3.3-5: the interaction energy between two molecules
 - `ch6/vdW_isotherms_example.ipynb` — Figure 6.6-1: pressure–volume behavior of the van der Waals EOS
