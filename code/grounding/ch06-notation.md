@@ -241,6 +241,10 @@ modify the cells directly rather than narrating code you cannot execute.
 - `ch1/Heat_capacity_fitting_CO2.ipynb` — Curve fitting a heat-capacity polynomial
 - `ch1/Heat_capacity_integration_N2.ipynb` — Integrating a heat capacity: how many intervals is enough?
 - `ch3/Heat_capacity_range_of_validity.ipynb` — How far can a heat-capacity correlation be trusted?
+- `ch3/refrigerant_comparison.ipynb` — Can a new refrigerant replace an old one?
+- `ch3/Steam_charts_from_appendix_A3.ipynb` — Figure 3.3-1: the steam charts, drawn from Appendix A.III
+- `ch3/PH_charts_methane_and_nitrogen.ipynb` — Figures 3.3-2 and 3.3-3: methane and nitrogen from the Peng-Robinson equation
+- `ch3/Heat_capacity_from_molecular_structure.ipynb` — Where a heat capacity comes from, and what fitting one costs
 - `ch3/LJ_interaction_energy_figure.ipynb` — Figure 3.3-5: the interaction energy between two molecules
 - `ch6/vdW_isotherms_example.ipynb` — Figure 6.6-1: pressure–volume behavior of the van der Waals EOS
 - `ch6/PR_eos_reference.ipynb` — Generalized Peng-Robinson equation of state

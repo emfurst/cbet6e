@@ -59,6 +59,11 @@ APPENDIX_A2_CP = {
     #     7.34 rests on the book's own appendix rather than on a coincidence.
     "nitrogen": (28.883, -0.157e-2,  0.808e-5, -2.871e-9),
     "water":    (32.218,  0.192e-2,  1.055e-5, -3.593e-9),
+    # Added 2026-08-07 for the recomputed Fig. 3.3-2 (methane P-H chart). NOTE the
+    # range: A.II prints methane under "Paraffinic Hydrocarbons" as 273-1500 K, not
+    # 273-1800 K. It is excellent there -- 35.68 J/(mol K) at 298 K against a true
+    # 35.65 -- and catastrophic below it. The chart starts at 111 K. Use the CRYO row.
+    "methane":  (19.875,  5.021e-2,  1.268e-5, -11.004e-9),
 }
 
 # ---------------------------------------------------------------------------
@@ -133,6 +138,50 @@ APPENDIX_A2_CP = {
 APPENDIX_A2_CP_CRYO = {
     "oxygen":   (30.171, -1.293e-2,  4.236e-5, -2.5828e-8),
     "nitrogen": (29.234, -0.102e-2,  0.025e-5,  6.339e-9),
+    # ---------------------------------------------------------------------------
+    # METHANE, 100-500 K. Added 2026-08-07 for the recomputed Fig. 3.3-2, author's
+    # decision of the same day. ⬜ NOT YET IN PRINT -- Appendix A.II must gain this
+    # row as it gained the two above, or the methane chart rests on constants the
+    # book does not contain.
+    #
+    # WHY IT IS THE WORST CASE IN THE BOOK. A.II's printed methane row is quoted
+    # 273-1500 K. Extrapolated to 100 K it returns Cp* = 25.01 J/(mol K) against a
+    # true 33.26 -- 25% low, and BELOW THE PHYSICAL FLOOR: a nonlinear polyatomic
+    # cannot go under 4R = 33.258 J/(mol K), which is what methane's Cp* tends to
+    # once its vibrations freeze out. Over 100-400 K, the span the chart covers,
+    # that costs -635 J/mol in H and -4.5 J/(mol K) in S -- 8% of methane's entire
+    # heat of vaporization, and six times the oxygen gap that prompted these rows.
+    #
+    # ⚠️ ITS PROVENANCE IS DIFFERENT FROM THE TWO ABOVE, AND BETTER. Those were
+    # fitted to NIST-JANAF Shomate coefficients. THAT ROUTE DOES NOT EXIST HERE:
+    # the WebBook carries no sub-298 K Shomate segment for methane (checked
+    # 2026-08-07 -- JANAF gives 298-1300 K and 1300-6000 K only). It is not needed,
+    # because methane's ideal-gas Cp* is DERIVABLE:
+    #
+    #     Cp* = 4R + R * sum_i g_i u_i^2 e^u_i / (e^u_i - 1)^2,  u_i = h c nu_i / kT
+    #
+    # -- translation (3/2 R) + rotation (3/2 R, nonlinear) + R, plus the harmonic
+    # contribution of CH4's nine normal modes: nu = 2917 (x1), 1534 (x2), 3019 (x3),
+    # 1306 (x3) cm^-1. That expression reproduces the JANAF Shomate fit to
+    # +/-0.03 J/(mol K) over 298-1300 K, which is the validation; extending it BELOW
+    # 298 K is then vibrational freeze-out toward an exact limit, not the
+    # extrapolation of a curve fit. The derivation, the JANAF comparison and the fit
+    # that produced the coefficients below are in
+    #     code/ch3/PH_charts_methane_and_nitrogen.ipynb   (section 1)
+    # which asserts them against this row, so a changed coefficient fails there. (The
+    # O2 and N2 rows are audited in code/ch3/Heat_capacity_range_of_validity.ipynb
+    # instead, because they were fitted to JANAF rather than derived.)
+    #
+    # RANGE. 100-500 K, not the 100-700 K of the two rows above: over 100-700 the
+    # cubic reaches max |dCp*| = 0.496 J/(mol K) and +6.6 J/mol, where 100-500 gives
+    # 0.362 and +2.2 -- matching the oxygen row already in print. A.II's own
+    # Temperature Range column distinguishes them, so a third range is the appendix's
+    # idiom rather than a departure from it. Methane's Cp* rises steeply past 500 K,
+    # which is what a cubic anchored at 100 K cannot follow.
+    #
+    # Accuracy over 100-400 K, against the derivation above:
+    #   max |dCp*| 0.362 J/(mol K)   dH +2.2 J/mol (was -635)   dS +0.010 (was -4.52)
+    "methane":  (37.097, -5.282e-2, 18.976e-5, -9.2669e-8),
 }
 
 
@@ -161,6 +210,13 @@ APPENDIX_A2_CP_CRYO = {
 TABLE_6_6_1 = {
     "oxygen":   dict(Tc=154.6, Pc=5.046e6, omega=0.021, name="oxygen"),
     "nitrogen": dict(Tc=126.2, Pc=3.394e6, omega=0.040, name="nitrogen"),
+    # Added 2026-08-07 for Fig. 3.3-2. Table 6.6-1 and pure_property.csv disagree
+    # here too, in the same direction as they do for oxygen and by about as much:
+    #   Table 6.6-1   190.6 K   4.600 MPa   omega 0.008
+    #   CSV (RPP)     190.4 K   4.60  MPa   omega 0.011
+    # omega 0.008 vs 0.011 moves kappa by 0.004, which is small -- but the rule
+    # stands: the printed figures use the printed constants.
+    "methane":  dict(Tc=190.6, Pc=4.600e6, omega=0.008, name="methane"),
 }
 
 

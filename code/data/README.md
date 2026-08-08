@@ -18,8 +18,8 @@ appears in the 6e Appendix B and is reproduced here so the attribution travels w
 data files themselves. The printed Appendix A tables — A.II (ideal-gas heat capacities)
 and A.IV (enthalpies and Gibbs energies of formation) — are drawn from this database.
 
-**Licence note.** The `thermo` package and the notebooks in this repository are released
-under the repository's own licence; **that licence does not extend to the underlying
+**License note.** The `thermo` package and the notebooks in this repository are released
+under the repository's own license; **that license does not extend to the underlying
 property data**, whose provenance is above. Keep this credit with the CSVs in any copy
 or redistribution.
 
@@ -79,9 +79,55 @@ subgroup R/Q constants or the 44-main-group names (the Matlab GUI only ran modif
 UNIFAC). Those must be sourced separately (book appendix or the published original-UNIFAC
 tables) before the original variant is complete.
 
+## `steam_*.csv` — Appendix A.III, the thermodynamic properties of water and steam
+
+A digitization of the book's **own Appendix A.III**, extracted from the page proofs by
+`tools/parse_appendix_A3.py`. Figure 3.3-1(a) (the Mollier diagram) and 3.3-1(b) (the
+$T$–$S$ diagram) are drawn from these files, which is why the charts and the appendix a
+student reads them against cannot disagree.
+
+| file | what it is | rows |
+|---|---|---|
+| `steam_saturation_T.csv` | saturation, entered by temperature, 0.01–374.14 °C | 71 |
+| `steam_saturation_P.csv` | saturation, entered by pressure | 73 |
+| `steam_superheat.csv` | superheated vapor, 36 isobars (0.01–60 MPa) × 25 temperature levels (50–1300 °C) | 545 |
+| `steam_compressed_liquid.csv` | compressed liquid, 6 isobars (5–50 MPa) | 111 |
+| `steam_solid_vapor.csv` | saturated solid–vapor (below the triple point) | 22 |
+
+Columns: `T_C`, `P_MPa`, and then `V`/`U`/`H`/`S` — with the `l`/`v`/`d` suffixes
+(`Hl`, `Hv`, `dH`) for the two saturation tables, which carry the liquid value, the
+vapor value and their difference. In the superheat and compressed-liquid files a row
+with `sat = True` is the table's own `Sat.` row: the saturated state at that pressure,
+whose temperature is in `Tsat_C` rather than `T_C`.
+
+**Verified, not merely parsed.** Every row satisfies $P\hat V = \hat H - \hat U$ to
+printing precision, and ten values typed by hand off the printed page reproduce to every
+printed digit. Five rows do not — they are typos in the printed appendix, listed in
+`legacy-5e/Errata_Sandler_5Ed.docx.md`. **The CSVs keep the printed values**: this is a
+digitization of A.III, not a correction of it. The one place a correction is applied is
+`CL_CORRECTIONS` in `ch3/Steam_charts_from_appendix_A3.ipynb`, for two compressed-liquid
+cells from which a chart line is *derived*.
+
+⚠️ **A.III is not IAPWS.** The appendix is an older generation of steam tables and
+differs from current IAPWS-95/IF97 values in the last digit or two. That is the point —
+consistency with the printed table — but nothing built from these files may be labeled
+IAPWS.
+
+> **Credit.** Appendix A.III is reproduced in the book *"From G. J. Van Wylen and R. E.
+> Sontag, Fundamentals of Classical Thermodynamics, S.I. Version, 2nd ed., John Wiley &
+> Sons, New York (1978). Used with permission."* Keep this credit with the CSVs in any
+> copy or redistribution — the license note above applies to them as it does to
+> `pure_property.csv`.
+>
+> ⬜ **Permission to publish the digitized table itself is not yet confirmed.** Reusing
+> the appendix in the book is a cleared grant; publishing it as a machine-readable CSV in
+> a public repository is a different act. Wiley published both books, so this is likely
+> straightforward — but confirm before the public release.
+
 ## Provenance
 `pure_property.csv` / `react_property.csv` extracted from `pure_prop.mdb` (618 rows) and
 `React.mdb` (99 rows) — the shared property database embedded in the 5e Visual Basic
 Property / Peng-Robinson / ChemEq programs. `unifac_*.csv` extracted from the 5e MATLAB
-`UNIFAC_data.mat`. See Appendix B and `revision_notes/bapp02.md` for the modernization
-decisions.
+`UNIFAC_data.mat`. `steam_*.csv` extracted from the 5e page proofs of Appendix A.III by
+`tools/parse_appendix_A3.py`. See Appendix B and `revision_notes/bapp02.md` for the
+modernization decisions.

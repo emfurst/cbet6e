@@ -29,6 +29,17 @@ dependencies = [
     "seaborn>=0.13",    # ch6/ch7 isotherm notebooks import it for plot styling
     "jupyterlab>=4.0",
     "openpyxl>=3.1",    # ch4/water_cp.ipynb reads an .xlsx
+    # The one ceiling in this file, and it is here reluctantly. ipykernel is not
+    # used directly — it arrives with jupyterlab — but ipykernel 7 changed the
+    # kernel startup handshake, and VS Code's Jupyter extension (2025.9.1, the
+    # current release as of 2026-08-06) hangs on it: the kernel starts, and every
+    # cell sits on a spinner forever. JupyterLab is unaffected. Since a large share
+    # of students run these notebooks in VS Code, a floor alone would hand them a
+    # notebook that never runs.
+    # ⬜ REMOVE THIS CEILING once the VS Code Jupyter extension supports ipykernel 7
+    #    — test by deleting the upper bound, `uv sync`, and running any notebook in
+    #    VS Code. Checked 2026-08-06.
+    "ipykernel>=6.29,<7",
 ]
 
 [tool.uv]

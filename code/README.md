@@ -97,7 +97,7 @@ Rewritten 2026-08-05 — the previous course-era versions are in `ch1/archive/`.
 | `Getting_started_Python_Jupyter.ipynb` | the bridge from an introductory CS Python course to the scientific stack: how a notebook executes, why a list will not do arithmetic and a NumPy array will, the four steps behind every plot in this book, and the mistakes that cost the most time |
 | `vdW_molar_volume_CO2.ipynb` | root finding — rearrange to $f(\underline{V})=0$ and hand it to `brentq`. Finds where CO₂ stops behaving ideally (≈2.4 bar at 300 K), checks it against a hand calculation, and shows what three roots do to a root finder |
 | `Thermometer_water_mercury.ipynb` | tabulated data, plotting, and numerical differentiation on **unevenly spaced** points (water/mercury volumes, Perry's Handbook). Why mercury works and water cannot, and how many digits survive differencing a table |
-| `Heat_capacity_fitting_CO2.ipynb` | curve-fit the Appendix A.II ideal-gas $C_P^*$ polynomial to NIST CO₂ data and compare with the book's coefficients. Residuals, and why extrapolation fails |
+| `Heat_capacity_fitting_CO2.ipynb` | curve-fit the Appendix A.II ideal-gas $C_P^*$ polynomial to NIST CO₂ data and compare with the book's coefficients. Residuals, and why extrapolation fails. Paired with ch3's `Heat_capacity_from_molecular_structure.ipynb`, which measures what this one asserts |
 | `Heat_capacity_integration_N2.ipynb` | write your own trapezoidal rule, watch it converge against the exact polynomial integral, and measure that its error falls as $h^2$. Ends with $\Delta\underline{H}$ and $\Delta\underline{U}$ |
 
 **`ch3/` — energy, and the ideal-gas heat capacity**
@@ -105,6 +105,10 @@ Rewritten 2026-08-05 — the previous course-era versions are in `ch1/archive/`.
 |---|---|
 | `Heat_capacity_range_of_validity.ipynb` | why a correlation's temperature range is part of its data: Appendix A.II's two O₂ rows against NIST-JANAF over 100–1800 K, and what each costs once you integrate it into $\underline{H}$ and $\underline{S}$. **Also derives** the cryogenic-range rows in `thermo.APPENDIX_A2_CP_CRYO` — run it to check those coefficients |
 | `LJ_interaction_energy_figure.ipynb` | Figure 3.3-5: the Lennard-Jones interaction energy between two molecules, for argon and methane |
+| `Steam_charts_from_appendix_A3.ipynb` | Figure 3.3-1: the Mollier and $T$–$S$ charts for steam, drawn from Appendix A.III (`../data/steam_*.csv`) rather than from an equation of state, so chart and table agree by construction. Every line family is an argument — zoom in, redraw at your own scale, read values numerically. Ends by reading Illustration 3.4-1 off both charts |
+| `Heat_capacity_from_molecular_structure.ipynb` | where $C_P^*$ comes from: equipartition, and an Einstein term per vibrational mode. Methane from four spectroscopic frequencies, matching NIST-JANAF to 0.03 J/(mol·K), with the $4R$ floor no nonlinear gas can go under. Then the derived curve becomes noisy "experimental" data and is fitted 400 times — what the coefficients do, what the curve does, and why the fitted *range* is part of the correlation. Needs no data file |
+| `PH_charts_methane_and_nitrogen.ipynb` | Figures 3.3-2 and 3.3-3: pressure–enthalpy charts for methane and nitrogen, drawn entirely from Peng–Robinson — three constants, four heat-capacity coefficients, one cubic. Derives methane's cryogenic $C_P^*$ from its vibrational spectrum (the printed Appendix A.II row is 25% low at 100 K), checks the equation against the book's own Wagner constants before drawing, and ends by working Illustration 6.5-1 on the nitrogen chart |
+| `refrigerant_comparison.ipynb` | can R-1234yf replace HFC-134a? Three constants per fluid and Peng–Robinson: why matching *volumetric* refrigeration capacity, not heat of vaporization, is the test a drop-in has to pass |
 
 **`ch4/` — entropy**
 | Notebook | What it teaches |
