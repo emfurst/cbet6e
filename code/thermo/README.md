@@ -143,6 +143,61 @@ limit (γ=1), a near-ideal alkane pair (γ≈1), and a strong positive-deviation
   chapter/appendix PDFs in `legacy-5e/Sandler_CBET_5e files/`), after which the same class handles
   both variants.
 
+## Redlich–Kister correlation of mixing data — `fitting`
+
+```python
+from thermo import RedlichKister, tangent_intercepts, load_mixing_data
+
+d = load_mixing_data("water-methanol-volume")           # SIS Table 8.6-1
+rk = RedlichKister.fit(d.x1, d.dmixV_m3_mol, order=3)   # Eq. 8.6-5a
+d1, d2 = rk.partial_molar_excess(0.5266)                # Eqs. 8.6-6a,b
+rk.infinite_dilution()                                  # the two endpoint limits
+RedlichKister.scan_order(d.x1, d.dmixV_m3_mol)          # rms, LOO-rms, endpoints vs order
+```
+
+The machinery of **SIS Sec. 8.6**, and the Python replacement for the 4e `PRTLMOLR`
+worksheet. A property change on mixing must vanish at both pure limits, so it is fitted
+with a polynomial that vanishes there by construction; the partial molar properties are
+then the *slope* of that curve rather than a tangent line drawn by hand.
+`tangent_intercepts` is the graphical route (Eqs. 8.6-4a,b) as arithmetic — a point and a
+slope — and the ch8 notebooks run both to show they agree.
+
+**Unit-agnostic**: it never mentions volume or enthalpy, which is the point of Eq. 8.6-10.
+The caller keeps SI.
+
+> ⚠️ **The derivative is far more sensitive to the fit order than the fit is.** Adding a
+> term barely moves the curve and can move the infinite-dilution partial molar properties
+> by ten percent or more — those are the endpoints, the one place the correlation
+> extrapolates. `loo_rms` and `scan_order` exist so a notebook can *show* that instead of
+> hiding it behind a default.
+>
+> ⚠️ **The summation identity is exact by construction**, so agreement there is not
+> evidence the fit is good — `residuals` is. It is still worth checking, because a
+> *graphical* construction does not satisfy it: the 5e's Table 8.6-4 misses it by up to
+> 16 J/mol (`code/ch8/validation/`).
+
+Verified against the book's own printed constants: with $a = (-4.0034, -0.17756, 0.54139,
+0.60481)\times10^{-6}$ m³/mol, Eqs. 8.6-6a,b reproduce **eleven of the twelve rows of
+Table 8.6-2 exactly**, and both infinite-dilution values. The twelfth disagreement is a
+**sign error in the printed table** (row $x_1 = 0.9489$), confirmed against the book's own
+$\bar V_1$ column.
+
+## Reaction and mixing data — `data`
+
+```python
+from thermo.data import reaction_cp, formation_enthalpy, formation_gibbs
+from thermo import load_mixing_data, get_reaction_species
+
+a, b, c, d, e = reaction_cp("NO2")        # SCALED Appendix A.II coefficients, SI
+formation_enthalpy("N2O4")                # J/mol  (the CSV stores kJ/mol)
+```
+
+> ⚠️ **`react_property.csv` stores the heat-capacity coefficients as Appendix A.II
+> *prints* them** — $b$, $c$, $d$ multiplied by $10^{2}$, $10^{5}$, $10^{9}$. Evaluating
+> the raw columns is wrong by three orders of magnitude and nothing warns you. Always go
+> through `reaction_cp`. Verified 2026-08-09: the scaled columns reproduce Illustration
+> 8.5-2's own combined coefficients and all five of its printed heats of reaction exactly.
+
 ## Property charts — `charts`, `ph_chart`, `steam_chart`
 
 Added 2026-08-08. The machinery behind the book's property charts, promoted out of the

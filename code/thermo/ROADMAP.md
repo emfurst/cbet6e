@@ -89,7 +89,8 @@ build on rather than a demo.
 | Chemical equilibrium $K_a(T)$ (CHEMEQ); ionization / pH | **`chem_equilibrium.py`** (new) | ⬜ to build | 13, 15 |
 | Adiabatic flame / reaction temperature | application (chem_eq + energy balance) | ⬜ to build | 14 |
 | Electrochemistry — Nernst / cell potentials (fuel cells, batteries) | **`electrochem.py`** (new) | ⬜ to build | 14 |
-| Fitting utils: Antoine, partial molar via R–K | **`fitting.py`** (new) or notebook recipes | ⚠️ ch1 has curve-fitting | 1, 8 |
+| Fitting utils: partial molar via R–K | **`fitting.py`** (new) | ✅ **done 2026-08-09** (`RedlichKister`, `tangent_intercepts`; reproduces printed Table 8.6-2 exactly) | 1, 8 |
+| Fitting utils: Antoine ($P^{vap}$) fits | `fitting.py` | ⬜ to add | 1, 7 |
 
 Legend: ✅ done · ⚠️ partial · ⬜ to build
 
@@ -105,6 +106,8 @@ thermo/
   peng_robinson.py     ✅ pure-fluid PR + PRSV  (add P–H/P–S, VLE envelope)
   van_der_waals.py     ✅ pure-fluid vdW (Fig. 7.5-2 curve a)
                        ⬜ SRK / RK: two more subclasses of CubicEOS
+  fitting.py           ✅ Redlich-Kister correlation + partial molar properties (Sec. 8.6)
+                       ⬜ Antoine fit
   pr_mixture.py        ✅ vdW mixing rules, mixture fugacity, bubble/dew/flash
   activity_models.py   ⬜ van Laar, Margules, Wilson, NRTL, Redlich–Kister + fitting
   unifac.py            ⚠️ modified done; original + VLE driver to add
@@ -119,9 +122,12 @@ Titles below are the book's actual chapter titles (from the 5e table of contents
 `book_markup/ftoc.pdf`; carried into 6e unchanged). Section numbers pinpoint where each
 capability is introduced.
 
-- **ch8 — The Thermodynamics of Multicomponent Mixtures.** Partial molar properties
-  (§8.6 experimental determination of partial molar volume & enthalpy); Redlich–Kister
-  fitting of mixing data (the 4e `PRTLMOLR` worksheet) → `fitting.py`.
+- **ch8 — The Thermodynamics of Multicomponent Mixtures.** ✅ **Done 2026-08-09.** Partial
+  molar properties (§8.6 experimental determination of partial molar volume & enthalpy);
+  Redlich–Kister fitting of mixing data (the 4e `PRTLMOLR` worksheet) → `fitting.py`. Three
+  notebooks in `code/ch8/`, six printed QR keys, `codes:`/`figures:`/`tables:` wired into
+  `ch08.yaml`. The chapter's two data tables are digitized in `code/data/mixing_*.csv`;
+  Tables 8.6-2 and 8.6-4 are **generated**, not stored.
 - **ch9 — Estimation of the Gibbs Energy and Fugacity of a Component in a Mixture.**
   The model chapter. `pr_mixture.py` (§9.4/§9.7 fugacity of a species in a mixture via
   an EOS + mixing rules), `activity_models.py` (§9.5 correlative γ models: van Laar,

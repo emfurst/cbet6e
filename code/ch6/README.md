@@ -99,6 +99,38 @@ mpl.rcParams.update({"font.family": "serif", "mathtext.fontset": "cm",
 `usetex` is switched on only when a LaTeX binary is present, so the notebooks still run
 in Colab, which has no TeX; the fallback keeps a serif face with CM math.
 
+**The fallback needs matplotlib ≥ 3.11** (2026-08-09). Without TeX, math is rendered by
+matplotlib's own `mathtext` engine, which implements a *subset* of LaTeX — and that
+subset only gained `\underline` in 3.11.0. Colab still ships 3.10, where every
+`$\underline{V}$` label raised
+
+```
+ParseFatalException: Unknown symbol: \underline
+```
+
+and killed the cell on the first draw, `tight_layout` included. Notebooks whose labels
+use the molar underbar therefore open with a guard cell that upgrades matplotlib only
+where it is too old, and does nothing on a machine that already has 3.11+:
+
+```python
+import sys
+from importlib.metadata import version
+
+if tuple(map(int, version("matplotlib").split(".")[:2])) < (3, 11):
+    !pip install -q "matplotlib>=3.11"
+    if "matplotlib" in sys.modules:
+        print("matplotlib upgraded - Runtime > Restart session, then Run all.")
+```
+
+It reads the version through `importlib.metadata`, which inspects the installed
+metadata *without* importing matplotlib — importing it first would pin the old module
+in `sys.modules` and force the restart the guard is trying to avoid. The check
+self-retires: once Colab's image moves to 3.11, it stops firing and never installs
+anything again.
+
+Also note `\underline` needs its braces. Real LaTeX accepts `\underline V`, but
+mathtext declares a required group and rejects it — write `$\underline{V}$` always.
+
 **Two consequences for label text, once usetex is on.** Every string is handed to LaTeX,
 so:
 

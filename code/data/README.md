@@ -51,14 +51,63 @@ Vapor-pressure correlations, selected by `Eq` (with $t = 1 - T/T_c$):
 
 ## `react_property.csv` — 99 reaction species
 
-For chemical-equilibrium work. `Cp = A + B T + C T^2 + D T^3 + E/T^2`.
+Appendix A.IV (standard formation properties at 25 °C, 1 bar) joined to Appendix A.II
+(ideal-gas heat capacities). For chemical-equilibrium and heat-of-reaction work.
 
 | Column | Meaning | Units |
 |---|---|---|
-| `Name` | species | — |
-| `DG`, `DH` | Gibbs energy / enthalpy of formation | kJ/mol |
-| `A, B, C, D, E` | 5-term heat-capacity polynomial coefficients | — |
+| `Name` | species, as a formula (`N2O4`, `H2O(g)`, `C6H6`) | — |
+| `DG`, `DH` | Gibbs energy / enthalpy of formation | **kJ/mol** |
+| `A, B, C, D, E` | heat-capacity coefficients, **as Appendix A.II prints them** | see below |
 | `ID` | index | — |
+
+> ⚠️ **The heat-capacity columns are stored scaled, and evaluating them raw is wrong by
+> three orders of magnitude — silently.** Appendix A.II prints $b$, $c$ and $d$ multiplied
+> by $10^{2}$, $10^{5}$ and $10^{9}$, and the CSV keeps that printed form. The formula is
+>
+> $$C_P^{*} = A + B\cdot10^{-2}\,T + C\cdot10^{-5}\,T^{2} + D\cdot10^{-9}\,T^{3} + E/T^{2}
+> \qquad \mathrm{J/(mol\,K)}$$
+>
+> `E` is unscaled and is nonzero only for the fourteen solid species. **Use
+> `thermo.data.reaction_cp(name)`**, which returns the coefficients already multiplied by
+> `REACT_CP_SCALE`; `formation_enthalpy` and `formation_gibbs` likewise return **J/mol**,
+> not the CSV's kJ/mol.
+>
+> Verified against the book's own arithmetic (2026-08-09): Illustration 8.5-2 prints the
+> combined coefficients for $2\,\mathrm{NO_2} - \mathrm{N_2O_4}$ as $12.804$,
+> $-7.239\times10^{-2}$, $4.301\times10^{-5}$, $1.5732\times10^{-8}$, and the scaled
+> columns reproduce all four exactly — and then the printed heats of reaction at 200, 300,
+> 400, 500 and 600 K to the last digit. Spot-checked against literature $C_P^{*}(298\ \mathrm{K})$
+> for O₂, N₂, CO, CO₂, H₂O, CH₄, NH₃ and SO₂ as well.
+
+## `mixing_*.csv` — property changes on mixing (Sec. 8.6)
+
+The data behind the partial molar volume and enthalpy tables. Species 1 is water and
+species 2 is methanol in both; **SI units**, where the book prints volumes multiplied by
+$10^{6}$ and enthalpies in kJ/mol.
+
+| file | is | columns |
+|---|---|---|
+| `mixing_water_methanol_volume.csv` | **Table 8.6-1** — density data at 298.15 K | `x1`, `rho_kg_m3`, `V_m3_mol`, `dmixV_m3_mol` |
+| `mixing_water_methanol_enthalpy.csv` | **Table 8.6-3** — heat of mixing at 19.69 °C | `x1`, `Qplus_J_mol_MeOH`, `dmixH_J_mol` |
+
+Load with `thermo.load_mixing_data("water-methanol-volume")` (or `…-enthalpy`).
+
+**Each table carries an identity that checks the transcription**, and both pass at the
+level of their printed rounding — which is the only audit available for a hand-typed table:
+
+- volume: $\underline{V} = M_{\text{mix}}/\rho$ with $M_1 = 18.0153$, $M_2 = 32.042$ g/mol,
+  and $\Delta_{\text{mix}}\underline{V} = \underline{V} - x_1\underline{V}_1 - x_2\underline{V}_2$
+  from the two end rows (max deviation $9\times10^{-11}$ m³/mol);
+- enthalpy: $\Delta_{\text{mix}}\underline{H} = (1-x_1)\,Q^{+}$, the relation printed in the
+  table's own source note (max deviation 0.5 J/mol against data printed to 1 J/mol).
+
+The `code/ch8/` notebooks run both checks in their opening cells. Note that neither of the
+book's *derived* tables (8.6-2, 8.6-4) is stored here — they are **generated** by those
+notebooks, per the production-notebook rule.
+
+*Source:* Table 8.6-1 from the 5e Sec. 8.6; Table 8.6-3 from *International Critical
+Tables*, Vol. 5, McGraw-Hill, New York, 1929, p. 159, as reprinted there.
 
 ## UNIFAC group-contribution parameters
 
@@ -146,5 +195,6 @@ IAPWS.
 `React.mdb` (99 rows) — the shared property database embedded in the 5e Visual Basic
 Property / Peng-Robinson / ChemEq programs. `unifac_*.csv` extracted from the 5e MATLAB
 `UNIFAC_data.mat`. `steam_*.csv` extracted from the 5e page proofs of Appendix A.III by
-`tools/parse_appendix_A3.py`. See Appendix B and `revision_notes/bapp02.md` for the
-modernization decisions.
+`tools/parse_appendix_A3.py`. `mixing_*.csv` transcribed from the 5e Tables 8.6-1 and
+8.6-3 and verified against each table's own identity (2026-08-09). See Appendix B and
+`revision_notes/bapp02.md` for the modernization decisions.
