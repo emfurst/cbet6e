@@ -72,7 +72,9 @@ build on rather than a demo.
 |---|---|---|---|
 | Property database (constants, $C_p^*$, $P^{vap}$, $\Delta_f G/\Delta_f H$) | `data.py` | ✅ done (`get_compound`, CSV loaders; `react_property.csv` has formation data) | all |
 | PR pure: props, fugacity, departures, $P^{vap}$ | `peng_robinson.py` | ✅ done | 6, 7 |
-| PR pure: P–H / P–S plots, VLE (T–V) envelope | `peng_robinson.py` | ⬜ to add (P–V isotherms exist as a notebook) | 6, 7 |
+| PR pure: P–H charts, dome + isotherm/isentrope/isochore/quality families | **`ph_chart.py`** (new) + **`charts.py`** (new) | ✅ **done 2026-08-08** (`ChartFluid`, `ph_chart`; reproduces Figs. 3.3-2/3.3-3 bit-for-bit) | 3, 5, 6 |
+| Steam charts from Appendix A.III (Mollier, T–S) | **`steam_chart.py`** (new) | ✅ **done 2026-08-08** (`SteamTables`, `temperature_entropy`; reproduces Fig. 3.3-1b bit-for-bit) | 3, 5 |
+| PR pure: P–S plots, VLE (T–V) envelope | `ph_chart.py` | ⬜ to add (P–V isotherms exist as a notebook) | 6, 7 |
 | **PRSV** (Stryjek–Vera $\kappa(T)$, Eqs. 7.5-1/7.5-2) | `peng_robinson.py` (`kappa1=`) | ✅ done (verified against Illustration 7.5-3) | 7 |
 | **van der Waals** | **`van_der_waals.py`** (new) | ✅ done (verified against the Fig. 7.5-2 notebook) | 6, 7 |
 | Shared cubic machinery: roots, fugacity, spinodals, $P^{vap}$ | **`cubic.py`** (new) | ✅ done (`CubicEOS`; bracketed Fig. 7.5-1 solver) | 6, 7 |
@@ -96,6 +98,9 @@ Legend: ✅ done · ⚠️ partial · ⬜ to build
 ```
 thermo/
   data.py              ✅ property + reaction databases (code/data/*.csv)
+  charts.py            ✅ chart craft: weights, grids, label placement, book typography
+  ph_chart.py          ✅ P-H charts from a cubic EOS (Figs. 3.3-2/3.3-3, 5.1-3, c06uf002)
+  steam_chart.py       ✅ Mollier + T-S charts from Appendix A.III (Figs. 3.3-1a/b, c05uf001)
   cubic.py             ✅ CubicEOS base: roots, fugacity, spinodals, P^vap
   peng_robinson.py     ✅ pure-fluid PR + PRSV  (add P–H/P–S, VLE envelope)
   van_der_waals.py     ✅ pure-fluid vdW (Fig. 7.5-2 curve a)
@@ -144,6 +149,22 @@ capability is introduced.
   (§15.1), ionic strength (§15.2), ligand binding (§15.3), denaturation (§15.5),
   ATP-ADP coupling (§15.6), Gibbs–Donnan / membrane potentials (§15.8) — layered on
   `chem_equilibrium` (ionization) and `activity_models`.
+
+## A note on where the chart modules landed
+
+This roadmap originally filed *"PR pure: P–H / P–S plots"* under `peng_robinson.py`. They
+went to **dedicated modules** instead, for two reasons. `peng_robinson.py` is 179 lines of
+equation-of-state mathematics and adding 400 lines of matplotlib would bury it — and the
+**drawing craft is shared with the steam charts, which have no equation of state at all**,
+so it could not live under PR in any case. `ChartFluid` (the per-kilogram wrapper on the
+chart's datum) is arguably EOS work, but it is a *chart* convention — kJ/kg, and H = S = 0
+at the triple-point liquid — so it sits with the chart it serves.
+
+⭐ **The organizing principle is unchanged and is in fact better served**: the package holds
+the method, the chapter notebooks are the application sites. What forced this was the
+decision that a figure's notebook lives in the figure's own chapter, which made three
+derived figures (5.1-3, `c05uf001`, `c06uf002`) into ch5 and ch6 applications of chart
+machinery that had been trapped inside a ch3 notebook.
 
 ## Conventions to carry forward (from ch6)
 

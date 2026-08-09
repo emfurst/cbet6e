@@ -246,6 +246,8 @@ modify the cells directly rather than narrating code you cannot execute.
 - `ch3/PH_charts_methane_and_nitrogen.ipynb` — Figures 3.3-2 and 3.3-3: methane and nitrogen from the Peng-Robinson equation
 - `ch3/Heat_capacity_from_molecular_structure.ipynb` — Where a heat capacity comes from, and what fitting one costs
 - `ch3/LJ_interaction_energy_figure.ipynb` — Figure 3.3-5: the interaction energy between two molecules
+- `ch5/Linde_liquefaction_CH4_figure.ipynb` — Figure 5.1-3: the liquefaction path of Illustration 5.1-1
+- `ch5/Rankine_cycle_steam_figure.ipynb` — Illustration 5.2-1: the Rankine cycle on the steam T-S chart
 - `ch6/vdW_isotherms_example.ipynb` — Figure 6.6-1: pressure–volume behavior of the van der Waals EOS
 - `ch6/PR_eos_reference.ipynb` — Generalized Peng-Robinson equation of state
 - `ch6/PR_isotherms_N2_example.ipynb` — Plotting PR isotherms (nitrogen)

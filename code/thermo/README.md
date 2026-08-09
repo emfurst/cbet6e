@@ -143,7 +143,53 @@ limit (γ=1), a near-ideal alkane pair (γ≈1), and a strong positive-deviation
   chapter/appendix PDFs in `legacy-5e/Sandler_CBET_5e files/`), after which the same class handles
   both variants.
 
+## Property charts — `charts`, `ph_chart`, `steam_chart`
+
+Added 2026-08-08. The machinery behind the book's property charts, promoted out of the
+chapter-3 notebooks so that a figure's notebook can live in the figure's own chapter
+(author, 2026-08-08) without copying ~1,000 lines three ways.
+
+| module | what it holds | draws |
+|---|---|---|
+| `charts` | the drawing craft: line weights, chart-paper grids, the label-placement layer, `use_book_style()` | — |
+| `ph_chart` | `ChartFluid` (a per-kilogram PR wrapper on the chart's datum) + the dome / isotherm / isentrope / isochore / quality families | Figs. **3.3-2**, **3.3-3**; **5.1-3**; **`c06uf002`** |
+| `steam_chart` | `SteamTables` — Appendix A.III digitized — and the isobar / isotherm / isenthalp / quality families built from it | Figs. **3.3-1a**, **3.3-1b**; **`c05uf001`** |
+
+```python
+from thermo.charts import use_book_style
+from thermo.ph_chart import ChartFluid, ph_chart
+
+use_book_style()                                    # Computer Modern, TeX if present
+n2 = ChartFluid("nitrogen", M=28.014, T_triple=63.15)
+fig, ax = plt.subplots(figsize=(7.0, 4.7))
+ph_chart(ax, n2, H_lim=(0, 900), isotherms=range(80, 401, 20))
+```
+
+**Two different sources, deliberately.** `ph_chart` computes from Peng–Robinson;
+`steam_chart` reads Appendix A.III. For water the book *tabulates* the properties, so a
+cubic would be a step backwards from data the reader already has — and for methane and
+nitrogen it tabulates nothing, which is why those come from the equation of state the
+reader is about to be taught.
+
+⚠️ **PR puts saturated-liquid density about 12 % high**, the textbook failing of a cubic.
+It lands on exactly one family — the constant-volume curves in the compressed-liquid
+region — which should not be read quantitatively there. The dome, isotherms and
+isentropes are unaffected.
+
+**These modules are loaded lazily** (`thermo/__init__.py`, PEP 562), so
+`from thermo import PengRobinson` does not pull matplotlib. None of the three imports
+it at module level either; it arrives only when a drawing function runs.
+
+**Validation.** Every curve family was checked against the chapter-3 notebooks it was
+promoted from, and reproduces them **bit-for-bit** — `max|diff| = 0` on the dome,
+isotherms, isentropes, isochores, quality lines, isobars, liquid branches, merged
+supercritical isobars and lines of constant enthalpy, for methane, nitrogen and water.
+The full charts render identically too: Fig. 3.3-2 gives 85 paths and 57 labels, and
+Fig. 3.3-1(b) 99 paths and 23 labels, with identical geometry, text, position and
+rotation in both cases.
+
 ## Provenance
 
-Refactored from the validated ch6/ch7 notebooks (PR) and the legacy MATLAB `unifac.m`
-(a faithful translation of its `calc_coeff`). See Appendix B and `code/data/README.md`.
+Refactored from the validated ch6/ch7 notebooks (PR), the legacy MATLAB `unifac.m`
+(a faithful translation of its `calc_coeff`), and the ch3 chart notebooks (`charts`,
+`ph_chart`, `steam_chart`). See Appendix B and `code/data/README.md`.
