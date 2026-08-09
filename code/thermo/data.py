@@ -1,5 +1,6 @@
 """Data loaders for the `thermo` package — reads the CSV tables in `code/data/`."""
 from pathlib import Path
+import numpy as np
 import pandas as pd
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
@@ -232,3 +233,93 @@ def load_unifac_interactions(kind="modified"):
     if kind == "original":
         return pd.read_csv(DATA_DIR / "unifac_interactions_original.csv")
     raise ValueError(f"kind must be 'modified' or 'original', got {kind!r}")
+
+
+# --- reaction species: Appendix A.IV formation data + Appendix A.II Cp* ------
+#
+# WATCH THE SCALING. `react_property.csv` stores the heat-capacity coefficients in
+# the form Appendix A.II *prints* them, which is not the form you evaluate:
+#
+#     Cp* = A + B*1e-2 T + C*1e-5 T^2 + D*1e-9 T^3 + E/T^2       J/(mol K)
+#
+# Evaluating the raw columns gives Cp values wrong by three orders of magnitude,
+# silently. `REACT_CP_SCALE` and `reaction_cp` below are the only places that
+# factor should appear.
+#
+# Verified against the book's own arithmetic: Illustration 8.5-2 prints the
+# combined coefficients for 2 NO2 - N2O4 as 12.804, -7.239e-2, 4.301e-5,
+# 1.5732e-8, and the scaled columns reproduce all four exactly -- and then the
+# printed heats of reaction at 200, 300, 400, 500 and 600 K to the last digit.
+# (E is unscaled; it is nonzero only for the fourteen solid species.)
+REACT_CP_SCALE = np.array([1.0, 1e-2, 1e-5, 1e-9, 1.0])
+
+
+def load_reaction_properties():
+    """The 99-species reaction table: Name, DG, DH (kJ/mol), A..E, ID.
+
+    Appendix A.IV (standard Gibbs energies and enthalpies of formation at 25 C,
+    1 bar) joined to Appendix A.II (ideal-gas heat capacities). See
+    `reaction_cp` before using columns A..E.
+    """
+    return pd.read_csv(DATA_DIR / "react_property.csv")
+
+
+def get_reaction_species(name):
+    """One row of `react_property.csv` by exact `Name` (e.g. 'N2O4', 'H2O(g)')."""
+    df = load_reaction_properties()
+    hit = df[df["Name"] == str(name)]
+    if not len(hit):
+        hit = df[df["Name"].str.lower() == str(name).strip().lower()]
+    if not len(hit):
+        raise KeyError(f"species {name!r} not found in react_property.csv "
+                       f"(names are formulas, e.g. 'N2O4', 'C6H6', 'H2O(g)')")
+    return hit.iloc[0]
+
+
+def reaction_cp(name):
+    """Scaled ideal-gas Cp* coefficients (a, b, c, d, e) for one species, SI.
+
+    Returns the coefficients already multiplied by `REACT_CP_SCALE`, so
+
+        a, b, c, d, e = reaction_cp("NO2")
+        Cp = a + b*T + c*T**2 + d*T**3 + e/T**2        # J/(mol K)
+    """
+    row = get_reaction_species(name)
+    return np.array([float(row[k]) for k in "ABCDE"]) * REACT_CP_SCALE
+
+
+def formation_enthalpy(name):
+    """Standard enthalpy of formation at 25 C, 1 bar, in **J/mol** (CSV is kJ/mol)."""
+    return float(get_reaction_species(name)["DH"]) * 1e3
+
+
+def formation_gibbs(name):
+    """Standard Gibbs energy of formation at 25 C, 1 bar, in **J/mol**."""
+    return float(get_reaction_species(name)["DG"]) * 1e3
+
+
+# --- mixing data (SIS Sec. 8.6) ---------------------------------------------
+
+MIXING_DATASETS = {
+    # key: (file, what it is, the identity that checks it)
+    "water-methanol-volume": "mixing_water_methanol_volume.csv",
+    "water-methanol-enthalpy": "mixing_water_methanol_enthalpy.csv",
+}
+
+
+def load_mixing_data(key):
+    """A property-change-on-mixing data set from Sec. 8.6, in SI units.
+
+    `water-methanol-volume`   -- Table 8.6-1: x1, rho (kg/m^3), V and dmixV (m^3/mol)
+    `water-methanol-enthalpy` -- Table 8.6-3: x1, Q+ and dmixH (J/mol)
+
+    Species 1 is water and species 2 is methanol in both. Note the book prints
+    the volumes multiplied by 1e6 and the enthalpies in kJ/mol; the CSVs are SI,
+    like everything else in the package.
+    """
+    try:
+        fname = MIXING_DATASETS[key]
+    except KeyError:
+        raise KeyError(f"unknown mixing data set {key!r}; "
+                       f"choose from {sorted(MIXING_DATASETS)}") from None
+    return pd.read_csv(DATA_DIR / fname)

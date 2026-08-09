@@ -370,3 +370,6 @@ modify the cells directly rather than narrating code you cannot execute.
 - `ch7/clausius_clapeyron_isooctane.ipynb` — The Clausius-Clapeyron equation — Illustration 7.7-1 and Figure 7.7-1
 - `ch7/vapor_pressure_water.ipynb` — Vapor pressure of water — PR vs. PRSV, Illustration 7.5-3
 - `ch7/surface_effects_droplets.ipynb` — Surface effects on small drops — Figure 7.8-1
+- `ch8/RK_partial_molar_volume_water_methanol_example.ipynb` — Table 8.6-2: partial molar volumes from density data
+- `ch8/RK_partial_molar_enthalpy_water_methanol_example.ipynb` — Table 8.6-4: partial molar enthalpies from heat-of-mixing data
+- `ch8/Hrxn_temperature_N2O4_example.ipynb` — Illustration 8.5-2: the standard heat of reaction versus temperature

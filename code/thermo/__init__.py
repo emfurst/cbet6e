@@ -22,8 +22,10 @@ from .peng_robinson import PengRobinson
 from .van_der_waals import VanDerWaals
 from .pr_mixture import PRMixture
 from .unifac import UNIFAC
+from .fitting import RedlichKister, tangent_intercepts
 from .data import (get_compound, load_pure_properties, APPENDIX_A2_CP,
-                   APPENDIX_A2_CP_CRYO, TABLE_6_6_1)
+                   APPENDIX_A2_CP_CRYO, TABLE_6_6_1,
+                   load_mixing_data, load_reaction_properties, get_reaction_species)
 
 _LAZY = {"charts", "ph_chart", "steam_chart"}
 
@@ -42,6 +44,8 @@ def __dir__():
 
 
 __all__ = ["CubicEOS", "PengRobinson", "VanDerWaals", "PRMixture", "UNIFAC",
+           "RedlichKister", "tangent_intercepts",
            "get_compound", "load_pure_properties", "APPENDIX_A2_CP",
            "APPENDIX_A2_CP_CRYO", "TABLE_6_6_1",
+           "load_mixing_data", "load_reaction_properties", "get_reaction_species",
            "charts", "ph_chart", "steam_chart"]

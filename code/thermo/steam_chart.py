@@ -10,6 +10,11 @@ compressed-liquid table gives the liquid branches. That is why steam gets its ow
 module rather than a `ChartFluid` -- for water the book *tabulates* the properties,
 and a cubic would be a step backwards from data the reader already has.
 
+The CSVs are the appendix as the 6e prints it, five corrected cells included, so
+nothing here has to patch the data before it draws with it. How those five were
+found and what each was corrected to is
+`code/ch3/validation/Appendix_A3_corrections.ipynb`.
+
     from thermo.steam_chart import SteamTables, temperature_entropy
     from thermo.charts import use_book_style
 
@@ -48,16 +53,6 @@ R_M = 8.314462618 / 18.015268e-3 / 1e3
 # not exist, so it is the floor for an isobar on either chart.
 P_TRIPLE = 0.0006113
 
-# A.III tabulates compressed liquid at 5, 10, 15, 20, 30 and 50 MPa only. Where a
-# line is DERIVED from those columns rather than read off them, a printed typo would
-# be inherited as a visible kink, so the two known bad cells are repaired here. The
-# CSV still holds what the page prints -- this is the one place that departs from it.
-CL_CORRECTIONS = {
-    # (P MPa, T C, column): corrected value, and how it was established
-    (50.0, 60.0, "S"): 0.8054,      # printed 0.8502. Its pressure neighbors give
-                                    # 0.8050 and its own column in T gives 0.8054
-    (50.0, 240.0, "V"): 0.0011702,  # printed 0.001 107 2; P*V = H - U gives 0.0011702
-}
 
 
 def _default_data_dir():
@@ -94,8 +89,6 @@ class SteamTables:
         self.Tsat_of_P = PchipInterpolator(self.sat.P_MPa, self.sat.T_C)
 
         self.CL = self.cl[~self.cl["sat"]].copy()
-        for (P_, T_, col_), value_ in CL_CORRECTIONS.items():
-            self.CL.loc[(self.CL.P_MPa == P_) & (self.CL.T_C == T_), col_] = value_
 
         self._isobar_cache = {}
         self._merged_cache = {}
@@ -690,6 +683,6 @@ def temperature_entropy(ax, st, *, S_lim=(0, 10), T_lim=(0, 800),
 
 
 __all__ = ["SteamTables", "mollier", "temperature_entropy", "minor_isobars",
-           "TC", "PC", "HC", "SC", "R_M", "P_TRIPLE", "CL_CORRECTIONS",
+           "TC", "PC", "HC", "SC", "R_M", "P_TRIPLE",
            "MOLLIER_P", "MOLLIER_T", "MOLLIER_T_MINOR", "MOLLIER_X",
            "MOLLIER_X_MINOR", "TS_P", "TS_H", "TS_H_MINOR", "TS_X", "TS_X_MINOR"]

@@ -101,12 +101,29 @@ with `sat = True` is the table's own `Sat.` row: the saturated state at that pre
 whose temperature is in `Tsat_C` rather than `T_C`.
 
 **Verified, not merely parsed.** Every row satisfies $P\hat V = \hat H - \hat U$ to
-printing precision, and ten values typed by hand off the printed page reproduce to every
-printed digit. Five rows do not — they are typos in the printed appendix, listed in
-`legacy-5e/Errata_Sandler_5Ed.docx.md`. **The CSVs keep the printed values**: this is a
-digitization of A.III, not a correction of it. The one place a correction is applied is
-`CL_CORRECTIONS` in `ch3/Steam_charts_from_appendix_A3.ipynb`, for two compressed-liquid
-cells from which a chart line is *derived*.
+printing precision, the saturation rows satisfy $\Delta\hat X = \hat X^{\rm V} -
+\hat X^{\rm L}$, and ten values typed by hand off the printed page reproduce to every
+printed digit.
+
+**Five cells are corrected.** The 5e appendix carries five typeset errors, each
+established two independent ways before being changed; the arithmetic is worked out in
+`ch3/validation/Appendix_A3_corrections.ipynb`, which is the record for this table.
+They are applied by `tools/parse_appendix_A3.py` (`DATA_FIXES`) as it writes these
+files, so the CSVs remain exactly what the parser produces and a re-run cannot silently
+revert them.
+
+| table | row | column | printed | corrected |
+|---|---|---|---|---|
+| saturation, pressure | 1.4 MPa | $\hat H^{\rm V}$ | 2790.6 | **2790.0** |
+| superheat | 3.5 MPa, 500 °C | $\hat U$ | 3103.0 | **3103.8** |
+| superheat | 10 MPa, 1300 °C | $\hat U$ | 4460.5 | **4660.5** |
+| compressed liquid | 50 MPa, 240 °C | $\hat V$ | 0.001 107 2 | **0.001 170 2** |
+| compressed liquid | 50 MPa, 60 °C | $\hat S$ | 0.8502 | **0.8052** |
+
+⬜ These same five corrections go into the printed 6e Appendix A.III. Until they do,
+the CSVs and the printed page disagree in these five cells and nowhere else.
+
+**EMF:** These five corrections made on 2026-08-09 11:41
 
 ⚠️ **A.III is not IAPWS.** The appendix is an older generation of steam tables and
 differs from current IAPWS-95/IF97 values in the last digit or two. That is the point —
