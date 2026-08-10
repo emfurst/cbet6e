@@ -119,14 +119,29 @@ from importlib.metadata import version
 if tuple(map(int, version("matplotlib").split(".")[:2])) < (3, 11):
     !pip install -q "matplotlib>=3.11"
     if "matplotlib" in sys.modules:
-        print("matplotlib upgraded - Runtime > Restart session, then Run all.")
+        print(...)   # the RESTART NOW banner
 ```
 
-It reads the version through `importlib.metadata`, which inspects the installed
-metadata *without* importing matplotlib — importing it first would pin the old module
-in `sys.modules` and force the restart the guard is trying to avoid. The check
-self-retires: once Colab's image moves to 3.11, it stops firing and never installs
-anything again.
+**Colab needs a session restart, and there is no way around it.** Colab imports
+matplotlib as the session starts, so by the time the guard runs, `matplotlib` is
+already in `sys.modules`. pip replaces the files on disk, but the kernel goes on
+running the module it loaded at startup — so without a restart the labels fail exactly
+as before, and the traceback is *confusing rather than obvious*: the line numbers come
+from the old code objects in memory while the source text is read from the new file on
+disk, so it points at lines whose content does not match the error. That mismatch is
+the tell. The cell therefore prints a boxed **RESTART NOW: Runtime > Restart session,
+then Run all** whenever it upgrades. One click, once per session.
+
+The version is read through `importlib.metadata`, which inspects the installed metadata
+*without* importing matplotlib — worth keeping even though Colab has already imported it,
+so the guard stays a true no-op everywhere else. And the whole thing self-retires: once
+Colab's image moves to 3.11 the check stops firing, nothing installs, and no restart is
+ever asked for again.
+
+The alternative — rewriting all 37 label sites to emit `V̲` (combining low line U+0332)
+under mathtext and `\underline{V}` under LaTeX — was considered and rejected 2026-08-10:
+it needs no restart, but it puts a second notation spelling in the source permanently to
+work around a gap that Colab will close on its own.
 
 Also note `\underline` needs its braces. Real LaTeX accepts `\underline V`, but
 mathtext declares a required group and rejects it — write `$\underline{V}$` always.
