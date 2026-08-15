@@ -3,7 +3,7 @@
 Line weights, the two-tier major/minor treatment, chart-paper grids, and the
 label-placement layer that writes a value *on* its own curve at a chosen height.
 None of this is thermodynamics: it is the part of a property chart that is
-draughtsmanship, and it is identical whether the curves came from an equation of
+draftsmanship, and it is identical whether the curves came from an equation of
 state (`thermo.ph_chart`) or from a printed table (`thermo.steam_chart`).
 
 WHY IT IS HERE. Figures 3.3-1(a), 3.3-1(b), 3.3-2 and 3.3-3 are chapter-3 figures,

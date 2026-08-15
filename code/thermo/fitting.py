@@ -41,7 +41,8 @@ August 2026
 """
 import numpy as np
 
-__all__ = ["RedlichKister", "tangent_intercepts"]
+__all__ = ["RedlichKister", "tangent_intercepts", "LogPolynomialActivity",
+           "ILLUSTRATION_9_7_1_HEMOGLOBIN", "SIS_9_7_1_CONSTANTS"]
 
 
 class RedlichKister:
@@ -218,3 +219,128 @@ def tangent_intercepts(x1_star, dmix_star, slope):
     A = dmix_star - x1_star * slope
     B = dmix_star + (1.0 - x1_star) * slope
     return A, B
+
+
+# ---------------------------------------------------------------------------
+# Illustration 9.7-1 -- the activity coefficient of a protein in solution.
+#
+# A protein is a *nonsimple* mixture in the sense of SIS Sec. 9.7: it does not
+# exist as a pure liquid, so its activity coefficient is defined on a Henry's law
+# basis and referred to concentration rather than mole fraction,
+#
+#     gamma(c) = a(c) / c        with gamma -> 1 as c -> 0
+#
+# and correlated with an expansion in c whose constant term is zero, so that the
+# limit is satisfied by construction:
+#
+#     ln gamma = A c + B c^2 + C c^3                            (SIS Eq. 9.7-21)
+#
+# ⭐ The order matters less than the OBJECTIVE. Fitting ln gamma and fitting
+# gamma weight the fifteen points very differently -- gamma spans 1.16 to 36.8,
+# so a least-squares fit on gamma is dominated by the last three points while a
+# fit on ln gamma is not. The two give coefficients that differ by ~5% in B.
+# `fit` therefore takes `objective` explicitly and has no default that hides the
+# choice, and `LogPolynomialActivity.report` prints which one was used.
+# ---------------------------------------------------------------------------
+
+#: Illustration 9.7-1, as printed: concentration and activity of hemoglobin in
+#: aqueous solution, both in g/L. The solution's gamma column is *not* stored --
+#: it is gamma = a/c exactly, so it is a check on the transcription, not data.
+ILLUSTRATION_9_7_1_HEMOGLOBIN = np.array([
+    # c (g/L),  a (g/L)
+    [ 20.0,      23.1],
+    [ 40.0,      53.5],
+    [ 60.0,      94.6],
+    [ 80.0,     150.0],
+    [100.0,     226.0],
+    [120.0,     330.0],
+    [140.0,     473.0],
+    [160.0,     679.0],
+    [180.0,     973.0],
+    [200.0,    1410.0],
+    [220.0,    2060.0],
+    [240.0,    3040.0],
+    [260.0,    4580.0],
+    [280.0,    7040.0],
+    [300.0,   11050.0],
+])
+
+#: The constants printed in Illustration 9.7-1's solution. Read out of the
+#: MathType record in the Word source; the exponents are not printed in a form
+#: any text extraction recovers, and were pinned by testing against the data.
+SIS_9_7_1_CONSTANTS = (7.139e-3, 6.940e-6, 3.116e-8)
+
+
+class LogPolynomialActivity:
+    """ln gamma = A c + B c^2 + ... , the correlation of SIS Eq. 9.7-21.
+
+    Parameters
+    ----------
+    coeffs : sequence A, B, C, ... of coefficients of c, c^2, c^3, ...
+             There is deliberately no constant term: gamma -> 1 as c -> 0.
+    objective : the string recorded by `fit`, or None when the coefficients were
+             taken from a publication rather than fitted here.
+    """
+
+    def __init__(self, coeffs, objective=None):
+        self.coeffs = np.asarray(coeffs, float)
+        self.objective = objective
+
+    @property
+    def order(self):
+        return len(self.coeffs)
+
+    def ln_gamma(self, c):
+        c = np.asarray(c, float)
+        return sum(a * c ** (k + 1) for k, a in enumerate(self.coeffs))
+
+    def gamma(self, c):
+        return np.exp(self.ln_gamma(c))
+
+    def residuals(self, c, gamma):
+        """Relative residuals in gamma, (fitted - observed)/observed."""
+        return (self.gamma(c) - np.asarray(gamma, float)) / np.asarray(gamma, float)
+
+    def rms(self, c, gamma):
+        return float(np.sqrt((self.residuals(c, gamma) ** 2).mean()))
+
+    def max_error(self, c, gamma):
+        return float(np.abs(self.residuals(c, gamma)).max())
+
+    @classmethod
+    def fit(cls, c, gamma, order=3, objective="ln gamma"):
+        """Least-squares fit of the expansion to gamma(c).
+
+        objective : "ln gamma" fits the logarithm, weighting every point equally
+                    in ln gamma. "gamma" fits gamma itself, which weights the
+                    high-concentration points far more heavily. The choice is
+                    required rather than defaulted-away because it moves the
+                    coefficients by more than the experimental scatter does.
+        """
+        c = np.asarray(c, float)
+        gamma = np.asarray(gamma, float)
+        A = np.vstack([c ** (k + 1) for k in range(order)]).T
+        if objective == "ln gamma":
+            coeffs, *_ = np.linalg.lstsq(A, np.log(gamma), rcond=None)
+        elif objective == "gamma":
+            # weight the log-space normal equations by gamma, which is the
+            # first-order equivalent of least squares on gamma itself
+            coeffs, *_ = np.linalg.lstsq(A * gamma[:, None], np.log(gamma) * gamma,
+                                         rcond=None)
+        else:
+            raise ValueError("objective must be 'ln gamma' or 'gamma', "
+                             f"not {objective!r}")
+        return cls(coeffs, objective=objective)
+
+    def report(self, c, gamma, label=""):
+        """One line: the coefficients, the objective, and how well it does."""
+        names = "ABCDEFG"
+        terms = "  ".join(f"{names[k]}={a:10.4e}" for k, a in enumerate(self.coeffs))
+        obj = self.objective or "as printed"
+        return (f"{label:26s} {terms}   [{obj:9s}]  "
+                f"max|d|={100*self.max_error(c, gamma):5.2f}%  "
+                f"rms={100*self.rms(c, gamma):5.2f}%")
+
+    def __repr__(self):
+        return (f"LogPolynomialActivity(order={self.order}, "
+                f"objective={self.objective!r})")

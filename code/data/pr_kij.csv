@@ -1,0 +1,128 @@
+species_i,species_j,formula_i,formula_j,kij
+methane,ethylene,CH4,C2H4,0.022
+methane,ethane,CH4,C2H6,-0.003
+methane,propylene,CH4,C3H6,0.033
+methane,propane,CH4,C3H8,0.016
+methane,isobutane,CH4,i-C4H10,0.026
+methane,n-butane,CH4,n-C4H10,0.019
+methane,isopentane,CH4,i-C5H12,-0.006
+methane,n-pentane,CH4,n-C5H12,0.026
+methane,n-hexane,CH4,n-C6H14,0.04
+methane,benzene,CH4,C6H6,0.055
+methane,cyclohexane,CH4,c-C6H12,0.039
+methane,n-heptane,CH4,n-C7H16,0.035
+methane,n-octane,CH4,n-C8H18,0.05
+methane,n-decane,CH4,n-C10H22,0.049
+methane,nitrogen,CH4,N2,0.03
+methane,carbon monoxide,CH4,CO,0.03
+methane,carbon dioxide,CH4,CO2,0.09
+methane,sulfur dioxide,CH4,SO2,0.136
+methane,hydrogen sulfide,CH4,H2S,0.08
+ethylene,ethane,C2H4,C2H6,0.01
+ethylene,n-butane,C2H4,n-C4H10,0.092
+ethylene,benzene,C2H4,C6H6,0.031
+ethylene,n-heptane,C2H4,n-C7H16,0.014
+ethylene,n-decane,C2H4,n-C10H22,0.025
+ethylene,nitrogen,C2H4,N2,0.086
+ethylene,carbon monoxide,C2H4,CO,-0.022
+ethylene,carbon dioxide,C2H4,CO2,0.056
+ethane,propylene,C2H6,C3H6,0.089
+ethane,propane,C2H6,C3H8,0.001
+ethane,isobutane,C2H6,i-C4H10,-0.007
+ethane,n-butane,C2H6,n-C4H10,0.01
+ethane,n-pentane,C2H6,n-C5H12,0.008
+ethane,n-hexane,C2H6,n-C6H14,-0.04
+ethane,benzene,C2H6,C6H6,0.042
+ethane,cyclohexane,C2H6,c-C6H12,0.018
+ethane,n-heptane,C2H6,n-C7H16,0.007
+ethane,n-octane,C2H6,n-C8H18,0.019
+ethane,n-decane,C2H6,n-C10H22,0.014
+ethane,nitrogen,C2H6,N2,0.044
+ethane,carbon monoxide,C2H6,CO,0.026
+ethane,carbon dioxide,C2H6,CO2,0.13
+ethane,hydrogen sulfide,C2H6,H2S,0.086
+propylene,propane,C3H6,C3H8,0.007
+propylene,isobutane,C3H6,i-C4H10,-0.014
+propylene,nitrogen,C3H6,N2,0.09
+propylene,carbon monoxide,C3H6,CO,0.026
+propylene,carbon dioxide,C3H6,CO2,0.093
+propylene,hydrogen sulfide,C3H6,H2S,0.08
+propane,isobutane,C3H8,i-C4H10,-0.007
+propane,n-butane,C3H8,n-C4H10,0.003
+propane,isopentane,C3H8,i-C5H12,0.011
+propane,n-pentane,C3H8,n-C5H12,0.027
+propane,n-hexane,C3H8,n-C6H14,0.001
+propane,benzene,C3H8,C6H6,0.023
+propane,n-heptane,C3H8,n-C7H16,0.006
+propane,n-octane,C3H8,n-C8H18,0.0
+propane,n-decane,C3H8,n-C10H22,0.0
+propane,nitrogen,C3H8,N2,0.078
+propane,carbon monoxide,C3H8,CO,0.03
+propane,carbon dioxide,C3H8,CO2,0.12
+propane,hydrogen sulfide,C3H8,H2S,0.08
+isobutane,n-butane,i-C4H10,n-C4H10,0.0
+isobutane,nitrogen,i-C4H10,N2,0.1
+isobutane,carbon monoxide,i-C4H10,CO,0.04
+isobutane,carbon dioxide,i-C4H10,CO2,0.13
+isobutane,hydrogen sulfide,i-C4H10,H2S,0.047
+n-butane,n-pentane,n-C4H10,n-C5H12,0.017
+n-butane,n-hexane,n-C4H10,n-C6H14,-0.006
+n-butane,n-heptane,n-C4H10,n-C7H16,0.003
+n-butane,n-octane,n-C4H10,n-C8H18,0.007
+n-butane,n-decane,n-C4H10,n-C10H22,0.008
+n-butane,nitrogen,n-C4H10,N2,0.087
+n-butane,carbon monoxide,n-C4H10,CO,0.04
+n-butane,carbon dioxide,n-C4H10,CO2,0.135
+n-butane,hydrogen sulfide,n-C4H10,H2S,0.07
+isopentane,n-pentane,i-C5H12,n-C5H12,0.06
+isopentane,nitrogen,i-C5H12,N2,0.092
+isopentane,carbon monoxide,i-C5H12,CO,0.04
+isopentane,carbon dioxide,i-C5H12,CO2,0.121
+isopentane,hydrogen sulfide,i-C5H12,H2S,0.06
+n-pentane,benzene,n-C5H12,C6H6,0.018
+n-pentane,cyclohexane,n-C5H12,c-C6H12,0.004
+n-pentane,n-heptane,n-C5H12,n-C7H16,0.007
+n-pentane,n-octane,n-C5H12,n-C8H18,0.0
+n-pentane,nitrogen,n-C5H12,N2,0.1
+n-pentane,carbon monoxide,n-C5H12,CO,0.04
+n-pentane,carbon dioxide,n-C5H12,CO2,0.125
+n-pentane,hydrogen sulfide,n-C5H12,H2S,0.063
+n-hexane,benzene,n-C6H14,C6H6,0.01
+n-hexane,cyclohexane,n-C6H14,c-C6H12,-0.004
+n-hexane,n-heptane,n-C6H14,n-C7H16,-0.008
+n-hexane,nitrogen,n-C6H14,N2,0.15
+n-hexane,carbon monoxide,n-C6H14,CO,0.04
+n-hexane,carbon dioxide,n-C6H14,CO2,0.11
+n-hexane,hydrogen sulfide,n-C6H14,H2S,0.06
+benzene,cyclohexane,C6H6,c-C6H12,0.013
+benzene,n-heptane,C6H6,n-C7H16,0.001
+benzene,n-octane,C6H6,n-C8H18,0.003
+benzene,n-decane,C6H6,n-C10H22,0.1
+benzene,nitrogen,C6H6,N2,0.164
+benzene,carbon monoxide,C6H6,CO,0.11
+benzene,carbon dioxide,C6H6,CO2,0.077
+benzene,sulfur dioxide,C6H6,SO2,0.015
+cyclohexane,nitrogen,c-C6H12,N2,0.14
+cyclohexane,carbon monoxide,c-C6H12,CO,0.1
+cyclohexane,carbon dioxide,c-C6H12,CO2,0.105
+n-heptane,n-octane,n-C7H16,n-C8H18,0.0
+n-heptane,nitrogen,n-C7H16,N2,0.1
+n-heptane,carbon monoxide,n-C7H16,CO,0.04
+n-heptane,carbon dioxide,n-C7H16,CO2,0.1
+n-heptane,hydrogen sulfide,n-C7H16,H2S,0.06
+n-octane,nitrogen,n-C8H18,N2,0.1
+n-octane,carbon monoxide,n-C8H18,CO,0.04
+n-octane,carbon dioxide,n-C8H18,CO2,0.12
+n-octane,hydrogen sulfide,n-C8H18,H2S,0.06
+n-decane,nitrogen,n-C10H22,N2,0.11
+n-decane,carbon monoxide,n-C10H22,CO,0.04
+n-decane,carbon dioxide,n-C10H22,CO2,0.114
+n-decane,hydrogen sulfide,n-C10H22,H2S,0.033
+nitrogen,carbon monoxide,N2,CO,0.012
+nitrogen,carbon dioxide,N2,CO2,-0.02
+nitrogen,sulfur dioxide,N2,SO2,0.08
+nitrogen,hydrogen sulfide,N2,H2S,0.17
+carbon monoxide,carbon dioxide,CO,CO2,0.03
+carbon monoxide,hydrogen sulfide,CO,H2S,0.054
+carbon dioxide,sulfur dioxide,CO2,SO2,0.136
+carbon dioxide,hydrogen sulfide,CO2,H2S,0.097

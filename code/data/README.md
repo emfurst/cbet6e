@@ -109,24 +109,66 @@ notebooks, per the production-notebook rule.
 *Source:* Table 8.6-1 from the 5e Sec. 8.6; Table 8.6-3 from *International Critical
 Tables*, Vol. 5, McGraw-Hill, New York, 1929, p. 159, as reprinted there.
 
+## `pr_kij.csv` — Table 9.4-1, Peng-Robinson binary interaction parameters
+
+**127 pairs over 20 species**, digitized from the printed Table 9.4-1 (5e p. 441):
+`species_i, species_j, formula_i, formula_j, kij`. Stored as an upper-triangular **edge
+list, not a matrix**, because the table is about 65% blank and *a blank is not a zero*.
+
+⚠️ **The blanks are the point.** Table 9.4-1's own footnote reads: *"Blanks indicate no
+data are available from which the k12 could be evaluated. In such case use estimates from
+mixtures of similar compounds."* `thermo.data.pr_kij_matrix` therefore returns the pairs
+it could not find alongside the matrix, and `PRMixture.from_database(..., kij="table")`
+**warns** rather than filling a zero in silently.
+
+*Verified* against the book's own three worked values — $k$ = 0.010 for ethane/*n*-butane
+(Illustration 9.4-3), 0.09 for methane/carbon dioxide (Illustration 9.4-4), 0.018 for
+*n*-pentane/benzene (Illustration 9.4-5) — plus two structural checks: every entry lands
+in the upper triangle, and the parser places exactly as many numbers as each printed row
+contains. With these values `PRMixture` reproduces Illustration 9.4-3's fugacity table.
+
+*Source:* Table 9.4-1, from H. Knapp, R. Döring, L. Oellrich, U. Plöcker and
+J. M. Prausnitz, *Vapor-Liquid Equilibria for Mixtures of Low-Boiling Substances*,
+DECHEMA Chemistry Data Series Vol. VI, Frankfurt/Main (1982), and other sources.
+
 ## UNIFAC group-contribution parameters
 
-Extracted from the legacy MATLAB `UNIFAC_data.mat` for the Python UNIFAC substitute
-(`code/thermo/`).
-
-- `unifac_subgroups.csv` — 95 subgroups: `subgroup_no, main_group_no, subgroup_name,
-  main_group_name, R, Q`. **These R/Q are the *modified* (Dortmund) values.**
-- `unifac_interactions_modified.csv` — modified (Dortmund) UNIFAC main-group interactions:
+- **`unifac_subgroups.csv` — 92 subgroups over 46 main-group names**, digitized from the
+  book's own **Table 9.5-2** (5e pp. 457–458):
+  `subgroup_no, main_group_no, subgroup_name, main_group_name, R, Q, example`.
+  These *R*/*Q* are the **modified (Dortmund)** values — the only set the book prints
+  (`revision_notes/c09.md` D1).
+- `unifac_interactions_modified.csv` — modified (Dortmund) main-group interactions:
   `main_i, main_j, a_ij, b_ij, c_ij` (temperature-dependent, $\Psi=\exp[-(a/T+b+cT)]$),
   1220 nonzero pairs over 56 main groups.
 - `unifac_interactions_original.csv` — original UNIFAC main-group interactions:
-  `main_i, main_j, a_ij` (single parameter, $\Psi=\exp(-a/T)$), 838 nonzero pairs over
-  44 main groups (recovered from the `Unfa44` table).
+  `main_i, main_j, a_ij` ($\Psi=\exp(-a/T)$), 838 nonzero pairs over 44 main groups.
+  ⛔ **Retained but unused**: the book teaches modified UNIFAC only, so `unifac.py`'s
+  `original` branch stays unimplemented (c09.md **D1**, 2026-08-12).
 
-**Gap for the *original* variant:** the `.mat` does not contain the original-UNIFAC
-subgroup R/Q constants or the 44-main-group names (the Matlab GUI only ran modified
-UNIFAC). Those must be sourced separately (book appendix or the published original-UNIFAC
-tables) before the original variant is complete.
+⚠️ **One asymmetry, and it is deliberate.** *R* and *Q* and the group inventory come from
+the book; the **subgroup and main-group numbers do not**, because the chapter prints no
+number column anywhere (which is why four references in Illustration 9.6-2 dangle). The
+numbers come from the legacy MATLAB `UNIFAC_data.mat` extraction, and they have to,
+because `unifac_interactions_modified.csv` is keyed on the main-group number — the two
+files must agree or every $\Psi_{mn}$ is wrong.
+
+**What the digitization found.** Full audit trail:
+`code/ch9/validation/unifac_subgroups_table_9.5-2_validation.ipynb`.
+
+| | |
+|---|---|
+| ⛔ **the legacy file had duplicate subgroup numbers** | 37, 38 and 39 each appeared twice — the *original*-UNIFAC pyridine subgroups (C5H5N, C5H4N, C5H3N) and the Dortmund ones (AC2H2N, AC2HN, AC2N). `dict(zip(subgroup_no, R))` silently kept whichever row came last. `load_unifac_subgroups` now **refuses** a duplicate. |
+| ⛔ **six subgroups carried silicon names** | legacy main group 42 was `SiH2` with subgroups `SiH2`/`SiH`/`Si`, and 43 was `SiO` — but their *R* and *Q* are *exactly* the book's `cy-CH2`/`cy-CH`/`cy-C` and the three `cy-CH2 O` subgroups. In modified UNIFAC, main groups 42 and 43 **are** the cyclic groups. Recovering them by *R*/*Q* fingerprint is what let the cyclic groups keep the numbers the interaction table already uses. |
+| ⛔ **the book prints `CHO` twice** | the aldehyde and the ether subgroup. The ether is stored as `CH-O`. Filed as an erratum. |
+| ⚠️ **two values gained digits** | `AC2N` *Q* = 0.3539 (legacy 0.3530), `cy-CON-CH3` *R* = 3.9819 (legacy 3.9810). The book wins. |
+| ⚠️ **`CHCl3` is its own main group** | the book prints chloroform and CCl₃ under one `CCl3` heading, but the parameter set gives chloroform main group 45 and CCl₃ main group 23 — which is why their *R* differ where subgroups of a genuine main group always share *R*. This is the only place the printed heading and the parameter set's main groups disagree, and it accounts exactly for 46 names over 47 numbers. |
+
+*Checked:* the group sums reproduce Illustration 9.5-2 exactly — benzene as 6 ACH gives
+$r$ = 2.2578 and $q$ = 2.5926; 2,2,4-trimethyl pentane as 5 CH₃ + CH₂ + CH + C gives
+$r$ = 5.0600 and $q$ = 6.3675. `thermo.data.unifac_groups(name)` derives group
+assignments from the table's own *Example Assignments* column, so a notebook never
+hand-transcribes a subgroup number.
 
 ## `steam_*.csv` — Appendix A.III, the thermodynamic properties of water and steam
 

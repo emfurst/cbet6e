@@ -26,12 +26,13 @@ from numpy.polynomial import Polynomial
 from scipy import constants, optimize
 
 from .peng_robinson import PengRobinson
+from .phi_phi import PhiPhiVLE
 
 R = constants.R
 _SQRT2 = np.sqrt(2.0)
 
 
-class PRMixture:
+class PRMixture(PhiPhiVLE):
     """Peng-Robinson EOS for a mixture with van der Waals one-fluid mixing.
 
     Parameters
@@ -58,8 +59,32 @@ class PRMixture:
         self.b = np.array([c.b for c in self.components])  # pure b_i (T-independent)
 
     @classmethod
-    def from_database(cls, keys, kij=None):
-        """Build from `pure_property.csv` keys, e.g. ["benzene", "toluene"]."""
+    def from_database(cls, keys, kij=None, warn_missing=True):
+        """Build from `pure_property.csv` keys, e.g. ["benzene", "toluene"].
+
+        `kij` may be an explicit matrix, `None` for all zeros, or the string
+        ``"table"`` to look the pairs up in **Table 9.4-1** (`code/data/pr_kij.csv`):
+
+            >>> m = PRMixture.from_database(["ethane", "n-butane"], kij="table")
+
+        ⚠️ **A pair Table 9.4-1 does not list is set to zero and warned about**, not
+        filled in silently. The table is 65% blank and its own footnote says to
+        substitute an estimate from a similar mixture -- a judgment the caller has to
+        make, so it is surfaced rather than buried. Pass `warn_missing=False` once
+        you have decided that zero is what you want.
+        """
+        if isinstance(kij, str):
+            if kij != "table":
+                raise ValueError("kij must be a matrix, None, or 'table'")
+            from .data import pr_kij_matrix
+            kij, missing = pr_kij_matrix(keys)
+            if missing and warn_missing:
+                import warnings
+                pairs = ", ".join(f"{a}/{b}" for a, b in missing)
+                warnings.warn(
+                    f"Table 9.4-1 gives no k_ij for {pairs}; using 0. Its footnote "
+                    f"says to estimate from a similar mixture instead.",
+                    stacklevel=2)
         return cls([PengRobinson.from_database(k) for k in keys], kij=kij)
 
     @property
@@ -135,206 +160,8 @@ class PRMixture:
         """Vector of component fugacities f_i = x_i phi_i P (Pa)."""
         return np.asarray(x, dtype=float) * self.phi(x, T, P, phase) * P
 
-    # --- K-value initial guess ------------------------------------------
-    def _wilson_K(self, T, P):
-        """Wilson-correlation K_i = phi_i^L / phi_i^V estimate for initializing
-        VLE iterations (SIS Eq. 10.2-... style ideal K-value seed)."""
-        Tc = np.array([c.Tc for c in self.components])
-        Pc = np.array([c.Pc for c in self.components])
-        w = np.array([c.omega for c in self.components])
-        return Pc / P * np.exp(5.373 * (1 + w) * (1 - Tc / T))
-
-    # --- bubble / dew points --------------------------------------------
-    def _equilibrate_y(self, x, T, P, y0, max_iter=200, tol=1e-10):
-        """Inner successive-substitution: at fixed (x, T, P) find the incipient
-        vapor y in equilibrium with liquid x. Returns (y_unnormalized_sum, y)."""
-        y = np.array(y0, dtype=float)
-        y /= y.sum()
-        for _ in range(max_iter):
-            phiL = self.phi(x, T, P, "liquid")
-            phiV = self.phi(y, T, P, "vapor")
-            K = phiL / phiV
-            y_new = K * np.asarray(x, dtype=float)
-            s = y_new.sum()
-            y_new = y_new / s
-            if np.max(np.abs(y_new - y)) < tol:
-                return s, y_new
-            y = y_new
-        return s, y
-
-    def bubble_pressure(self, x, T, P_guess=None, max_iter=100, tol=1e-9):
-        """Bubble-point pressure and incipient vapor composition at (x, T).
-
-        Returns (P, y). Liquid x is given; the vapor is in equilibrium.
-        """
-        x = np.asarray(x, dtype=float)
-        K = self._wilson_K(T, 1e5)  # rough K to seed P and y
-        if P_guess is None:
-            P_guess = float(1.0 / np.sum(x / K)) if np.all(K > 0) else 1e5
-        y = K * x
-        y /= y.sum()
-        P = P_guess
-        for _ in range(max_iter):
-            s, y = self._equilibrate_y(x, T, P, y)
-            # sum(K x) = s must equal 1 at the bubble point; Newton on ln P
-            f = s - 1.0
-            if abs(f) < tol:
-                return float(P), y
-            dP = P * 1e-6
-            s2, _ = self._equilibrate_y(x, T, P + dP, y)
-            dfdP = (s2 - s) / dP
-            P = P - f / dfdP
-            if P <= 0:
-                P = P_guess / 2
-                P_guess = P
-        return float(P), y
-
-    def dew_pressure(self, y, T, P_guess=None, max_iter=100, tol=1e-9):
-        """Dew-point pressure and incipient liquid composition at (y, T).
-
-        Returns (P, x). Vapor y is given; the liquid is in equilibrium.
-        """
-        y = np.asarray(y, dtype=float)
-        K = self._wilson_K(T, 1e5)
-        if P_guess is None:
-            P_guess = float(np.sum(y * K)) * 1e5 if np.all(K > 0) else 1e5
-        x = y / K
-        x /= x.sum()
-        P = P_guess
-
-        def sum_x(P, x):
-            for _ in range(200):
-                phiV = self.phi(y, T, P, "vapor")
-                phiL = self.phi(x, T, P, "liquid")
-                K = phiL / phiV
-                x_new = y / K
-                s = x_new.sum()
-                x_new = x_new / s
-                if np.max(np.abs(x_new - x)) < 1e-10:
-                    return s, x_new
-                x = x_new
-            return s, x
-
-        for _ in range(max_iter):
-            s, x = sum_x(P, x)
-            f = s - 1.0
-            if abs(f) < tol:
-                return float(P), x
-            dP = P * 1e-6
-            s2, _ = sum_x(P + dP, x)
-            dfdP = (s2 - s) / dP
-            P = P - f / dfdP
-            if P <= 0:
-                P = P_guess / 2
-                P_guess = P
-        return float(P), x
-
-    def bubble_temperature(self, x, P, T_guess=None, max_iter=100, tol=1e-9):
-        """Bubble-point temperature and vapor composition at (x, P).
-
-        Returns (T, y).
-        """
-        x = np.asarray(x, dtype=float)
-        if T_guess is None:
-            Tb = np.array([c.Tc * 0.7 for c in self.components])  # crude
-            T_guess = float(x @ Tb)
-        T = T_guess
-        K = self._wilson_K(T, P)
-        y = K * x
-        y /= y.sum()
-        for _ in range(max_iter):
-            s, y = self._equilibrate_y(x, T, P, y)
-            f = s - 1.0
-            if abs(f) < tol:
-                return float(T), y
-            dT = T * 1e-6
-            s2, _ = self._equilibrate_y(x, T + dT, P, y)
-            dfdT = (s2 - s) / dT
-            T = T - f / dfdT
-        return float(T), y
-
-    def dew_temperature(self, y, P, T_guess=None, max_iter=100, tol=1e-9):
-        """Dew-point temperature and liquid composition at (y, P).
-
-        Returns (T, x).
-        """
-        y = np.asarray(y, dtype=float)
-        if T_guess is None:
-            Tb = np.array([c.Tc * 0.7 for c in self.components])
-            T_guess = float(y @ Tb)
-        T = T_guess
-
-        def sum_x(T, x):
-            for _ in range(200):
-                phiV = self.phi(y, T, P, "vapor")
-                phiL = self.phi(x, T, P, "liquid")
-                K = phiL / phiV
-                x_new = y / K
-                s = x_new.sum()
-                x_new = x_new / s
-                if np.max(np.abs(x_new - x)) < 1e-10:
-                    return s, x_new
-                x = x_new
-            return s, x
-
-        K = self._wilson_K(T, P)
-        x = y / K
-        x /= x.sum()
-        for _ in range(max_iter):
-            s, x = sum_x(T, x)
-            f = s - 1.0
-            if abs(f) < tol:
-                return float(T), x
-            dT = T * 1e-6
-            s2, _ = sum_x(T + dT, x)
-            dfdT = (s2 - s) / dT
-            T = T - f / dfdT
-        return float(T), x
-
-    # --- isothermal flash ------------------------------------------------
-    def flash(self, z, T, P, max_iter=200, tol=1e-10):
-        """Isothermal (T, P) flash of a feed of composition z.
-
-        Returns (beta, x, y) where beta is the vapor molar fraction and x, y are
-        the liquid and vapor compositions. beta == 0 -> subcooled liquid,
-        beta == 1 -> superheated vapor (feed is single-phase at (T, P)).
-        """
-        z = np.asarray(z, dtype=float)
-        K = self._wilson_K(T, P)
-        beta = 0.5
-        for _ in range(max_iter):
-            beta = self._rachford_rice(z, K, beta)
-            x = z / (1 + beta * (K - 1))
-            y = K * x
-            x = x / x.sum()
-            y = y / y.sum()
-            phiL = self.phi(x, T, P, "liquid")
-            phiV = self.phi(y, T, P, "vapor")
-            K_new = phiL / phiV
-            if np.max(np.abs(K_new / K - 1)) < tol:
-                K = K_new
-                break
-            K = K_new
-        beta = self._rachford_rice(z, K, beta)
-        beta = min(max(beta, 0.0), 1.0)
-        x = z / (1 + beta * (K - 1))
-        y = K * x
-        return beta, x / x.sum(), y / y.sum()
-
-    @staticmethod
-    def _rachford_rice(z, K, beta0=0.5):
-        """Solve sum_i z_i (K_i - 1) / (1 + beta (K_i - 1)) = 0 for beta in [0,1].
-        Falls back to the single-phase edges when the feed does not split."""
-        z, K = np.asarray(z, dtype=float), np.asarray(K, dtype=float)
-
-        def g(beta):
-            return np.sum(z * (K - 1) / (1 + beta * (K - 1)))
-
-        # single-phase checks (SIS: bubble if g(0)<0, dew if g(1)>0)
-        if g(0.0) <= 0:
-            return 0.0
-        if g(1.0) >= 0:
-            return 1.0
-        lo = 1.0 / (1.0 - K.max()) + 1e-10
-        hi = 1.0 / (1.0 - K.min()) - 1e-10
-        return float(optimize.brentq(g, max(lo, 0.0), min(hi, 1.0), xtol=1e-12))
+    # --- the VLE drivers live in phi_phi.PhiPhiVLE ------------------------
+    # `bubble_pressure`, `dew_pressure`, `bubble_temperature`, `dew_temperature`
+    # and `flash` are inherited. They were written here, but they touch this class
+    # only through `components` and `phi`, so Chapter 10 shares them with the
+    # Wong-Sandler mixing rule rather than keeping two copies. See phi_phi.py.

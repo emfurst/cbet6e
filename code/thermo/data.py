@@ -1,4 +1,5 @@
 """Data loaders for the `thermo` package — reads the CSV tables in `code/data/`."""
+import re
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -221,9 +222,145 @@ TABLE_6_6_1 = {
 }
 
 
+# --- Table 9.4-1: Peng-Robinson binary interaction parameters ---------------
+#
+# 127 pairs over 20 species, digitized from the printed Table 9.4-1 (5e p. 441).
+# Stored as an upper-triangular edge list, not a matrix: the table is 65% blank, and
+# a blank is *not* zero.
+#
+# ⚠️ THE BLANKS ARE THE POINT. Table 9.4-1's own footnote reads: "Blanks indicate no
+# data are available from which the k12 could be evaluated. In such case use estimates
+# from mixtures of similar compounds." A k_ij silently defaulted to zero is a
+# different mixture, not a missing decimal -- so `pr_kij_matrix` returns the pairs it
+# could not find alongside the matrix, and `PRMixture.from_database` warns rather than
+# filling in quietly.
+#
+# Verified against the book's own three worked values: k = 0.010 for ethane/n-butane
+# (Illustration 9.4-3), 0.09 for methane/carbon dioxide (Illustration 9.4-4), and
+# 0.018 for n-pentane/benzene (Illustration 9.4-5). All 127 entries land in the upper
+# triangle, and the parse places exactly as many numbers as the printed row contains.
+def load_pr_kij():
+    """Table 9.4-1 as a tidy edge list: species_i, species_j, formula_i, formula_j, kij."""
+    return pd.read_csv(DATA_DIR / "pr_kij.csv")
+
+
+def pr_kij_matrix(keys, strict=False):
+    """Symmetric k_ij matrix for `keys`, plus the pairs Table 9.4-1 does not give.
+
+    `keys` are matched against both the species names and the formulas as the table
+    prints them, case-insensitively -- so ["methane", "CO2"] and ["CH4", "carbon
+    dioxide"] both work.
+
+    Returns
+    -------
+    kij : (n, n) array, zero on the diagonal and for any pair the table lacks.
+    missing : list of (key_i, key_j) the table has no value for.
+
+    Set `strict=True` to raise instead of returning `missing`.
+    """
+    df = load_pr_kij()
+    lookup = {}
+    for _, row in df.iterrows():
+        a, b = row.species_i.lower(), row.species_j.lower()
+        fa, fb = row.formula_i.lower(), row.formula_j.lower()
+        for u in (a, fa):
+            for v in (b, fb):
+                lookup[(u, v)] = float(row.kij)
+                lookup[(v, u)] = float(row.kij)
+    n = len(keys)
+    kij = np.zeros((n, n))
+    missing = []
+    for i in range(n):
+        for j in range(i + 1, n):
+            ki, kj = str(keys[i]).strip().lower(), str(keys[j]).strip().lower()
+            if (ki, kj) in lookup:
+                kij[i, j] = kij[j, i] = lookup[(ki, kj)]
+            else:
+                missing.append((keys[i], keys[j]))
+    if missing and strict:
+        raise KeyError(f"Table 9.4-1 has no k_ij for {missing}")
+    return kij, missing
+
+
+# --- Table 9.5-2: UNIFAC group volume and surface area parameters ------------
+#
+# 92 subgroups over 46 main-group names, digitized from the printed Table 9.5-2
+# (5e pp. 457-458). The book's own table is the source of truth for R, Q and the group
+# inventory; the subgroup and main-group *numbers* are not printed anywhere in the
+# chapter and come from the legacy `UNIFAC_data.mat` extraction, because
+# `unifac_interactions_modified.csv` is keyed on the main-group number and the two
+# files have to agree. That asymmetry is recorded in code/data/README.md.
+#
+# Verified: the group sums reproduce Illustration 9.5-2 exactly -- benzene as 6 ACH
+# gives r = 2.2578 and q = 2.5926, and 2,2,4-trimethyl pentane as 5 CH3 + CH2 + CH + C
+# gives r = 5.0600 and q = 6.3675.
+def _check_subgroups(df):
+    """Integrity rules the table must satisfy. A silent violation here changes every
+    activity coefficient, so it is checked on every load rather than documented.
+
+    The legacy file this replaced violated the first rule: subgroup numbers 37, 38 and
+    39 each appeared twice -- once for the original-UNIFAC pyridine subgroups
+    (C5H5N, C5H4N, C5H3N) and once for the Dortmund ones (AC2H2N, AC2HN, AC2N) -- so
+    `dict(zip(subgroup_no, R))` silently kept whichever row came last.
+    """
+    if not df.subgroup_no.is_unique:
+        dup = sorted(df.loc[df.subgroup_no.duplicated(keep=False), "subgroup_no"].unique())
+        raise ValueError(f"unifac_subgroups.csv: duplicate subgroup_no {dup} -- "
+                         f"a dict keyed on it would silently drop rows")
+    bad = df.groupby("main_group_no").main_group_name.nunique()
+    if (bad > 1).any():
+        raise ValueError(f"unifac_subgroups.csv: main_group_no with more than one name: "
+                         f"{list(bad[bad > 1].index)}")
+    if (df.R <= 0).any():
+        raise ValueError("unifac_subgroups.csv: R must be positive")
+    if (df.Q < 0).any():
+        raise ValueError("unifac_subgroups.csv: Q must be non-negative")
+    return df
+
+
 def load_unifac_subgroups():
-    """subgroup_no, main_group_no, subgroup_name, main_group_name, R, Q (modified R/Q)."""
-    return pd.read_csv(DATA_DIR / "unifac_subgroups.csv")
+    """Table 9.5-2: subgroup_no, main_group_no, subgroup_name, main_group_name, R, Q,
+    example. The R/Q are the **modified (Dortmund)** values -- the only set the book
+    prints (see revision_notes/c09.md D1)."""
+    return _check_subgroups(pd.read_csv(DATA_DIR / "unifac_subgroups.csv"))
+
+
+def unifac_groups(name):
+    """Look up the group assignment the book's Example Assignments column gives.
+
+    Returns {subgroup_no: count} ready for `UNIFAC.gamma`, so a notebook can write
+    `unifac_groups("benzene")` instead of hand-transcribing `{9: 6}` and risking the
+    wrong subgroup number. Only the species Table 9.5-2 uses as examples are
+    available; anything else has to be assigned by hand from the table.
+    """
+    df = load_unifac_subgroups()
+    key = str(name).strip().lower()
+    num = dict(zip(df.subgroup_name.str.replace(" ", ""), df.subgroup_no))
+    for ex in df.example.dropna():
+        if ":" not in ex:
+            if ex.strip().lower() == key:            # e.g. "Water", "Chloroform"
+                row = df[df.example == ex].iloc[0]
+                return {int(row.subgroup_no): 1}
+            continue
+        species, assignment = ex.split(":", 1)
+        if species.strip().lower() != key:
+            continue
+        groups = {}
+        for part in assignment.split(","):
+            part = part.strip()
+            # Table 9.5-2 omits the count when it is 1 ("Methylamine: CH3 NH2",
+            # "Dimethylamine: CH3 NH, 1 CH3"), so a missing leading integer means one.
+            m = re.match(r"(?:(\d+)\s*)?(.+)", part)
+            if not m:
+                raise ValueError(f"cannot parse {part!r} in Table 9.5-2 example {ex!r}")
+            count = int(m.group(1)) if m.group(1) else 1
+            sub = m.group(2).replace(" ", "")
+            if sub not in num:
+                raise KeyError(f"Table 9.5-2 example {ex!r} names subgroup {sub!r}, "
+                               f"which is not a row of the table")
+            groups[int(num[sub])] = groups.get(int(num[sub]), 0) + count
+        return groups
+    raise KeyError(f"{name!r} is not an example species in Table 9.5-2")
 
 
 def load_unifac_interactions(kind="modified"):
