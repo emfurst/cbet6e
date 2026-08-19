@@ -18,7 +18,7 @@ Chapter 9 is where the mixture models live. Naming follows the ch6 convention,
 | [`hemoglobin_activity_coefficient_example.ipynb`](hemoglobin_activity_coefficient_example.ipynb) | **Illustration 9.7-1**, `c09uf002` | `LogPolynomialActivity` |
 | [`Wong_Sandler_mixing_rule_acetone_water_example.ipynb`](Wong_Sandler_mixing_rule_acetone_water_example.ipynb) | **Sec. 9.9** (no illustration, no figure) | `WongSandler`, `GexFromUNIFAC` |
 
-⭐ **Three of these are one system through three models.** The correlation, regular
+**Three of these are one system through three models.** The correlation, regular
 solution and UNIFAC notebooks all use benzene / 2,2,4-trimethyl pentane at 55 °C — the
 same seven data points, correlated, then predicted two different ways. Read them in that
 order; the last one carries the comparison table. The models genuinely disagree, and the
@@ -36,17 +36,17 @@ is the audit trail for digitizing **Table 9.5-2** into `code/data/unifac_subgrou
 the checks the table makes possible, and the five defects the comparison found. Excluded
 from the public repository by the same rule as the other `validation/` folders.
 
-⚠️ Its Colab bootstrap checks `../../thermo` as well as `../thermo`, because it sits one
+Its Colab bootstrap checks `../../thermo` as well as `../thermo`, because it sits one
 level deeper than the chapter notebooks. Without that, the bootstrap clones a published
 copy of the package over the local one and the notebook tests the wrong code.
 
-⭐ **The electrolyte notebook is the odd one out, and says so.** Every other notebook here
+**The electrolyte notebook is the odd one out, and says so.** Every other notebook here
 computes activity coefficients from mole fractions. §9.10's independent variable is ionic
 strength, and its answer is a single *mean* coefficient for the salt, because
 electroneutrality makes the individual ion coefficients unmeasurable. It is also the only
 ch9 notebook Chapter 15 reuses.
 
-⭐ **The Wong–Sandler notebook is the other odd one out, for the opposite reason.** It
+**The Wong–Sandler notebook is the other odd one out, for the opposite reason.** It
 backs a *section*, not an illustration or a figure, because §9.9 has none of either —
 it is prose from end to end, and it is the one place the book teaches a method its own
 author invented. It is the only notebook in the book whose printed key is a **section
@@ -57,7 +57,7 @@ $10^{11}$ bar.
 
 ## All ten are built
 
-✅ **2026-08-13.** The chapter's code is complete — **ten notebooks, twelve QR keys, nine
+**2026-08-13.** The chapter's code is complete — **ten notebooks, twelve QR keys, nine
 recomputed figures**, closed out by Illustration 9.7-1 (hemoglobin), which gave §9.7 its
 first notebook and left §§9.1–9.3 as the only sections with no code behind them. The VLE demonstrations of the Wong–Sandler rule (§10.3, Figs. 10.3-9
 to 10.3-13, all acetone/water) belong to chapter 10 and need its bubble-point drivers;
@@ -74,6 +74,6 @@ to 10.3-13, all acetone/water) belong to chapter 10 and need its bubble-point dr
   `c09uf002` are in the 5e figure set and `c09uf003` is not, though the manuscript has the
   slot and the printed page (5e p. 489) has the figure. Second such gap in the chapter
   after Fig. 9.7-3, and the first supplied by recomputation rather than recovery.
-  ⚠️ Its points come from the illustration's printed **table**, not from the printed art,
+  Its points come from the illustration's printed **table**, not from the printed art,
   which is misregistered against its own axes by about 0.03 in $\gamma_\pm$ and drops the
   $M = 6$ point entirely.

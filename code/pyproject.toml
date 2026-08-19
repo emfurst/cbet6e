@@ -36,7 +36,7 @@ dependencies = [
     # cell sits on a spinner forever. JupyterLab is unaffected. Since a large share
     # of students run these notebooks in VS Code, a floor alone would hand them a
     # notebook that never runs.
-    # ⬜ REMOVE THIS CEILING once the VS Code Jupyter extension supports ipykernel 7
+    # REMOVE THIS CEILING once the VS Code Jupyter extension supports ipykernel 7
     #    — test by deleting the upper bound, `uv sync`, and running any notebook in
     #    VS Code. Checked 2026-08-06.
     "ipykernel>=6.29,<7",

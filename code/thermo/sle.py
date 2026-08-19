@@ -1,6 +1,6 @@
 """sle -- solid-liquid and solid-fluid equilibrium, SIS Secs. 12.1 and 12.3.
 
-⭐ **The whole of Sec. 12.1 and Sec. 12.3 is one equation solved for two different
+**The whole of Sec. 12.1 and Sec. 12.3 is one equation solved for two different
 unknowns.** Sec. 12.1 asks *how much solid dissolves at this temperature* and solves
 Eq. 12.1-7 for x; Sec. 12.3 asks *at what temperature does solid first appear from this
 liquid* and solves Eq. 12.3-2 for T. Those two printed equations are the same function
@@ -36,7 +36,7 @@ everything else is that function inverted one way or the other:
 | Eq. 12.3-5 | the dilute-solute freezing-point depression | `freezing_point_depression` |
 | Sec. 12.3 | the eutectic, as the crossing of two freezing curves | `eutectic` |
 
-## ⛔ The trap: gamma depends on x, so the solubility is a fixed point
+## The trap: gamma depends on x, so the solubility is a fixed point
 
 This is what the highlighted sentence in Illustration 12.1-2 is actually about. UNIFAC
 (or regular solution theory, or anything else) returns gamma *given* a composition, but
@@ -49,7 +49,7 @@ iterated:
 prints it -- Illustration 12.1-1's "the results of the next two iterations are
 x_1 = 0.0768 and x_1 = 0.0772" and Illustration 12.1-2's 0.07 -> 0.0821 -> 0.0856 are
 the sequence, not just its limit, and a reader checking the book needs to see the same
-steps. ⛔ **On failure to converge it raises** rather than returning the last iterate:
+steps. **On failure to converge it raises** rather than returning the last iterate:
 a fixed point that has not converged is not an answer, and returning it silently is how
 a wrong number reaches print.
 
@@ -125,7 +125,7 @@ def ln_x_gamma(T, T_m, dH_fus, dCp=0.0):
     T_m : normal melting (or triple-point) temperature of the solute, K.
     dH_fus : heat of fusion at T_m, J/mol.
     dCp : Cp(liquid) - Cp(solid), J/(mol K), taken independent of temperature.
-        ⚠️ *That subtraction order matters and is easy to get backwards.*
+        *That subtraction order matters and is easy to get backwards.*
         Illustration 12.3-2 prints 48.6 for toluene, which is its Cp^L of 135.6 less
         its Cp^S of 87.0 -- liquid minus solid.
     """
@@ -228,7 +228,7 @@ def solubility_parameter(dH_sub, dH_fus, V_liquid, T):
         dU_vap = dH_vap - RT
         delta_1 = sqrt(dU_vap / V_liquid)                  (Eq. 12.1-11)
 
-    ⭐ **This is the awkward step in regular solution theory and Sec. 12.1 says so**:
+    **This is the awkward step in regular solution theory and Sec. 12.1 says so**:
     the solubility parameter wanted is that of a liquid which, at the temperature of
     interest, does not exist. It is reached from the solid's sublimation pressure and
     its heat of fusion, which is why `heat_of_sublimation` sits next to it.
@@ -250,7 +250,7 @@ def heat_of_fusion(x1, T1, x2, T2):
     sentence: the activity coefficients have been assumed to cancel in the ratio, so
     what comes out carries their temperature and composition dependence with it.
 
-    ⭐ **Solubilities in any units that are proportional to mole fraction will do.**
+    **Solubilities in any units that are proportional to mole fraction will do.**
     Illustration 12.1-7 hands it mg/mL directly, and its own justification is that at
     a molecular weight of 34 800 the mole fraction is 9.4e-8, where x is linear in S.
     """
@@ -304,11 +304,11 @@ def solubility_in_gas(P_sat, P, phi_bar, V_solid, T, f_over_P=1.0, y0=None,
 
         y_i = P_i^sat (f/P)_sat exp[V^S(P - P_i^sat)/RT] / (P phi-bar_i^V(T, P, y))
 
-    ⛔ **phi-bar depends on y, so this has to be solved, not evaluated** -- Sec. 12.1
+    **phi-bar depends on y, so this has to be solved, not evaluated** -- Sec. 12.1
     says so in the sentence after Eq. 12.1-17, and Illustration 12.1-5's procedure
     paragraph is the hand version. `phi_bar` is a callable y -> phi-bar_i^V.
 
-    ⛔⛔ **AND THE EQUATION HAS MORE THAN ONE ROOT.** For CO2 + naphthalene at 60.4 C
+    **AND THE EQUATION HAS MORE THAN ONE ROOT.** For CO2 + naphthalene at 60.4 C
     and 133.8 bar it has *three*: 1.05e-2, 0.124 and 0.542. Only the smallest is the
     solubility of a trace solid in a supercritical fluid; the others are the same
     equality of fugacities satisfied by a dense, naphthalene-rich phase, which is not
@@ -401,7 +401,7 @@ def freezing_point(x1, T_m, dH_fus, dCp=0.0, gamma=1.0, T_min=None, n_scan=400):
     T_min : lower end of the search. Defaults to 0.2 T_m, which spans every freezing
         point Illustration 12.3-2 reports (its lowest is 0.56 T_m).
 
-    ⛔ **WITH dCp != 0 THIS EQUATION HAS TWO ROOTS, AND ONLY THE UPPER ONE IS
+    **WITH dCp != 0 THIS EQUATION HAS TWO ROOTS, AND ONLY THE UPPER ONE IS
     PHYSICAL.** As T -> 0 the dCp term goes as +dCp T_m/(R T) while the fusion term
     goes as -dH_fus/(R T), so whenever dCp T_m > dH_fus -- which is the case for *both*
     species in Illustration 12.3-2 (48.6 x 178.16 = 8659 against 6611) -- the residual
@@ -445,7 +445,7 @@ def freezing_point_depression(x2, T_m, dH_fus):
     """dT = T_m - T_f = R T_m^2 x_2 / dH_fus -- Eq. 12.3-5.
 
     The dilute limit, in which gamma_1 -> 1 and ln x_1 = ln(1 - x_2) -> -x_2.
-    ⭐ **It contains nothing about the solute but its mole fraction**, which is
+    **It contains nothing about the solute but its mole fraction**, which is
     Sec. 12.3's own observation and the reason it can be compared term by term with
     the osmotic pressure of Eq. 11.5-4. `x2` may be a sum over several solutes, which
     is Eq. 12.3-6.
@@ -473,7 +473,7 @@ def eutectic(x_grid, T_a, T_b):
     (x_eutectic, T_eutectic) -- found by linear interpolation on the difference
     T_a - T_b across its sign change, so the answer is not restricted to a grid point.
 
-    ⚠️ **The eutectic is the MINIMUM of the freezing curve, not of either branch.**
+    **The eutectic is the MINIMUM of the freezing curve, not of either branch.**
     Reporting min(T_a) or min(T_b) gives a temperature far below the real one; on
     Illustration 12.3-2's grid min(T_a) is 99.8 K against a eutectic of 155.9 K.
     """

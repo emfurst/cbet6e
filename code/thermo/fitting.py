@@ -235,7 +235,7 @@ def tangent_intercepts(x1_star, dmix_star, slope):
 #
 #     ln gamma = A c + B c^2 + C c^3                            (SIS Eq. 9.7-21)
 #
-# ⭐ The order matters less than the OBJECTIVE. Fitting ln gamma and fitting
+# The order matters less than the OBJECTIVE. Fitting ln gamma and fitting
 # gamma weight the fifteen points very differently -- gamma spans 1.16 to 36.8,
 # so a least-squares fit on gamma is dominated by the last three points while a
 # fit on ln gamma is not. The two give coefficients that differ by ~5% in B.

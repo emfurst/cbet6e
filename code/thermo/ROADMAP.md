@@ -5,9 +5,9 @@ Derived from the **4th-edition Appendix B** program catalog
 (`legacy-4e/Sandler_4e_app_B.pdf`), read as a specification of *what the historical
 computing suite could do*, re-expressed as Python modules.
 
-✅ **Status 2026-08-12 — chapters 6–9 are complete.** T13 (`electrolytes.py`) and T14
+**Status 2026-08-12 — chapters 6–9 are complete.** T13 (`electrolytes.py`) and T14
 (`wong_sandler.py`) both landed; thirteen modules, the property and model-parameter
-databases, and notebook sets in `ch6`–`ch9`. ⬜ **Next is ch10** — the VLE drivers, which
+databases, and notebook sets in `ch6`–`ch9`. **Next is ch10** — the VLE drivers, which
 are the first application of `wong_sandler` and the first place UNIFAC gets a P–xy
 driver.
 
@@ -76,63 +76,63 @@ build on rather than a demo.
 
 | Capability — from the 4e suite unless marked *new* | Target module | Status | Chapter(s) |
 |---|---|---|---|
-| Property database (constants, $C_p^*$, $P^{vap}$, $\Delta_f G/\Delta_f H$) | `data.py` | ✅ done (`get_compound`, CSV loaders; `react_property.csv` has formation data) | all |
-| Model-parameter tables digitized from the book | `data.py` | ✅ **done 2026-08-12** — Table 9.5-2 UNIFAC subgroups (92 over 46 main groups; `load_unifac_subgroups`, `unifac_groups`), PR $k_{ij}$ (127 pairs / 20 species; `load_pr_kij`, `pr_kij_matrix`), §8.6 mixing data (`load_mixing_data`) | 8, 9, 10 |
-| PR pure: props, fugacity, departures, $P^{vap}$ | `peng_robinson.py` | ✅ done | 6, 7 |
-| PR pure: P–H charts, dome + isotherm/isentrope/isochore/quality families | **`ph_chart.py`** (new) + **`charts.py`** (new) | ✅ **done 2026-08-08** (`ChartFluid`, `ph_chart`; reproduces Figs. 3.3-2/3.3-3 bit-for-bit) | 3, 5, 6 |
-| Steam charts from Appendix A.III (Mollier, T–S) | **`steam_chart.py`** (new) | ✅ **done 2026-08-08** (`SteamTables`, `temperature_entropy`; reproduces Fig. 3.3-1b bit-for-bit) | 3, 5 |
-| PR pure: P–S plots, VLE (T–V) envelope | `ph_chart.py` | ⬜ to add (P–V isotherms exist as a notebook) | 6, 7 |
-| **PRSV** (Stryjek–Vera $\kappa(T)$, Eqs. 7.5-1/7.5-2) | `peng_robinson.py` (`kappa1=`) | ✅ done (verified against Illustration 7.5-3) | 7 |
-| **van der Waals** | **`van_der_waals.py`** (new) | ✅ done (verified against the Fig. 7.5-2 notebook) | 6, 7 |
-| Shared cubic machinery: roots, fugacity, spinodals, $P^{vap}$ | **`cubic.py`** (new) | ✅ done (`CubicEOS`; bracketed Fig. 7.5-1 solver) | 6, 7 |
-| SRK / RK variants (a(T) swap) | `cubic.py` — subclass as vdW and PR now do | ⬜ to add | 6 |
-| PR **mixtures**: mixing rules + $k_{ij}$, mixture fugacity | **`pr_mixture.py`** (new) | ✅ done (`PRMixture`, vdW one-fluid + `ln_phi`, verified) | 9, 10 |
-| Bubble/dew T & P; iso-T flash | `pr_mixture.py` + phase-eq driver | ✅ bubble/dew P&T + Rachford-Rice flash done; iso-H/S flash ⬜ | 10 |
-| UNIFAC: $\gamma$ (modified) | `unifac.py` | ✅ works; R/Q now from the book's Table 9.5-2 | 9, 10 |
-| ~~UNIFAC: original variant~~ | `unifac.py` | ⛔ **retired 2026-08-12 (EMF)** — the book teaches modified (Dortmund) UNIFAC; the `original` branch stays unimplemented. See `revision_notes/c09.md` D1 | — |
-| UNIFAC: $G^{ex}$–x, P–xy VLE driver | `unifac.py` (+ driver) | ⬜ to add | 10 |
-| Activity models: van Laar, Margules (1- & 2-constant), Redlich–Kister, Wilson, NRTL, Flory–Huggins, UNIQUAC, regular solution (+ $G^{ex}$ fitting) | **`activity_models.py`** | ✅ **done 2026-08-12** — one `gamma(x,T)`/`gex(x,T)` interface; multicomponent Wilson, NRTL, UNIQUAC and regular solution; `check_gibbs_duhem` on every model | 9, 10, 11 |
-| **Combined EOS + $G^{ex}$: the Wong–Sandler mixing rule** (§9.9) — *new, not in the 4e suite* | **`wong_sandler.py`** | ✅ **done 2026-08-12 (T14)** — Eqs. 9.9-9/-10/-11/-12/-13, both combining rules, `GexFromUNIFAC`, and `check_boundary` for the two conditions the rule is derived from. ⭐ **Verified without a single printed number**: the boundary conditions hold to 1e-15, Eq. 9.9-8 and $C^*$ confirmed by taking the EOS to $10^{11}$ bar, and Eq. 9.9-11 reproduces `PRMixture` exactly on vdW one-fluid input | 9, 10 |
-| **Electrolytes: Debye–Hückel and its extensions** (§9.10) — ionic strength, mean ionic activity coefficients — *new, not in the 4e suite* | **`electrolytes.py`** | ✅ **done 2026-08-12 (T13)** — Eqs. 9.10-15/17/18 on one `DebyeHuckel` class, `Electrolyte` with an electroneutrality check, Table 9.10-1, mixed-electrolyte `ionic_strength`. Recovers Illustration 9.10-2's fitted δ = 0.137. ⭐ **Its audit proved Table 9.10-1 correct** (α ρ/β³ = 33.03 on all fourteen rows) and found the printed art for `c09uf003` never existed. ⭐ Reused by ch15 | 9, 15 |
-| VLLE / LLE / gas solubility / osmotic (incl. Margules VLLECALC) | phase-eq driver on `activity_models` + `pr_mixture` | ⬜ to build | 11 |
-| Chemical equilibrium $K_a(T)$ (CHEMEQ); ionization / pH | **`chem_equilibrium.py`** (new) | ⬜ to build | 13, 15 |
-| Adiabatic flame / reaction temperature | application (chem_eq + energy balance) | ⬜ to build | 14 |
-| Electrochemistry — Nernst / cell potentials (fuel cells, batteries) | **`electrochem.py`** (new) | ⬜ to build | 14 |
-| Fitting utils: partial molar via R–K | **`fitting.py`** (new) | ✅ **done 2026-08-09** (`RedlichKister`, `tangent_intercepts`; reproduces printed Table 8.6-2 exactly) | 1, 8 |
-| Fitting utils: Antoine ($P^{vap}$) fits | `fitting.py` | ⬜ to add | 1, 7 |
+| Property database (constants, $C_p^*$, $P^{vap}$, $\Delta_f G/\Delta_f H$) | `data.py` | done (`get_compound`, CSV loaders; `react_property.csv` has formation data) | all |
+| Model-parameter tables digitized from the book | `data.py` | **done 2026-08-12** — Table 9.5-2 UNIFAC subgroups (92 over 46 main groups; `load_unifac_subgroups`, `unifac_groups`), PR $k_{ij}$ (127 pairs / 20 species; `load_pr_kij`, `pr_kij_matrix`), §8.6 mixing data (`load_mixing_data`) | 8, 9, 10 |
+| PR pure: props, fugacity, departures, $P^{vap}$ | `peng_robinson.py` | done | 6, 7 |
+| PR pure: P–H charts, dome + isotherm/isentrope/isochore/quality families | **`ph_chart.py`** (new) + **`charts.py`** (new) | **done 2026-08-08** (`ChartFluid`, `ph_chart`; reproduces Figs. 3.3-2/3.3-3 bit-for-bit) | 3, 5, 6 |
+| Steam charts from Appendix A.III (Mollier, T–S) | **`steam_chart.py`** (new) | **done 2026-08-08** (`SteamTables`, `temperature_entropy`; reproduces Fig. 3.3-1b bit-for-bit) | 3, 5 |
+| PR pure: P–S plots, VLE (T–V) envelope | `ph_chart.py` | to add (P–V isotherms exist as a notebook) | 6, 7 |
+| **PRSV** (Stryjek–Vera $\kappa(T)$, Eqs. 7.5-1/7.5-2) | `peng_robinson.py` (`kappa1=`) | done (verified against Illustration 7.5-3) | 7 |
+| **van der Waals** | **`van_der_waals.py`** (new) | done (verified against the Fig. 7.5-2 notebook) | 6, 7 |
+| Shared cubic machinery: roots, fugacity, spinodals, $P^{vap}$ | **`cubic.py`** (new) | done (`CubicEOS`; bracketed Fig. 7.5-1 solver) | 6, 7 |
+| SRK / RK variants (a(T) swap) | `cubic.py` — subclass as vdW and PR now do | to add | 6 |
+| PR **mixtures**: mixing rules + $k_{ij}$, mixture fugacity | **`pr_mixture.py`** (new) | done (`PRMixture`, vdW one-fluid + `ln_phi`, verified) | 9, 10 |
+| Bubble/dew T & P; iso-T flash | `pr_mixture.py` + phase-eq driver | bubble/dew P&T + Rachford-Rice flash done; iso-H/S flash | 10 |
+| UNIFAC: $\gamma$ (modified) | `unifac.py` | works; R/Q now from the book's Table 9.5-2 | 9, 10 |
+| ~~UNIFAC: original variant~~ | `unifac.py` | **retired 2026-08-12 (EMF)** — the book teaches modified (Dortmund) UNIFAC; the `original` branch stays unimplemented. See `revision_notes/c09.md` D1 | — |
+| UNIFAC: $G^{ex}$–x, P–xy VLE driver | `unifac.py` (+ driver) | to add | 10 |
+| Activity models: van Laar, Margules (1- & 2-constant), Redlich–Kister, Wilson, NRTL, Flory–Huggins, UNIQUAC, regular solution (+ $G^{ex}$ fitting) | **`activity_models.py`** | **done 2026-08-12** — one `gamma(x,T)`/`gex(x,T)` interface; multicomponent Wilson, NRTL, UNIQUAC and regular solution; `check_gibbs_duhem` on every model | 9, 10, 11 |
+| **Combined EOS + $G^{ex}$: the Wong–Sandler mixing rule** (§9.9) — *new, not in the 4e suite* | **`wong_sandler.py`** | **done 2026-08-12 (T14)** — Eqs. 9.9-9/-10/-11/-12/-13, both combining rules, `GexFromUNIFAC`, and `check_boundary` for the two conditions the rule is derived from. **Verified without a single printed number**: the boundary conditions hold to 1e-15, Eq. 9.9-8 and $C^*$ confirmed by taking the EOS to $10^{11}$ bar, and Eq. 9.9-11 reproduces `PRMixture` exactly on vdW one-fluid input | 9, 10 |
+| **Electrolytes: Debye–Hückel and its extensions** (§9.10) — ionic strength, mean ionic activity coefficients — *new, not in the 4e suite* | **`electrolytes.py`** | **done 2026-08-12 (T13)** — Eqs. 9.10-15/17/18 on one `DebyeHuckel` class, `Electrolyte` with an electroneutrality check, Table 9.10-1, mixed-electrolyte `ionic_strength`. Recovers Illustration 9.10-2's fitted δ = 0.137. **Its audit proved Table 9.10-1 correct** (α ρ/β³ = 33.03 on all fourteen rows) and found the printed art for `c09uf003` never existed. Reused by ch15 | 9, 15 |
+| VLLE / LLE / gas solubility / osmotic (incl. Margules VLLECALC) | phase-eq driver on `activity_models` + `pr_mixture` | to build | 11 |
+| Chemical equilibrium $K_a(T)$ (CHEMEQ); ionization / pH | **`chem_equilibrium.py`** (new) | to build | 13, 15 |
+| Adiabatic flame / reaction temperature | application (chem_eq + energy balance) | to build | 14 |
+| Electrochemistry — Nernst / cell potentials (fuel cells, batteries) | **`electrochem.py`** (new) | to build | 14 |
+| Fitting utils: partial molar via R–K | **`fitting.py`** (new) | **done 2026-08-09** (`RedlichKister`, `tangent_intercepts`; reproduces printed Table 8.6-2 exactly) | 1, 8 |
+| Fitting utils: Antoine ($P^{vap}$) fits | `fitting.py` | to add | 1, 7 |
 
-Legend: ✅ done · ⚠️ partial · ⬜ to build · ⛔ next up, and blocking a notebook the chapter needs
+Legend: done · partial · to build · next up, and blocking a notebook the chapter needs
 
 ## Target module layout
 
 ```
 thermo/
-  data.py              ✅ property + reaction databases (code/data/*.csv)
-  charts.py            ✅ chart craft: weights, grids, label placement, book typography
-  ph_chart.py          ✅ P-H charts from a cubic EOS (Figs. 3.3-2/3.3-3, 5.1-3, c06uf002)
-  steam_chart.py       ✅ Mollier + T-S charts from Appendix A.III (Figs. 3.3-1a/b, c05uf001)
-  cubic.py             ✅ CubicEOS base: roots, fugacity, spinodals, P^vap
-  peng_robinson.py     ✅ pure-fluid PR + PRSV  (add P–H/P–S, VLE envelope)
-  van_der_waals.py     ✅ pure-fluid vdW (Fig. 7.5-2 curve a)
-                       ⬜ SRK / RK: two more subclasses of CubicEOS
-  fitting.py           ✅ Redlich-Kister correlation + partial molar properties (Sec. 8.6)
-                       ⬜ Antoine fit
-  pr_mixture.py        ✅ vdW mixing rules, mixture fugacity, bubble/dew/flash
-                       ⬜ iso-H / iso-S flash
-  activity_models.py   ✅ Margules 1&2, Redlich-Kister, van Laar, Wilson, NRTL,
+  data.py              property + reaction databases (code/data/*.csv)
+  charts.py            chart craft: weights, grids, label placement, book typography
+  ph_chart.py          P-H charts from a cubic EOS (Figs. 3.3-2/3.3-3, 5.1-3, c06uf002)
+  steam_chart.py       Mollier + T-S charts from Appendix A.III (Figs. 3.3-1a/b, c05uf001)
+  cubic.py             CubicEOS base: roots, fugacity, spinodals, P^vap
+  peng_robinson.py     pure-fluid PR + PRSV  (add P–H/P–S, VLE envelope)
+  van_der_waals.py     pure-fluid vdW (Fig. 7.5-2 curve a)
+                       SRK / RK: two more subclasses of CubicEOS
+  fitting.py           Redlich-Kister correlation + partial molar properties (Sec. 8.6)
+                       Antoine fit
+  pr_mixture.py        vdW mixing rules, mixture fugacity, bubble/dew/flash
+                       iso-H / iso-S flash
+  activity_models.py   Margules 1&2, Redlich-Kister, van Laar, Wilson, NRTL,
                           Flory-Huggins, UNIQUAC, regular solution (2026-08-12)
-  unifac.py            ✅ modified done (the book's model — D1); original retired; VLE driver to add
-  electrolytes.py      ✅ Debye-Huckel + extensions, Table 9.10-1 (Sec. 9.10); ch15 reuses it
-  wong_sandler.py      ✅ Wong-Sandler mixing rule + GexFromUNIFAC (Sec. 9.9); ch10 uses it
-  chem_equilibrium.py  ⬜ Ka(T) from ΔfG, ΔfH, Cp; ionization / pH
-  electrochem.py       ⬜ Nernst / cell potentials (fuel cells, batteries)
+  unifac.py            modified done (the book's model — D1); original retired; VLE driver to add
+  electrolytes.py      Debye-Huckel + extensions, Table 9.10-1 (Sec. 9.10); ch15 reuses it
+  wong_sandler.py      Wong-Sandler mixing rule + GexFromUNIFAC (Sec. 9.9); ch10 uses it
+  chem_equilibrium.py  Ka(T) from ΔfG, ΔfH, Cp; ionization / pH
+  electrochem.py       Nernst / cell potentials (fuel cells, batteries)
 ```
 
-✅ **Both names settled 2026-08-12.** `electrolytes.py`, not `debye_huckel.py`: ch15 layers
+**Both names settled 2026-08-12.** `electrolytes.py`, not `debye_huckel.py`: ch15 layers
 ionic strength, pH and Gibbs–Donnan on the same module, and the *extensions* of §9.10 are
 not Debye–Hückel proper. `wong_sandler.py` keeps the name the book gives the rule.
 
-⭐ **`electrolytes` does not inherit `ActivityModel`, and that is the precedent to carry.**
+**`electrolytes` does not inherit `ActivityModel`, and that is the precedent to carry.**
 Sec. 9.5's models map mole fractions to one coefficient per species; this one maps ionic
 strength to a single mean for the salt, because electroneutrality makes the individual ion
 coefficients unmeasurable. **Where the physics changes the independent variable, the
@@ -145,28 +145,28 @@ Titles below are the book's actual chapter titles (from the 5e table of contents
 `book_markup/ftoc.pdf`; carried into 6e unchanged). Section numbers pinpoint where each
 capability is introduced.
 
-- **ch8 — The Thermodynamics of Multicomponent Mixtures.** ✅ **Done 2026-08-09.** Partial
+- **ch8 — The Thermodynamics of Multicomponent Mixtures.** **Done 2026-08-09.** Partial
   molar properties (§8.6 experimental determination of partial molar volume & enthalpy);
   Redlich–Kister fitting of mixing data (the 4e `PRTLMOLR` worksheet) → `fitting.py`. Three
   notebooks in `code/ch8/`, six printed QR keys, `codes:`/`figures:`/`tables:` wired into
   `ch08.yaml`. The chapter's two data tables are digitized in `code/data/mixing_*.csv`;
   Tables 8.6-2 and 8.6-4 are **generated**, not stored.
 - **ch9 — Estimation of the Gibbs Energy and Fugacity of a Component in a Mixture.**
-  ⚠️ **The model chapter, and ⭐ two thirds done as of 2026-08-12.** Built: `pr_mixture.py`
+  **The model chapter, and two thirds done as of 2026-08-12.** Built: `pr_mixture.py`
   (§9.4/§9.7 fugacity of a species in a mixture via an EOS + mixing rules, with the $k_{ij}$
   table), `activity_models.py` (§9.5 correlative γ models), UNIFAC (§9.6 predictive —
   modified/Dortmund only, D1), `electrolytes.py` (§9.10), `wong_sandler.py` (§9.9), and
   **all nine notebooks in `code/ch9/`**, executing clean, with eight recomputed figures and
-  **all eleven QR keys** in the manuscript. ✅ **The chapter's code is done.**
-  ⭐ **What this chapter proved about the method.** Making two printed expressions for the
+  **all eleven QR keys** in the manuscript. **The chapter's code is done.**
+  **What this chapter proved about the method.** Making two printed expressions for the
   same quantity compute against each other found **two equation errors in eleven pages that
   had survived five editions** (Eqs. 9.5-12b, 9.5-18), and digitizing Table 9.5-2 found three
   more defects plus a live bug in our own legacy-derived data. Run the same sweep in ch10–15
   as each module lands. See [`../../revision_notes/c09.md`](../../revision_notes/c09.md) §§12–13.
-- **ch10 — Vapor-Liquid Equilibrium in Mixtures.** ⬜ **Next.** Bubble/dew/flash drivers
+- **ch10 — Vapor-Liquid Equilibrium in Mixtures.** **Next.** Bubble/dew/flash drivers
   along the chapter's three tracks: ideal (§10.1), low-pressure γ-based (§10.2, on
   `activity_models`/UNIFAC), high-pressure φ–φ EOS method (§10.3, on `pr_mixture` **and
-  `wong_sandler`**). P–xy diagrams. ⭐ §10.3's four demonstrations are all acetone/water and
+  `wong_sandler`**). P–xy diagrams. §10.3's four demonstrations are all acetone/water and
   all use the Wong–Sandler rule, including the two falsifiable claims T14 left untested: that
   the van der Waals rules produce a **false liquid–liquid split** at 298 K where Wong–Sandler
   does not, and that $k_{12}=0$ is not ideal-solution behavior. Both need the bubble-point
@@ -201,7 +201,7 @@ so it could not live under PR in any case. `ChartFluid` (the per-kilogram wrappe
 chart's datum) is arguably EOS work, but it is a *chart* convention — kJ/kg, and H = S = 0
 at the triple-point liquid — so it sits with the chart it serves.
 
-⭐ **The organizing principle is unchanged and is in fact better served**: the package holds
+**The organizing principle is unchanged and is in fact better served**: the package holds
 the method, the chapter notebooks are the application sites. What forced this was the
 decision that a figure's notebook lives in the figure's own chapter, which made three
 derived figures (5.1-3, `c05uf001`, `c06uf002`) into ch5 and ch6 applications of chart

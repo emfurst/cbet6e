@@ -8,7 +8,7 @@ is draftsmanship only -- the thermodynamics is in `thermo.lle` (`lle_flash`,
 
     from thermo.ternary import ternary_axes, plot, tie_line, point, to_xy
 
-⚠️ **WHY THIS IS BESPOKE AND NOT `mpltern`.** The author's practice files
+**WHY THIS IS BESPOKE AND NOT `mpltern`.** The author's practice files
 (`code/test code/ternary.ipynb`) use `mpltern`, which is a good library, and it was
 still not the right choice here:
 
@@ -40,7 +40,7 @@ the fraction at each named corner, summing to one:
 so `(1, 0, 0)` is the apex, `(0, 1, 0)` the left corner and `(0, 0, 1)` the right.
 Each corner is the pure component named there.
 
-⚠️ **Two different edges belong to each species, and confusing them is the easy
+**Two different edges belong to each species, and confusing them is the easy
 mistake.** A species' fraction is proportional to the perpendicular distance from
 the edge **opposite** its corner -- that is the geometry, and it is why the three
 fractions sum to one. But the printed **ruler** for that species is drawn on an
@@ -48,7 +48,7 @@ fractions sum to one. But the printed **ruler** for that species is drawn on an
 the thing it measures. Fig. 11.2-7 is the schematic that says this, `_edge_points`
 implements the ruler placement, and `read_construction` draws the reading.
 
-ⓘ **Fraction-agnostic, like `thermo.lle`.** Section 11.2's ternary illustrations are
+**Fraction-agnostic, like `thermo.lle`.** Section 11.2's ternary illustrations are
 worked in WEIGHT fractions and weights; the mathematics is identical either way, so
 nothing here assumes moles. Pass `percent=True` to label the axes 0-100.
 """
@@ -123,7 +123,7 @@ def _unpack(*args):
 def _edge_points(f):
     """The three tick anchors at fraction `f`, one per species, on the BOOK's edges.
 
-    ⚠️ **Which edge carries which species is not arbitrary, and a plausible-looking
+    **Which edge carries which species is not arbitrary, and a plausible-looking
     choice is wrong.** The first draft of this module put the apex species' scale on
     the left edge; the 5e's own Figs. 11.2-7 and 11.2-8 put it on the right. The
     rule, read off those two figures: **each species is scaled on the edge that ENDS
@@ -156,7 +156,7 @@ def ternary_axes(ax, *, top, left, right, ticks=0.2, minors=2, grid=True,
     because a triangular diagram is read by interpolating between rulings exactly as
     chart paper is -- but in **pure black hairlines, not gray**.
 
-    ⛔ **An earlier version of this docstring claimed a triangular grid was "the one
+    **An earlier version of this docstring claimed a triangular grid was "the one
     place tint is allowed." It is not, and `tools/check_print_art.py` said so**: it
     rejected the first Figure 11.2-8 on `0.7 G` and `0.87 G` in the content stream.
     That gate carries an allowlist of author-granted grey waivers and this was not on
@@ -165,11 +165,11 @@ def ternary_axes(ax, *, top, left, right, ticks=0.2, minors=2, grid=True,
     grid is 0.20 pt black where the binodal is 1.1 pt black, a factor of five in
     weight. Pass `grey_grid=True` for a screen figure that will never be staged.
 
-    ⚠️ Nothing else in the book stages grey art, and `charts.GRID_MAJOR`/`GRID_MINOR`
+    Nothing else in the book stages grey art, and `charts.GRID_MAJOR`/`GRID_MINOR`
     are unused by any staged figure -- this module was about to be the first, which is
     what makes the gate worth having.
 
-    ⚠️ **Label sizes are floored at 7 pt.** A long species name on a 3.3 in figure is
+    **Label sizes are floored at 7 pt.** A long species name on a 3.3 in figure is
     the failure recorded in [[no-figure-text-below-7pt]]: the fix is a SHORTER NAME,
     not smaller type. "Methyl isobutyl ketone" does not fit; "MIK" does, and the
     caption carries the expansion -- which is exactly what the 5e's Fig. 11.2-8 does.
@@ -216,7 +216,7 @@ def ternary_axes(ax, *, top, left, right, ticks=0.2, minors=2, grid=True,
                     ha="center", va="top")
 
     # --- corner names outside, scale ends just inside -------------------------
-    # ⚠️ The `1.0` sits INSIDE the triangle, on the inward bisector, rather than
+    # The `1.0` sits INSIDE the triangle, on the inward bisector, rather than
     # beside the species name. Outside it collides with the name at every corner --
     # "100W" instead of "100  W" -- and the collision is worse the longer the name.
     one = fmt(1.0)
@@ -227,7 +227,7 @@ def ternary_axes(ax, *, top, left, right, ticks=0.2, minors=2, grid=True,
     ax.text(RIGHT[0] + pad * 0.55, RIGHT[1] - pad * 0.55, right, size=label_size,
             color="k", ha="left", va="top")
     if corner_values:
-        # ⚠️ The apex needs a longer inward offset than the base corners: it is the
+        # The apex needs a longer inward offset than the base corners: it is the
         # acute corner, its two walls converge on the label, and a wide value like
         # "100" crowds them where "1" does not.
         for corner, inward, reach in ((APEX, np.array([0.0, -1.0]), 2.9),
@@ -355,7 +355,7 @@ def read_construction(ax, comp, *, symbol="x", names=None, size=7, lw=0.9,
     `which` selects which of the three to draw ("tlr" for all; Fig. 11.2-7 draws all
     three, and a figure that only needs to make the point once can ask for one).
 
-    ⭐ The three lines meet at the point *by construction*, and that is the lesson:
+    The three lines meet at the point *by construction*, and that is the lesson:
     two of the three fractions fix the composition and the third is not free.
     """
     c = _norm(np.asarray(comp, dtype=float)).ravel()
@@ -407,7 +407,7 @@ def lever_arm(ax, z, cI, cII, *, label_I=None, label_II=None, size=7):
     drawn at different weights only if labeled -- the *lengths* carry the meaning,
     and they are already drawn to scale by construction.
 
-    ⚠️ It does NOT check that `z` lies on the segment. `thermo.lle.tie_line_split`
+    It does NOT check that `z` lies on the segment. `thermo.lle.tie_line_split`
     does that properly, by least squares over all species, and returns the residual
     that says how far off the data are. Drawing is not validation.
     """
@@ -429,7 +429,7 @@ def lever_arm(ax, z, cI, cII, *, label_I=None, label_II=None, size=7):
 def _renderer(fig):
     """A renderer that works under `jupyter nbconvert --execute` too.
 
-    ⚠️ `fig.canvas.get_renderer()` exists on the Agg canvas and NOT on the plain
+    `fig.canvas.get_renderer()` exists on the Agg canvas and NOT on the plain
     `FigureCanvasBase` a headless kernel can hand you, so a check that passes in
     JupyterLab can die with AttributeError in a batch re-execution -- which is
     exactly where a figure gate needs to work. Fall back to attaching an Agg canvas.
@@ -446,7 +446,7 @@ def _renderer(fig):
 def check_labels(ax, *, tol=0.0, verbose=True):
     """Fail if any two text labels on `ax` overlap. Call it before saving.
 
-    ⭐ **This is the ch6/ch11 lesson made reusable.** `tools/check_print_art.py`
+    **This is the ch6/ch11 lesson made reusable.** `tools/check_print_art.py`
     gates staged art on color and font family; it cannot see that two labels are
     sitting on top of each other, and a triangular diagram has three scales, three
     corner names, three edge symbols and whatever the figure itself adds -- all
@@ -460,7 +460,7 @@ def check_labels(ax, *, tol=0.0, verbose=True):
     fig = ax.figure
     fig.canvas.draw()                      # extents are only real after a draw
     rend = _renderer(fig)
-    # ⚠️ TEXT box only. `Annotation.get_window_extent` includes the leader, so a
+    # TEXT box only. `Annotation.get_window_extent` includes the leader, so a
     # label that correctly points at a curve would be reported as colliding with
     # every other label its leader happens to pass. `read_construction` draws
     # leaders, so this matters here and not only in the notebooks.

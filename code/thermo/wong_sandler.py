@@ -4,7 +4,7 @@ The **Wong-Sandler mixing rules**: a way of putting an activity coefficient mode
 *inside* a cubic equation of state, so that one model describes a highly nonideal
 mixture in both phases and over a wide range of temperature and pressure.
 
-⭐ **This is the one place the book teaches a method its own author invented**
+**This is the one place the book teaches a method its own author invented**
 (Wong and Sandler, *AIChE J.* **38**, 671 (1992)), and in the 5e it is prose only:
 Sec. 9.9 has no illustration, no figure, and no worked number anywhere in the
 chapter. Everything here therefore rests on the section's own derivation, and the
@@ -49,7 +49,7 @@ dependence is inherited from the G^ex model rather than assumed -- which is why 
 same equation of state can then describe acetone/water, and why Sec. 10.3 can fit at
 one temperature and predict 100-200 degrees away.
 
-⚠️ **Setting k_ij = 0 is NOT the ideal-solution case here.** With the van der Waals
+**Setting k_ij = 0 is NOT the ideal-solution case here.** With the van der Waals
 rules it very nearly is; with these, `D` still carries G^ex, so a zero binary
 parameter can still produce extreme nonideality. Sec. 10.3 makes exactly this point
 about acetone/water, and `code/ch9/` demonstrates it.
@@ -92,7 +92,7 @@ class GexFromUNIFAC:
     >>> from thermo.data import unifac_groups
     >>> g = GexFromUNIFAC(UNIFAC(), [{18: 1, 1: 1}, unifac_groups("water")])
 
-    ⭐ This is Sec. 10.3's fourth route -- the mixing rule fed by a *predictive* model,
+    This is Sec. 10.3's fourth route -- the mixing rule fed by a *predictive* model,
     so a mixture with no data at all can be carried to high pressure.
     """
 
@@ -119,7 +119,7 @@ class WongSandler(PhiPhiVLE):
     Parameters
     ----------
     components : list of PengRobinson
-        The pure fluids. ⚠️ Sec. 10.3 says to use **PRSV** here (`kappa1=`, Eqs.
+        The pure fluids. Sec. 10.3 says to use **PRSV** here (`kappa1=`, Eqs.
         7.5-1/7.5-2 with kappa1 fitted to each pure vapor pressure) rather than the
         generalized kappa of Eq. 6.7-4, "to ensure that the pure component vapor
         pressures are correct." Nothing in this class requires it, and it does not
@@ -180,7 +180,7 @@ class WongSandler(PhiPhiVLE):
         a, b = self.a_pure(T), self.b_pure
         Bi = b - a / (R * T)                       # pure second virial coefficients
         if self.combining == "9.9-10a":
-            # ⚠️ THE PRINTED FORM IS SIGN-AMBIGUOUS, and taking it literally is
+            # THE PRINTED FORM IS SIGN-AMBIGUOUS, and taking it literally is
             # catastrophic. Below the Boyle temperature -- which is everywhere these
             # models are used -- every B_i is NEGATIVE. The product of two negatives
             # is positive, so the principal square root of Eq. 9.9-10a is POSITIVE,
@@ -219,10 +219,10 @@ class WongSandler(PhiPhiVLE):
                      + self.gex_model.gex(x, T) / (self.C_star * R * T))
 
     def b_mix(self, x, T):
-        """b = Q/(1 - D), Eq. 9.9-9a. ⚠️ Temperature dependent, unlike the van der
+        """b = Q/(1 - D), Eq. 9.9-9a. Temperature dependent, unlike the van der
         Waals one-fluid b -- Q carries a/RT and D carries G^ex(T).
 
-        ⚠️ **D > 1 is the normal case, not an error.** Reading Eq. 9.9-9a for the
+        **D > 1 is the normal case, not an error.** Reading Eq. 9.9-9a for the
         first time it is tempting to guard on `D < 1`, since `1 - D` is a
         denominator. But D is dominated by SUM_i x_i a_i/(b_i RT), which is roughly
         a/(bRT) -- about 12 for liquid water at 25 C, and greater than 1 for every
@@ -271,7 +271,7 @@ class WongSandler(PhiPhiVLE):
                       activity coefficient model's G^ex at low pressure?
         ``diagonal``  does the combining rule reduce to the pure B_i at i = j?
 
-        ⭐ **This is the whole content of the section, run as arithmetic.** The mixing
+        **This is the whole content of the section, run as arithmetic.** The mixing
         rules were *derived* by imposing these two, so their holding is not evidence
         that the derivation is right -- it is evidence that this implementation of it
         is. With no printed number anywhere in Sec. 9.9 to check against, it is the
@@ -318,7 +318,7 @@ class WongSandler(PhiPhiVLE):
     def dND_dNi(self, x, T):
         """d(ND)/dN_i = a_i/(b_i RT) + ln gamma_i / C*, Eq. 9.9-13.
 
-        ⭐ The second term is the neat part of the whole method: differentiating
+        The second term is the neat part of the whole method: differentiating
         N G^ex with respect to N_i gives RT ln gamma_i by definition, so the activity
         coefficient model enters the fugacity coefficient *as itself* -- no numerical
         differentiation, and any model with a gamma can be dropped in.

@@ -75,7 +75,7 @@ Both mixing data sets are in `code/data/`, in SI units:
 Both notebooks run those checks in their opening cells, and both tables pass at the level
 of their printed rounding.
 
-⚠️ **`react_property.csv`'s heat-capacity columns are stored as Appendix A.II *prints*
+**`react_property.csv`'s heat-capacity columns are stored as Appendix A.II *prints*
 them** — $b$, $c$, $d$ multiplied by $10^{2}$, $10^{5}$, $10^{9}$. Use
 `thermo.data.reaction_cp`, which returns them scaled. Reading the raw columns gives an
 answer wrong by three orders of magnitude with no warning.

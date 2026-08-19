@@ -26,7 +26,7 @@ J/mol is silently used as A/RT.
 
 ## Reusing a model at a second temperature -- read this before extrapolating
 
-⚠️ "Absorb T" means **at the temperature the parameters were fitted at.** Three of these
+"Absorb T" means **at the temperature the parameters were fitted at.** Three of these
 models are defined by an energy divided by RT, and the book prints the law:
 
     Wilson    Lambda_ij = (V_j/V_i) exp[-(lambda_ij - lambda_ii)/RT]   Eq. 9.5-11
@@ -58,13 +58,13 @@ Rebuilding by hand is the clearest of the three in a notebook, because it puts t
 on the page next to the equation. The other two are for code that is handed a model it
 did not build.
 
-ⓘ **Not guarded, on purpose:** van Laar (Table 9.5-1 tabulates alpha and beta per
+**Not guarded, on purpose:** van Laar (Table 9.5-1 tabulates alpha and beta per
 temperature *range* -- the book gives no law to apply, so there is nothing to correct)
 and Flory-Huggins (chi's temperature dependence is substance-specific and the book fits
 it per system, so the notebooks already build a fresh model at each T). Margules,
 Redlich-Kister and regular solution hold energies in J/mol and divide by RT themselves.
 
-⭐ This guard exists because the class of error cost a session on Fig. 11.2-6, where the
+This guard exists because the class of error cost a session on Fig. 11.2-6, where the
 Wong-Sandler curve missed the measured liquid-liquid dome badly with tau frozen and
 matched it to 0.004 in mole fraction with the energies frozen.
 
@@ -395,7 +395,7 @@ class RedlichKisterGex(ActivityModel):
         RT ln gamma_1 = x2^2 S(u) + 2 x1 x2^2 S'(u)
         RT ln gamma_2 = x1^2 S(u) - 2 x1^2 x2 S'(u)
 
-    where S(u) = SUM_i a_i u^i. ⭐ Illustration 10.2-4's three-term fit to the
+    where S(u) = SUM_i a_i u^i. Illustration 10.2-4's three-term fit to the
     benzene / 2,2,4-trimethyl pentane data at 55 C is the book's own worked case:
     a = (1389.0, 419.45, 109.83) J/mol. Those coefficients reproduce all fourteen
     smoothed activity coefficients and all seven smoothed G^ex values printed in
@@ -406,11 +406,11 @@ class RedlichKisterGex(ActivityModel):
         >>> round(float(g1), 3), round(float(g2), 3)
         (1.166, 1.107)
 
-    ⚠️ **They are not recoverable from the seven data points the book prints.**
+    **They are not recoverable from the seven data points the book prints.**
     `fit_gex` on the printed G^ex column gives (1392.5, 430.4, 96.6) -- a 12% shift in
     the third coefficient. That is expected and must not be tuned away.
 
-    ⛔ **They are also NOT Weissman and Wood's own constants**, though this docstring
+    **They are also NOT Weissman and Wood's own constants**, though this docstring
     said so until the paper was read (J. Chem. Phys. 32, 1153 (1960), 2026-08-15).
     Their Eqs. (8)-(10) give the coefficients as functions of temperature, and at
     328.15 K those come to (1354.7, 424.5, 101.0) J/mol -- not these. Nor does the
@@ -479,7 +479,7 @@ class VanLaar(ActivityModel):
     alpha and beta are dimensionless (SIS Table 9.5-1 tabulates them for 30 binaries
     with the temperature range over which each pair applies).
 
-    ⭐ When alpha = beta the model collapses to the one-constant Margules form
+    When alpha = beta the model collapses to the one-constant Margules form
     ln gamma_1 = alpha x2^2 -- the note printed under Table 9.5-1, and worth checking
     in a notebook rather than believing:
 
@@ -525,7 +525,7 @@ class VanLaar(ActivityModel):
         9.5-1(b): at x1 = 0.6 the benzene / 2,2,4-trimethyl pentane data give
         alpha = 0.415 and beta = 0.706.
 
-        ⚠️ **It is exact algebra and exquisitely sensitive to the point you read.**
+        **It is exact algebra and exquisitely sensitive to the point you read.**
         The round trip is exact -- feeding back the activity coefficients that
         alpha = 0.415, beta = 0.706 imply at x1 = 0.6 (gamma_1 = 1.1243,
         gamma_2 = 1.1677) returns those constants to six figures. But reading the
@@ -561,7 +561,7 @@ class FloryHuggins(ActivityModel):
     first bracket in G^ex is the combinatorial (entropic) contribution, the second the
     residual (enthalpic) one.
 
-    ⛔ **ERRATUM, SIS Eq. 9.5-18.** The book prints the second equation with
+    **ERRATUM, SIS Eq. 9.5-18.** The book prints the second equation with
     **+(m - 1) phi_1**. That sign is inconsistent with the book's own Eq. 9.5-17: the
     two disagree by 2(m - 1) x1 x2 / (x1 + m x2), which for m = 3, chi = 0.5 reaches
     **0.535 in ln gamma**. With (1 - m) phi_1 the identity G^ex/RT = SUM_i x_i ln
@@ -571,7 +571,7 @@ class FloryHuggins(ActivityModel):
     sign. Problem 9.29 asks the reader to derive Eq. 9.5-18, so a student who does the
     derivation correctly will disagree with the printed answer.
 
-    ⛔ **A SECOND ERRATUM, SIS Illustration 11.2-6.** That illustration restates these
+    **A SECOND ERRATUM, SIS Illustration 11.2-6.** That illustration restates these
     equations "from Eqs. 9.5-18" and drops the **m** in front of chi phi_1^2. Its
     printed table of PS/PMMA coexistence compositions was computed with the m missing
     *and* with the sign the way this class writes it -- neither Eq. 9.5-18 as printed
@@ -643,11 +643,11 @@ class Wilson(ActivityModel):
     Lambda : the 2 constants (L12, L21) for a binary, or a full n x n matrix with
         L_ii = 1. Dimensionless.
 
-    ⛔ **Wilson cannot predict liquid-liquid immiscibility** for any parameter values
+    **Wilson cannot predict liquid-liquid immiscibility** for any parameter values
     -- the reason Chapter 11 reaches for NRTL or UNIQUAC instead. The model is not
     broken; the limitation is structural, and Sec. 9.11 says so.
 
-    ⚠️ **One instance is one temperature** -- see the module docstring. Wilson is the
+    **One instance is one temperature** -- see the module docstring. Wilson is the
     one guarded model with no `rescaled_to`: Lambda_ij bundles the volume ratio
     V_j/V_i in with the exponential, so the energy cannot be recovered from Lambda
     alone. Build it from lambda_ij and the molar volumes at the temperature you want.
@@ -688,7 +688,7 @@ class Wilson(ActivityModel):
             ln gamma_1^inf = -ln L12 + 1 - L21
             ln gamma_2^inf = -ln L21 + 1 - L12
 
-        ⛔ **ERRATUM, SIS Eq. 9.5-12b.** The book prints `-ln L12 + 1 - L12` and
+        **ERRATUM, SIS Eq. 9.5-12b.** The book prints `-ln L12 + 1 - L12` and
         `-ln L21 + 1 - L21` -- the *same* subscript twice in each expression. Taking
         x1 -> 0 in the book's own Eq. 9.5-12a,
 
@@ -736,7 +736,7 @@ class NRTL(ActivityModel):
     Prausnitz's own recommendation is to fix it rather than fit it, which is why it
     is a separate argument here.
 
-    ⚠️ **One instance is one temperature** -- tau_ij is an energy over RT, so it
+    **One instance is one temperature** -- tau_ij is an energy over RT, so it
     scales as 1/T. See the module docstring; `rescaled_to` moves it.
     """
 
@@ -820,7 +820,7 @@ class UNIQUAC(ActivityModel):
     x_i r_i / SUM_j x_j r_j the segment (volume) fraction, l_i = (z/2)(r_i - q_i)
     - (r_i - 1), and z = 10 the coordination number.
 
-    ⚠️ **Watch the subscript order in the residual term.** The tau inside the
+    **Watch the subscript order in the residual term.** The tau inside the
     logarithm is tau_ji; the one in the numerator of the sum is tau_ij. tau is not
     symmetric, so swapping them changes every activity coefficient -- and the
     pure-component limit does *not* catch it, because gamma_i -> 1 either way. The
@@ -832,7 +832,7 @@ class UNIQUAC(ActivityModel):
     r, q : per-species volume and surface area parameters.
     tau : n x n matrix with tau_ii = 1, or pass (tau12, tau21) for a binary.
 
-    ⚠️ **One instance is one temperature.** para. 1303 defines ln tau_ij =
+    **One instance is one temperature.** para. 1303 defines ln tau_ij =
     -(u_ij - u_jj)/RT, so tau_ij = exp(-a_ij/T) and the constant is a_ij, not tau.
     See the module docstring; `rescaled_to` moves it. This is the model and the
     mistake behind Fig. 11.2-6.
@@ -951,7 +951,7 @@ class RegularSolution(ActivityModel):
 
     which for a binary is Eq. 9.6-10, RT ln gamma_1 = V_1 Phi_2^2 (delta_1 - delta_2)^2.
 
-    ⭐ **This is the only model in the module that needs no mixture data at all** --
+    **This is the only model in the module that needs no mixture data at all** --
     both parameters are pure-component properties. That is its whole appeal, and
     Illustration 9.6-1 is the book's own warning about the price: for benzene /
     2,2,4-trimethyl pentane the prediction is qualitatively right and quantitatively
@@ -1001,7 +1001,7 @@ class RegularSolution(ActivityModel):
         return cls.from_table_9_6_1(V, d)
 
     def volume_fraction(self, x):
-        """Phi_i, SIS Eq. 9.6-8. ⚠️ Printed with a *capital* Phi, unlike the
+        """Phi_i, SIS Eq. 9.6-8. Printed with a *capital* Phi, unlike the
         lowercase phi_i of UNIQUAC -- a different measure of size (molar volume
         rather than the group parameter r_i), and the chapter keeps both symbols."""
         x = self._x(x)
@@ -1112,7 +1112,7 @@ TABLE_9_5_1_VAN_LAAR = {
 # (cal/cc)^(1/2)). Source: J. M. Prausnitz, *Molecular Thermodynamics of Fluid-Phase
 # Equilibria*, Prentice-Hall (1969).
 #
-# ⚠️ The table is in two blocks measured at different conditions -- liquefied gases
+# The table is in two blocks measured at different conditions -- liquefied gases
 # at 90 K and liquid solvents at 25 C -- and the book does not say the parameters
 # transfer between them. Sec. 9.6 does note that (delta_1 - delta_2) is often nearly
 # temperature independent, so the table "may be used at temperatures other than the

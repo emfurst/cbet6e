@@ -111,7 +111,7 @@ APPENDIX_A2_CP = {
 #   oxygen   0.173 J/(mol K)    2.8 J/mol  (was 67.1)  0.011  (was 0.323)
 #   nitrogen 0.056 J/(mol K)    2.0 J/mol  (was 43.7)  0.009  (was 0.263)
 #
-# ⚠️ THESE ROWS ARE NOT DROP-IN REPLACEMENTS -- they are worse than useless above 700 K.
+# THESE ROWS ARE NOT DROP-IN REPLACEMENTS -- they are worse than useless above 700 K.
 # Fitted over 100-700 K, the oxygen cubic returns Cp* = -6.5 J/(mol K) at 1800 K, a
 # negative heat capacity. Below 700 K it beats the printed row everywhere, including by
 # 8x inside the 273-700 K overlap (0.046 vs 0.397). The rule: below 700 K use CRYO,
@@ -120,7 +120,7 @@ APPENDIX_A2_CP = {
 # Water is deliberately absent: it is not a cryogenic fluid (it freezes at 273 K), so
 # nothing in the book needs it below A.II's range, and the two agree to 0.07% anyway.
 #
-# ✅ IN PRINT as of 2026-08-04: the author added `deliverables/manuscript/bapp01.docx`
+# IN PRINT as of 2026-08-04: the author added `deliverables/manuscript/bapp01.docx`
 # and put these two rows into the "Combustion Gases (Low Temperature Range)" block,
 # each one above its 273-1800 K sibling and distinguished by the Temperature Range
 # column. No new block heading -- A.II's range column does the work.
@@ -131,7 +131,7 @@ APPENDIX_A2_CP = {
 # Table 6.4-4. Rounding the fit to the printed precision costs at most 0.0023 J/(mol K)
 # in Cp*, which is nothing beside the 0.17 the row already carries.
 #
-# ✅ VERIFIED AGAINST THE APPENDIX 2026-08-05: all eight coefficients below match what
+# VERIFIED AGAINST THE APPENDIX 2026-08-05: all eight coefficients below match what
 # bapp01.docx prints, to the last digit. (A 234 -> 293 transposition in the nitrogen `a`
 # was caught and fixed; it would have been a uniform +0.059 J/(mol K) offset in Cp*,
 # worth -7.4 J/mol in H at 173 K -- four times larger than the 2 J/mol this row exists
@@ -142,7 +142,7 @@ APPENDIX_A2_CP_CRYO = {
     "nitrogen": (29.234, -0.102e-2,  0.025e-5,  6.339e-9),
     # ---------------------------------------------------------------------------
     # METHANE, 100-500 K. Added 2026-08-07 for the recomputed Fig. 3.3-2, author's
-    # decision of the same day. ⬜ NOT YET IN PRINT -- Appendix A.II must gain this
+    # decision of the same day. NOT YET IN PRINT -- Appendix A.II must gain this
     # row as it gained the two above, or the methane chart rests on constants the
     # book does not contain.
     #
@@ -154,7 +154,7 @@ APPENDIX_A2_CP_CRYO = {
     # that costs -635 J/mol in H and -4.5 J/(mol K) in S -- 8% of methane's entire
     # heat of vaporization, and six times the oxygen gap that prompted these rows.
     #
-    # ⚠️ ITS PROVENANCE IS DIFFERENT FROM THE TWO ABOVE, AND BETTER. Those were
+    # ITS PROVENANCE IS DIFFERENT FROM THE TWO ABOVE, AND BETTER. Those were
     # fitted to NIST-JANAF Shomate coefficients. THAT ROUTE DOES NOT EXIST HERE:
     # the WebBook carries no sub-298 K Shomate segment for methane (checked
     # 2026-08-07 -- JANAF gives 298-1300 K and 1300-6000 K only). It is not needed,
@@ -228,7 +228,7 @@ TABLE_6_6_1 = {
 # Stored as an upper-triangular edge list, not a matrix: the table is 65% blank, and
 # a blank is *not* zero.
 #
-# ⚠️ THE BLANKS ARE THE POINT. Table 9.4-1's own footnote reads: "Blanks indicate no
+# THE BLANKS ARE THE POINT. Table 9.4-1's own footnote reads: "Blanks indicate no
 # data are available from which the k12 could be evaluated. In such case use estimates
 # from mixtures of similar compounds." A k_ij silently defaulted to zero is a
 # different mixture, not a missing decimal -- so `pr_kij_matrix` returns the pairs it
@@ -336,12 +336,12 @@ def load_unifac_subgroups(kind="modified"):
     2026-08-17; those six rows, recovered from the 5e's Illustration 9.5-2, now serve
     as an independent check on the transcription and agree to the last digit.
 
-    ⛔ The two tables share subgroup numbers 1-26 and 40-77 and **disagree on 27,
+    The two tables share subgroup numbers 1-26 and 40-77 and **disagree on 27,
     37-39 and 78-85** -- 27 is `FCH2O` here and `cy-CH2 OCH2` there. Both numbers
     exist in both tables, so a group assignment carried across kinds does not raise.
     Use `unifac_groups(name, kind)`.
 
-    ⛔ **Never mix the two sets.** The R/Q and the a_mn must come from the same
+    **Never mix the two sets.** The R/Q and the a_mn must come from the same
     parameter set; the 6e's own footnote to Table 9.5-2 says so. `UNIFAC(kind=...)`
     pairs them, which is why this loader is not meant to be called directly.
     """
@@ -360,7 +360,7 @@ def unifac_groups(name, kind="modified"):
     wrong subgroup number. Only the species the table uses as examples are available;
     anything else has to be assigned by hand from the table.
 
-    ⛔ **`kind` must match the `UNIFAC(kind=...)` the result is handed to.** The two
+    **`kind` must match the `UNIFAC(kind=...)` the result is handed to.** The two
     parameter sets share subgroup numbers 1-26 and 40-77, but **27, 37-39 and 78-85
     name different groups in each** -- 27 is the original set's `FCH2O` and Dortmund's
     `cy-CH2 OCH2`, 78-80 are `SiH3`/`SiH2`/`SiH` against `cy-CH2`/`cy-CH`/`cy-C`. Both

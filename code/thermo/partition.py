@@ -262,7 +262,7 @@ def gibbs_energy_of_transfer(gamma_inf_ratio, T):
 #   soil      organic carbon is 40 % as good as octanol   0.4 * w_S  K_OW
 #   sediment  the same, with a different organic fraction 0.4 * w_D  K_OW
 #
-# ⭐ The 0.4 is empirical and Sec. 12.5 says so. It is not a thermodynamic result, and
+# The 0.4 is empirical and Sec. 12.5 says so. It is not a thermodynamic result, and
 # it is the single largest soft number in the section.
 
 #: Sec. 12.5's own average organic/lipid fractions, and the densities Ill. 12.5-3 gives.
@@ -285,7 +285,7 @@ def air_water_partition(gamma_inf, p_vap, T, constant=EQ_12_5_8_CONSTANT):
     for P^vap in **bar** and T in K, giving a ratio of g/m^3 to g/m^3. The molecular
     weight cancels between Eqs. 12.5-6 and 12.5-7, which is why it does not appear.
 
-    ⚠️ Watch the pressure unit. Illustration 12.5-1 states benzo[a]pyrene's vapor
+    Watch the pressure unit. Illustration 12.5-1 states benzo[a]pyrene's vapor
     pressure in **pascals** (2.13e-5 Pa) and converts inside the equation; hand it bar.
     """
     return constant * np.asarray(gamma_inf, float) * np.asarray(p_vap, float) / np.asarray(T, float)
@@ -320,7 +320,7 @@ def compartment_concentrations(C_water, Kow, K_aw, compartments=None):
         per_volume concentration per CUBIC METER of the compartment, in the same unit
                    as C_water -- per_mass times the density in g/m^3
 
-    ⛔ **The two are not interchangeable and the illustration reports both.** A soil
+    **The two are not interchangeable and the illustration reports both.** A soil
     concentration of 0.247 ppm by weight is 3.71e8 ng/m^3, and the factor between them
     is the soil density -- 1500 kg/m^3, not 1000. Quoting one where the other is meant
     is a factor of 1.5 for soil and 1.42 for sediment on top of the unit conversion.

@@ -1,6 +1,6 @@
 """reaction -- chemical reaction equilibrium, SIS Chapter 13.
 
-⭐ **This module is the replacement for CHEMEQ** and for "the chemical equilibrium
+**This module is the replacement for CHEMEQ** and for "the chemical equilibrium
 constant calculation programs of Appendix B.I or B.II", the Visual Basic executables the
 5e shipped on its website. Their whole numerical content was two screens of arithmetic:
 sum the formation properties of Appendix A.IV against the stoichiometric coefficients,
@@ -30,7 +30,7 @@ read to establish it -- not guessed from the printed output.
 | Eq. 13.1-22a | the integrated van 't Hoff, as an integral | `Reaction.ln_Ka(mode="quadrature")` |
 | Eq. 13.1-22b | the same, with dH_rxn constant | `Reaction.ln_Ka(mode="constant_H")` |
 | the second 13.1-22a (see below) | dH_rxn(T), Cp polynomial carried through | `Reaction.delta_H` |
-| the second 13.1-22b (see below) | ⭐ ln Ka(T), fully integrated -- **this is CHEMEQ** | `Reaction.ln_Ka` |
+| the second 13.1-22b (see below) | ln Ka(T), fully integrated -- **this is CHEMEQ** | `Reaction.ln_Ka` |
 | Eqs. 13.1-22c, 13.1-22d | the same with dCp constant | `Reaction.ln_Ka(mode="constant_cp")` |
 | Eqs. 13.1-23a to 23c | the ratios Kc, Kx, Ky, Kp | `Reaction.K_ratio` |
 | Eq. 13.1-23d | Knu and Kgamma, the nonideality corrections | `K_nu_from_eos`, `K_gamma_from_model` |
@@ -51,7 +51,7 @@ the same equilibrium state, and multiplying the equilibrium relation by any cons
 changes nothing. `Reaction.reversed` and `Reaction.scaled` exist so that a notebook can
 demonstrate that, rather than assert it.
 
-## ⛔ The trap: the equilibrium relation has roots outside the physical range
+## The trap: the equilibrium relation has roots outside the physical range
 
 `equilibrium_extent` never takes a bare initial guess. The extent is bounded by
 exhaustion -- no species may end up with a negative mole number -- which gives a closed
@@ -65,9 +65,9 @@ solver **checks that monotonicity** and says so in the result rather than trusti
 Outside the bracket the same algebra has further roots that converge perfectly well and
 mean nothing -- Illustration 13.1-5's cubic in X is the chapter's own example, where the
 physical root is X = 0.0173 and the approximate analysis gives X proportional to
-P^(-1/3). ⛔ On failure the solver **raises**; it does not return the last iterate.
+P^(-1/3). On failure the solver **raises**; it does not return the last iterate.
 
-## ⚠️ Two equations in Sec. 13.1 are printed with duplicate numbers
+## Two equations in Sec. 13.1 are printed with duplicate numbers
 
 The labels **(13.1-22a)** and **(13.1-22b)** each appear twice in Sec. 13.1: once on the
 general integrated van 't Hoff relation, and again about a page later on the pair that
@@ -78,7 +78,7 @@ of the two references has to move, and which one is the author's call, so the ta
 names the second pair by position rather than by number. This is inherited from the 5e --
 both labels are duplicated in the printed book, so it is not an artifact of the .docx.
 
-## ⛔ Illustration 13.1-8's printed Ka table is not reproducible from Appendix A
+## Illustration 13.1-8's printed Ka table is not reproducible from Appendix A
 
 Illustration 13.1-8 prints Ka for the ammonia reaction as 0.258, 0.02946, 0.005754 and
 0.001595 at 500, 600, 700 and 800 K, and attributes them to "the programs in Appendix B.I
@@ -125,7 +125,7 @@ __all__ = ["Reaction", "Extent", "equilibrium_extent", "multireaction_extents",
 
 # --- formulas and elements ---------------------------------------------------
 #
-# ⚠️ A formula parser is a liability, and `electrolytes.py` deliberately does without
+# A formula parser is a liability, and `electrolytes.py` deliberately does without
 # one. It is unavoidable here: the element balance is what checks a reaction's
 # stoichiometry, and Gibbs minimization is posed subject to element conservation. So the
 # parser is written to be *checkable* rather than clever -- every one of the 99 names in
@@ -134,7 +134,7 @@ __all__ = ["Reaction", "Extent", "equilibrium_extent", "multireaction_extents",
 # `code/ch13/validation/` runs that check. The names below are the ones no rule gets
 # right, and they are listed rather than pattern-matched.
 
-#: Tags that name a phase or a crystal form, not a group of atoms. ⚠️ `PbO(red)` and
+#: Tags that name a phase or a crystal form, not a group of atoms. `PbO(red)` and
 #: `SiO2qrtz` are why this cannot be "strip anything in parentheses" -- and why
 #: `Ca(OH)2` cannot be handled by stripping either.
 PHASE_TAGS = ("(g)", "(l)", "(s)", "(aq)", "(red)", "(yellow)", "qrtz")
@@ -177,7 +177,7 @@ def _strip_decoration(name):
     for tag in PHASE_TAGS:
         formula = formula.replace(tag, "")
     # "i-C4H10", "n-C4H10", "m-C8H10", "cs2-C4H8", "trs2-C4H8", "nC6H14", "iC3H8O".
-    # ⚠️ The lookahead on the bare "n"/"i" form is what keeps "Na" intact.
+    # The lookahead on the bare "n"/"i" form is what keeps "Na" intact.
     formula = _PREFIX.sub("", formula)
     return formula
 
@@ -268,7 +268,7 @@ class Reaction:
         """A reaction from the way the book writes it: `'N2 + 3 H2 = 2 NH3'`.
 
         `=`, `==`, `->` and `=` with an arrow all separate the two sides. Coefficients
-        may be written `3 H2`, `3H2` or omitted. ⚠️ `3H2` is ambiguous in principle -- no
+        may be written `3 H2`, `3H2` or omitted. `3H2` is ambiguous in principle -- no
         species name in Appendix A.IV begins with a digit, which is what makes it safe.
         """
         parts = re.split(r"<?=+>?|->|→|⇌|⇄", str(equation))
@@ -330,7 +330,7 @@ class Reaction:
     def element_balance(self):
         """Net atoms created by the reaction as written -- all zero if it is balanced.
 
-        ⭐ This is the reaction's own check on itself, and it is the only thing standing
+        This is the reaction's own check on itself, and it is the only thing standing
         between a mistyped coefficient and a converged, meaningless answer.
         """
         net = defaultdict(float)
@@ -372,7 +372,7 @@ class Reaction:
         """The physically possible range of X: no species may go negative.
 
         Returns `(X_lo, X_hi)`, pulled in by `inset` so that a log of zero cannot happen
-        at an endpoint. ⛔ Everything about `equilibrium_extent`'s reliability rests on
+        at an endpoint. Everything about `equilibrium_extent`'s reliability rests on
         this bracket -- see the module docstring.
 
         `in_excess` names species that do not bound the extent because there is assumed
@@ -460,7 +460,7 @@ class Reaction:
 
             dCp = da + db T + dc T^2 + dd T^3 + de/T^2        J/(mol K)
 
-        ⚠️ The A.II coefficients are *printed* pre-scaled by powers of ten; using the raw
+        The A.II coefficients are *printed* pre-scaled by powers of ten; using the raw
         columns is wrong by three orders of magnitude and silently so. `thermo.data`
         is the only place that factor lives.
         """
@@ -476,7 +476,7 @@ class Reaction:
     def _enthalpy_constant(self):
         """The constant in dH_rxn(T) = const + da T + db T^2/2 + ... -- Eq. 13.1-21.
 
-        ⭐ Worth its own name because the chapter prints it twice for the same reaction
+        Worth its own name because the chapter prints it twice for the same reaction
         and in two different guises: Illustration 13.1-3 gives it as 56 189 J/mol, and
         gives the coefficient of (1/T - 1/T1) in ln Ka as -6758.4, which is this constant
         over -R. Reproducing both from one expression is the check that this is right.
@@ -518,7 +518,7 @@ class Reaction:
         T : float or array
         mode : {'full', 'constant_cp', 'constant_H', 'quadrature'}
             `'full'` -- the heat-capacity polynomial carried analytically through the
-            integration. ⭐ **This is what CHEMEQ computed**, and it is the chapter's
+            integration. **This is what CHEMEQ computed**, and it is the chapter's
             "General equation for the variation of the equilibrium constant with
             temperature" (printed as Eq. 13.1-22b, a duplicated label -- see the module
             docstring).
@@ -561,7 +561,7 @@ class Reaction:
     def Ka(self, T, mode="full"):
         """The equilibrium constant -- SIS Eq. 13.1-18. See `ln_Ka` for the modes.
 
-        ⚠️ Returns `inf` where ln Ka overflows. CHEMEQ printed ">10^38" in that case
+        Returns `inf` where ln Ka overflows. CHEMEQ printed ">10^38" in that case
         rather than a number, and a reaction that far to one side is better read from
         `ln_Ka` anyway.
         """
@@ -583,7 +583,7 @@ class Reaction:
         return (self.delta_H(T) - self.delta_G(T, mode=mode)) / T
 
     def table(self, T, mode="full"):
-        """⭐ What CHEMEQ printed: T, ln Ka, log10 Ka, Ka, dG_rxn, dH_rxn.
+        """What CHEMEQ printed: T, ln Ka, log10 Ka, Ka, dG_rxn, dH_rxn.
 
         The 5e program stepped 21 temperatures from a start and a step size; pass whatever
         array you want instead. dG and dH are in kJ/mol, as CHEMEQ printed them and as
@@ -623,7 +623,7 @@ class Reaction:
 
         Notes
         -----
-        ⚠️ Ka depends only on temperature and on the choice of standard state. These
+        Ka depends only on temperature and on the choice of standard state. These
         ratios do not: they move with pressure, with concentration and with the mixture
         nonidealities, which is why the chapter warns that a literature Kc "has meaning
         only in the situation in which it was obtained."
@@ -642,7 +642,7 @@ class Reaction:
         if kind == "Kc":
             if C is None:
                 raise ValueError("Kc needs the total molar concentration C")
-            # ⚠️ Watch this exponent. Table 13.1-3 prints the liquid relation as
+            # Watch this exponent. Table 13.1-3 prints the liquid relation as
             #     Ka = C^(-sum nu) Kc Kgamma
             # so Kc = Ka C^(+dnu)/Kgamma, with C RAISED to +dnu, not lowered. This had
             # the sign inverted until it was checked against the printed table: x_i =
@@ -689,7 +689,7 @@ def K_nu_from_eos(reaction, T, P, y, eos, order, phase="vapor"):
     eos : PRMixture
     order : sequence of str
         The reaction's species names, in the order the EOS components were built in.
-        ⚠️ Required, and not inferred: `react_property.csv` names species by formula
+        Required, and not inferred: `react_property.csv` names species by formula
         (`'H2O(g)'`) and `pure_property.csv` by name (`'water'`), so there is no reliable
         way to line the two lists up automatically. Getting the order wrong gives a
         converged, wrong Knu, so the caller states it.
@@ -759,7 +759,7 @@ class Extent:
     bracket : tuple
         The physical bracket the root was found in.
     monotone : bool
-        Whether prod a_i^nu_i rose monotonically across the bracket. ⛔ `False` means the
+        Whether prod a_i^nu_i rose monotonically across the bracket. `False` means the
         root may not be unique and the answer needs looking at, not trusting.
     history : list
         The outer iterates on Knu (or Kgamma). One entry for a solve with no nonideality.
@@ -847,7 +847,7 @@ def equilibrium_extent(reaction, T, initial, P=None, basis="TP", Ka=None,
     ValueError
         If the bracket holds no root -- which means the reaction is driven to one
         boundary and the answer is exhaustion, not equilibrium -- or if the outer
-        iteration on Knu does not converge. ⛔ It does not return the last iterate.
+        iteration on Knu does not converge. It does not return the last iterate.
     """
     if basis not in ("TP", "TV"):
         raise ValueError(f"basis must be 'TP' or 'TV', got {basis!r}")
@@ -859,7 +859,7 @@ def equilibrium_extent(reaction, T, initial, P=None, basis="TP", Ka=None,
                          "completion and the extent is set by exhaustion, not by "
                          "equilibrium (see Sec. 13.1 on reactions that go to completion)")
     phases = dict(phases or {})
-    # ⭐ A condensed pure phase is not part of the fluid mixture: it has unit activity, it
+    # A condensed pure phase is not part of the fluid mixture: it has unit activity, it
     # does not dilute anything, and it must stay out of the mole fraction denominator.
     # Illustration 13.3-1 says so for its solid carbon, and Aspen getting this wrong is
     # the reason that illustration's own note tells the reader to add a separator.
@@ -941,7 +941,7 @@ def equilibrium_extent(reaction, T, initial, P=None, basis="TP", Ka=None,
                          f"passes; the extents so far are {history}. A fixed point that "
                          f"has not converged is not an answer.")
 
-    # ⛔ Uniqueness is not assumed. For an ideal mixture at fixed T and P the product of
+    # Uniqueness is not assumed. For an ideal mixture at fixed T and P the product of
     # activities rises monotonically with X, so a sign change means exactly one root;
     # record whether that actually held rather than relying on it.
     probe = np.linspace(lo, hi, 65)
@@ -963,7 +963,7 @@ def multireaction_extents(reactions, T, initial, P=None, basis="TP", Ka=None,
     mole numbers are N_i = N_i,0 + sum_j nu_ij X_j (Eq. 13.3-1). Returns a dict with the
     extents, the composition and the residuals.
 
-    ⚠️ The coupled set is where a bare Newton solve earns its bad reputation, on two
+    The coupled set is where a bare Newton solve earns its bad reputation, on two
     counts. The residuals are logarithms, so an iterate that pushes any mole number
     negative makes them undefined rather than merely wrong -- so the feasible region
     `N_i,0 + sum_j nu_ij X_j >= 0` is imposed as a constraint, not hoped for. And the
@@ -972,7 +972,7 @@ def multireaction_extents(reactions, T, initial, P=None, basis="TP", Ka=None,
     interior point of the feasible polytope, found by a small linear program that
     maximizes the smallest mole number.
 
-    ⛔ If the residuals do not come down to `tol` it raises, and it also raises on a
+    If the residuals do not come down to `tol` it raises, and it also raises on a
     converged root that violates feasibility -- see the comment at the end of this
     function for the book's own statement of that trap. Compare `gibbs_minimization`,
     which is posed as a constrained minimization and is the more robust route.
@@ -1025,7 +1025,7 @@ def multireaction_extents(reactions, T, initial, P=None, basis="TP", Ka=None,
         """A strictly interior point of `N0 + nu^T X >= 0`, by maximizing the slack.
 
         Maximize t subject to N0_i + sum_j nu_ij X_j >= t for every fluid species, with t
-        capped so the program stays bounded. ⭐ This is what replaces the degenerate
+        capped so the program stays bounded. This is what replaces the degenerate
         all-zero guess: at X = 0 any species with no feed is at exactly zero, and the log
         of that is what makes the residuals infinite before the solver has taken a step.
         """
@@ -1045,13 +1045,13 @@ def multireaction_extents(reactions, T, initial, P=None, basis="TP", Ka=None,
         """Every fluid mole number non-negative -- the book's acceptability conditions."""
         return bool(np.all(N0_fluid + nu_fluid.T @ np.asarray(X, float) >= -1e-9))
 
-    # ⭐ Multi-start Newton, then a constrained fallback. A Newton root-find reaches
+    # Multi-start Newton, then a constrained fallback. A Newton root-find reaches
     # machine precision on these equations when it starts anywhere sensible, so it is
     # tried from several points rather than from one: the interior point of the feasible
     # polytope, and a few fractions of the way across it. Any start that converges to a
     # *feasible* root is accepted.
     #
-    # ⛔ For an ideal mixture G is strictly convex in the extents, so there is only one
+    # For an ideal mixture G is strictly convex in the extents, so there is only one
     # feasible root -- the equilibrium state. Distinct starts landing on distinct
     # feasible roots would contradict that, so it is checked rather than assumed, and it
     # raises instead of quietly returning whichever one came first.
@@ -1070,7 +1070,7 @@ def multireaction_extents(reactions, T, initial, P=None, basis="TP", Ka=None,
         worst = float(np.max(np.abs(residuals(attempt.x))))
         if best is None or worst < best[0]:
             best = (worst, np.asarray(attempt.x, dtype=float))
-        # ⚠️ `attempt.success` is deliberately **not** consulted. hybr reports failure
+        # `attempt.success` is deliberately **not** consulted. hybr reports failure
         # ("not making good progress") on roots it has already driven to 1e-15, because
         # its own step test cannot improve on machine precision. The residual is the
         # criterion, so the residual is what is measured.
@@ -1106,7 +1106,7 @@ def multireaction_extents(reactions, T, initial, P=None, basis="TP", Ka=None,
                          f"{res}. Try `gibbs_minimization`, which cannot walk out of the "
                          f"feasible region the way this formulation can.")
     N, y, P_x = composition(sol.x)
-    # ⛔ Illustration 13.3-1 states the trap in the book's own words: "Since these
+    # Illustration 13.3-1 states the trap in the book's own words: "Since these
     # equations are nonlinear, there will be more than one set of solutions for the molar
     # extents of reaction." Its two acceptability conditions -- no more steam consumed
     # than was supplied, no more hydrogen consumed than was produced -- are both just
@@ -1137,7 +1137,7 @@ def formation_gibbs_T(species, T, mode="full"):
     formation reaction from the element reference states, and that reaction is carried to
     T by exactly the same integration as any other -- `Reaction.delta_G`.
 
-    ⭐ This is checkable, and it is worth checking: for any balanced reaction,
+    This is checkable, and it is worth checking: for any balanced reaction,
     sum_i nu_i dG_f,i(T) must equal that reaction's own `delta_G(T)`. The two paths share
     no arithmetic beyond the Cp table -- the element terms have to cancel for them to
     agree -- so it tests the element bookkeeping in `elements` as well.
@@ -1171,7 +1171,7 @@ def gibbs_curve(reaction, T, initial, P=None, X=None, mode="full", phases=None):
 
         G(X) = sum_i N_i(X) [ dG_f,i(T) + R T ln (y_i P / 1 bar) ]
 
-    ⭐ The figure's whole point is that the mixing term -- the logarithms -- is what puts
+    The figure's whole point is that the mixing term -- the logarithms -- is what puts
     the minimum at an interior X, and that dropping it (the dashed line the chapter draws)
     leaves a straight line with no minimum at all. `ideal` in the return is that dashed
     line, so a notebook can draw both.
@@ -1210,7 +1210,7 @@ def gibbs_minimization(species, T, initial, P=None, mode="full", phases=None):
     so nothing has to be decided about which reactions are independent -- Sec. 13.3's
     difficulty. Returns the same shape of answer as `multireaction_extents`.
 
-    ⚠️ The species list is a modeling choice and the answer depends on it entirely: a
+    The species list is a modeling choice and the answer depends on it entirely: a
     species left out cannot form, and one put in will form if it lowers G. That is a
     feature when it is deliberate and a trap when it is not.
     """
@@ -1227,7 +1227,7 @@ def gibbs_minimization(species, T, initial, P=None, mode="full", phases=None):
     A = np.array([[elements(s).get(el, 0.0) for s in species] for el in els])
     b = A @ N0
 
-    # ⛔ The mole fraction denominator is the **fluid phase only**. A pure condensed phase
+    # The mole fraction denominator is the **fluid phase only**. A pure condensed phase
     # is its own phase: it has unit activity and it does not dilute the gas. Letting a
     # solid into the total is exactly the error Illustration 13.3-1 warns about in its own
     # note -- "otherwise Aspen Plus includes the solid in the mole fraction calculation
@@ -1296,13 +1296,13 @@ def ellingham(reactions, T, mode="full", per_mole_O2=False):
 
     Notes
     -----
-    ⓘ Figure 13.2-3 in the book is third-party art, redrawn from Lupis, and its caption
+    Figure 13.2-3 in the book is third-party art, redrawn from Lupis, and its caption
     says it is also on the website as an enlargeable PDF. This function is the numerical
     construction, not a reproduction of that figure: the lines it returns come from
     Appendix A.IV and A.II, so they carry the appendices' own accuracy and their own
     temperature limits.
 
-    ⚠️ Appendix A.II's Cp correlations were fitted over roughly 273-1800 K. The classical
+    Appendix A.II's Cp correlations were fitted over roughly 273-1800 K. The classical
     Ellingham diagram runs to 2000 K and beyond, and a line drawn out there is an
     extrapolation. It is also drawn straight through melting and boiling points, where
     the real dG has a kink that these correlations know nothing about, since Appendix

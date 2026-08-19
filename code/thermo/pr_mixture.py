@@ -67,7 +67,7 @@ class PRMixture(PhiPhiVLE):
 
             >>> m = PRMixture.from_database(["ethane", "n-butane"], kij="table")
 
-        ⚠️ **A pair Table 9.4-1 does not list is set to zero and warned about**, not
+        **A pair Table 9.4-1 does not list is set to zero and warned about**, not
         filled in silently. The table is 65% blank and its own footnote says to
         substitute an estimate from a similar mixture -- a judgment the caller has to
         make, so it is surfaced rather than buried. Pass `warn_missing=False` once

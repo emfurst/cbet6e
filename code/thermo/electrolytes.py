@@ -37,7 +37,7 @@ and not molarities. `alpha` is tabulated in (mol/kg)^(-1/2) and `beta` in
 [(mol/kg)^(1/2) angstrom]^(-1), so `beta_a` (with a in angstroms) is
 (mol/kg)^(-1/2) and beta_a*sqrt(I) is dimensionless.
 
-⚠️ **The book says it is ignoring the molality/molarity distinction** ("in the
+**The book says it is ignoring the molality/molarity distinction** ("in the
 application of these formulas the distinction between molality ... and ... molarity
 will sometimes be ignored"), and Figs. 9.10-1 and 9.10-2 do exactly that -- 9.10-1's
 abscissa is labeled molarity M and 9.10-2's caption calls gamma_pm the mean *molar*
@@ -54,7 +54,7 @@ is the only way the arithmetic can be checked.
 it, because the osmotic pressure of a salt solution is a logarithm of the solvent
 activity and its fourth decimal place is worth tenths of a bar.
 
-⚠️ **The appendix's own two equations disagree with its own note by a factor of 3, and
+**The appendix's own two equations disagree with its own note by a factor of 3, and
 this module follows the note.** Written with
 
     sigma(y) = [1 + y - 2 ln(1+y) - 1/(1+y)] / y^3
@@ -132,12 +132,12 @@ def _sigma(y):
 # Aqueous Solutions". T in degrees C, alpha in (mol/kg)^(-1/2), beta in
 # [(mol/kg)^(1/2) angstrom]^(-1).
 #
-# ⚠️ THE TABLE CARRIES NO SOURCE. Its footnote (5e note 21) defines the angstrom
+# THE TABLE CARRIES NO SOURCE. Its footnote (5e note 21) defines the angstrom
 # and the liter and says nothing about where the numbers came from. They are the
 # standard Debye-Huckel constants for water -- alpha is 2.303 A_gamma, with A_gamma
 # the base-10 constant of the physical-chemistry literature -- and they agree with
 # the accepted values to the digits printed (see `check_alpha_against_theory` in
-# code/ch9/validation/). ⬜ The 6e should give the table a credit line; Robinson and
+# code/ch9/validation/). The 6e should give the table a credit line; Robinson and
 # Stokes, *Electrolyte Solutions*, 2nd ed. (1959) is already cited in Fig. 9.10-1's
 # caption and tabulates them.
 TABLE_9_10_1 = np.array([
@@ -535,7 +535,7 @@ ILLUSTRATION_9_10_1_HCL = np.array([
 ])
 
 # Illustration 9.10-2: mean ionic activity coefficients of NaCl in water at 25 C.
-# ⚠️ The printed table's first row is M = 0, gamma_pm = 1.00 -- the infinite-dilution
+# The printed table's first row is M = 0, gamma_pm = 1.00 -- the infinite-dilution
 # limit, not a measurement. It is dropped here: every model returns exactly 1 there
 # by construction, so including it in a fit or an RMS flatters all three equally.
 ILLUSTRATION_9_10_2_NACL = np.array([

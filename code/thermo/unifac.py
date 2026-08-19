@@ -24,10 +24,10 @@ the two sets differ by 2-3 % in pressure and by almost nothing in vapor composit
 Both sets are complete: 92 subgroups over 47 main groups for Dortmund, 85 over 44 for
 original. Neither is a stub.
 
-⛔ The R/Q and the a_mn must come from the same parameter set, which is why `kind`
+The R/Q and the a_mn must come from the same parameter set, which is why `kind`
 selects both together and neither table is meant to be loaded on its own.
 
-⛔ **And the two sets do not agree on what a subgroup NUMBER means.** They share 1-26
+**And the two sets do not agree on what a subgroup NUMBER means.** They share 1-26
 and 40-77, but 27, 37-39 and 78-85 name different groups in each -- 27 is `FCH2O` in
 the original set and `cy-CH2 OCH2` in Dortmund; 78-80 are `SiH3`/`SiH2`/`SiH` against
 `cy-CH2`/`cy-CH`/`cy-C`. Both numbers exist in both tables, so handing one set's group

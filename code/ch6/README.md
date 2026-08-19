@@ -68,7 +68,7 @@ it would put the two halves of one argument in two files.
 > gives $P_2 = 41.46$ vs $41.45$ bar), but regenerate homework answer keys from the
 > twin if that is the version you assign.
 >
-> ✅ **The oxygen pair is fixed (2026-08-04).** `pure_property.csv` carries
+> **The oxygen pair is fixed (2026-08-04).** `pure_property.csv` carries
 > $\omega = 0.025$ and $P_c = 50.4$ bar, against Table 6.6-1's $\omega = 0.021$
 > ($\kappa = 0.4069$, the value Illustration 6.4-1 prints) and $P_c = 5.046$ MPa —
 > a different parameter set, not a rounding, so `from_database("oxygen")` silently

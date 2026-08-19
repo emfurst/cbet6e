@@ -81,6 +81,16 @@ an **overbar** is reserved for a partial molar property ($\bar{G}_i$, introduced
 Ch. 8). This matches the book. Per-chapter notation files for an AI coding assistant are
 generated alongside the companion site (`6e_companion_site/build/grounding/chNN-notation.md`).
 
+## Prose style in the code
+
+Everything a reader sees — markdown cells, docstrings, comments, and the text a cell
+prints — is plain prose with **no emoji**. Markers like the ones used for triage in the
+revision notes must not cross into a notebook or a module: a notebook is read on the
+companion site and on GitHub, and its stored output is part of what a student reads. Where
+a warning needs weight, say so in words (`NOT`, `must`, bold) rather than with a glyph.
+This was reset across `code/` on 2026-08-19, when 596 markers were removed from 75 files;
+`archive/` was left frozen on purpose.
+
 ## Layout
 
 ### Chapter notebooks

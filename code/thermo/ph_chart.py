@@ -26,7 +26,7 @@ when they are got wrong, and both of which are commented at the point of use:
    temperature the polyline steps across the corner and the curve visibly bends away
    before it reaches the envelope.
 
-⚠️ **Peng-Robinson puts saturated-liquid density about 12 percent high**, which is
+**Peng-Robinson puts saturated-liquid density about 12 percent high**, which is
 the textbook failing of a cubic. It lands on exactly one family: the constant-volume
 curves in the compressed-liquid region, left of the saturation curve. Those should
 not be read quantitatively there. Nothing else on the chart is affected -- the dome,

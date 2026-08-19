@@ -9,7 +9,7 @@ touch the mixture model through exactly two things: `self.components` (for the W
 K-value seed, which needs Tc, Pc and omega) and `self.phi(x, T, P, phase)`. **Any
 mixture model that can return a fugacity coefficient can be driven by them.**
 
-⭐ WHY THIS IS ITS OWN MODULE. These solvers were written inside `PRMixture`, where the
+WHY THIS IS ITS OWN MODULE. These solvers were written inside `PRMixture`, where the
 mixing rule is van der Waals one-fluid. Chapter 10 needs the identical solvers driven by
 the **Wong-Sandler** rule (Figs. 10.3-9 to 10.3-13), and `wong_sandler.py` importing them
 from `pr_mixture.py` would say the Wong-Sandler rule depends on the van der Waals one --
@@ -19,7 +19,7 @@ Both mixing rules now inherit from here instead, which is also the chapter's own
 through `thermo.vle.GammaPhi`, whose solvers carry these same names and signatures, so
 `pxy`/`txy` draw a diagram without knowing which of the three produced it.
 
-⚠️ Deliberately Tier 1: no matplotlib, no drawing. Import cost is numpy + scipy only.
+Deliberately Tier 1: no matplotlib, no drawing. Import cost is numpy + scipy only.
 
 Eric M. Furst
 August 2026
@@ -52,7 +52,7 @@ class PhiPhiVLE:
     and inherits `bubble_pressure`, `dew_pressure`, `bubble_temperature`,
     `dew_temperature` and `flash`.
 
-    ⛔ **THE TRIVIAL ROOT, and why these solvers are not a plain Newton.** The
+    **THE TRIVIAL ROOT, and why these solvers are not a plain Newton.** The
     equilibrium condition x_i phi_i^L = y_i phi_i^V is satisfied *identically* by
     y = x, K = 1 -- "equilibrium" between a phase and itself. It is a real root of
     the equations and a physically empty one, and successive substitution runs
@@ -70,7 +70,7 @@ class PhiPhiVLE:
     brackets the residual on a ladder of pressures where two phases do exist, and
     only then converges. See `_solve_outer`.
 
-    ⚠️ Convergence is successive substitution on the inner loop and a bracketed
+    Convergence is successive substitution on the inner loop and a bracketed
     Newton on the outer. Where a model has no two-phase solution -- inside a region
     the equation of state makes single-phase -- these return **NaN** rather than
     raising, and rather than the last iterate. That is deliberate: `thermo.vle.pxy`
@@ -136,13 +136,13 @@ class PhiPhiVLE:
         machine precision rather than merely closely -- the collapse is a fixed
         point of the iteration, not an approach to one.
 
-        ⛔ **A SUBCRITICAL pure component is exempt, and must be.** At x = (1, 0)
+        **A SUBCRITICAL pure component is exempt, and must be.** At x = (1, 0)
         the vapor really is the liquid's composition, so y = x is the answer rather
         than the trivial root -- the condition phi^L = phi^V it satisfies is the
         ordinary vapor-pressure criterion. Without this exemption every P-x-y sweep
         loses both of its endpoints.
 
-        ⛔ **Above that species' own critical temperature the exemption must not
+        **Above that species' own critical temperature the exemption must not
         apply.** A supercritical pure fluid has no vapor pressure at all, so there
         the collapse is the trivial root again and returning a pressure for it is
         worse than returning nothing: carbon dioxide at Figure 10.3-7's 377.65 K is
@@ -151,7 +151,7 @@ class PhiPhiVLE:
         figure's own closing question asks the student *why* the envelope cannot
         reach x = 1 there.
 
-        ⚠️ A genuine mixture critical point also has y -> x, so points within
+        A genuine mixture critical point also has y -> x, so points within
         `tol` of it are rejected too. That is the honest outcome: there the two
         are numerically indistinguishable. Figure 10.3-7's critical points are
         therefore *estimated* by extrapolating y - x to zero, which is what its
@@ -181,7 +181,7 @@ class PhiPhiVLE:
         `f(v) -> float`, NaN where the trivial root is all there is. Returns
         `(a, b)` with f(a) and f(b) of opposite sign, or None.
 
-        ⚠️ A blind ladder over the whole pressure range does not work here, and
+        A blind ladder over the whole pressure range does not work here, and
         that is worth stating because it is the obvious thing to try. The window
         in which two phases exist can be **narrower than one rung** near a mixture
         critical point -- for carbon dioxide/isopentane at 377.65 K and
@@ -238,7 +238,7 @@ class PhiPhiVLE:
         Bisection inside that bracket cannot escape it, so the near-critical
         branch converges to the physical root instead of the empty one.
 
-        ⚠️ Every evaluation is seeded from the same `state`, never warm-started
+        Every evaluation is seeded from the same `state`, never warm-started
         from the previous iterate. Warm starting is faster and makes the answer
         depend on the path taken to it; a figure has to be reproducible.
         """
@@ -257,7 +257,7 @@ class PhiPhiVLE:
         def crosses(v, rel=1e-3):
             """Does the residual change SIGN through v, or is v on a flat plateau?
 
-            ⛔ `|f| < tol` is not enough to identify a bubble point near a mixture
+            `|f| < tol` is not enough to identify a bubble point near a mixture
             critical point, and this is the subtlest failure in the module. The
             collapse onto the trivial root is not sudden: over a *range* of
             pressures above the true bubble point the iteration drifts onto the
@@ -273,7 +273,7 @@ class PhiPhiVLE:
             sides. That distinction needs no new tolerance, and it is what stops
             Newton from reporting 94.0 bar where the answer is 92.6.
 
-            ⚠️ Sign change alone is still not enough *very* close to the critical
+            Sign change alone is still not enough *very* close to the critical
             point, where the residual flattens toward the noise floor and its zero
             wanders. The crossing must also be RESOLVABLE -- see `_RESOLVABLE`.
             Points that fail this come back as NaN, which is the honest answer:
@@ -327,7 +327,7 @@ class PhiPhiVLE:
             if hi / lo - 1.0 < 1e-13:
                 return (float(mid), st) if crosses(mid) else (
                     float("nan"), np.asarray(fixed, dtype=float))
-            # ⚠️ A near-zero residual is accepted only where it CROSSES. On the
+            # A near-zero residual is accepted only where it CROSSES. On the
             # trivial plateau f is ~0 without changing sign, so an early return on
             # |f| < tol alone would stop here -- and the plateau always lies ABOVE
             # the bubble point, so the search continues downward instead.
@@ -345,7 +345,7 @@ class PhiPhiVLE:
     def bubble_pressure(self, x, T, P_guess=None, max_iter=100, tol=1e-9):
         """Bubble-point pressure and incipient vapor composition at (x, T) -> (P, y).
 
-        ⚠️ The seed is the ideal-solution bubble pressure sum(x_i K_i) P_ref, which
+        The seed is the ideal-solution bubble pressure sum(x_i K_i) P_ref, which
         is the Raoult's-law estimate the Wilson correlation was built to give. It is
         *not* 1 / sum(x_i / K_i) -- that is the dew-point form, and using it here
         seeded the solve six orders of magnitude low.
@@ -451,7 +451,7 @@ class PhiPhiVLE:
         beta is the vapor molar fraction; 0 is a subcooled liquid and 1 a superheated
         vapor, i.e. the feed does not split at (T, P).
 
-        ⚠️ **The trivial root reaches here too, and is not guarded against.** If the
+        **The trivial root reaches here too, and is not guarded against.** If the
         K values collapse to 1, Rachford-Rice returns beta = 0 and the answer reads
         "a subcooled liquid" -- which is the right answer whenever the feed really
         is single-phase, and the wrong one near a mixture critical point, where it

@@ -61,7 +61,7 @@ and `eos_binary_lle`/`eos_vlle_binary` accept anything with an
 `ln_phi(x, T, P, phase=...)` -- so `PRMixture` and `wong_sandler` both work, with the
 liquid root taken in both phases, which is the change SIS p. 630 describes.
 
-⚠️ **The two routes do not have the same signature, and the difference is physical.**
+**The two routes do not have the same signature, and the difference is physical.**
 The activity-coefficient functions take T and no P; the equation-of-state ones take
 both, because a cubic has no incompressible-liquid shortcut. `eos_vlle_binary` therefore
 solves all four unknowns at once rather than solving LLE first and taking a bubble point
@@ -304,7 +304,7 @@ def binary_lle(model, T, guess=None, n=1001, tol=1e-10, min_gap=1e-6,
        *local* tangent, which satisfies (1) and (2) and is still not the equilibrium
        state.
 
-    ⚠️ **Check 3 has no meaning for a thermodynamically inconsistent model**, because
+    **Check 3 has no meaning for a thermodynamically inconsistent model**, because
     such a model has no Gibbs energy for the tangent to lie under. Reproducing SIS
     Illustration 11.2-6's printed table needs `FloryHuggins(..., printed_chi=True)`,
     which is inconsistent by construction, and this function rejects it -- with a
@@ -440,7 +440,7 @@ def lle_flash(model, z, T, K0=None, max_iter=500, tol=1e-12, min_gap=1e-4):
     the default. Pass `K0` when a data-based seed is available -- the book's other
     suggestion, and much the better one for a correlation.
 
-    ⚠️ **This solver can converge to the trivial root** where the two phases become
+    **This solver can converge to the trivial root** where the two phases become
     identical, and it reports None when it does. Successive substitution has no
     defense against it beyond that; `binary_lle` does, and for two species it is the
     function to use. The check here is `min_gap` on the largest |K_i - 1|.
@@ -555,7 +555,7 @@ def gamma_from_solubility(x_saturated):
     11.2-3 and 11.2-4 are both this one line, and because the solubilities involved
     are so small the numbers it returns are effectively infinite-dilution values.
 
-    ⚠️ Illustration 11.2-4 makes the approximation explicit and then says it is an
+    Illustration 11.2-4 makes the approximation explicit and then says it is an
     over-estimate: the product x gamma in the *saturated* phase is a little below 1,
     not equal to it, so 1/x is a little high. Slightly, for a solubility of 0.7e-4;
     not at all slightly for a phase that is only 74 mol % pure, which is the same
@@ -594,7 +594,7 @@ def vlle_binary(model, T, gp=None, rtol=1e-6, **kw):
     decoration, it is the identity x_i^I gamma_i^I = x_i^II gamma_i^II re-emerging
     as a pressure, and Illustration 11.3-1 prints both to make exactly that point.
 
-    ⓘ The Gibbs phase rule leaves one degree of freedom here (C = 2, P = 3), so at
+    The Gibbs phase rule leaves one degree of freedom here (C = 2, P = 3), so at
     a given T there is a single three-phase pressure and all three compositions are
     fixed. Changing the overall feed moves mass between the phases and nothing else.
     """
@@ -722,7 +722,7 @@ def eos_binary_lle(eos, T, P, guess=None, n=201, tol=1e-11, min_gap=1e-4,
     liquid does not split at this T and P. This is Illustration 11.2-5's
     calculation -- CO2 + n-decane from Peng-Robinson with k12 = 0.114.
 
-    ⚠️ **Pressure is an argument here and is not in `binary_lle`.** With activity
+    **Pressure is an argument here and is not in `binary_lle`.** With activity
     coefficients the liquid is taken incompressible and P drops out; an equation of
     state has no such shortcut, and near a liquid-liquid critical point -- which for
     CO2 + n-decane is only a few kelvin above the range of interest -- the
@@ -792,7 +792,7 @@ def eos_vlle_binary(eos, T, P_guess=None, guess=None, tol=1e-10, min_gap=1e-4):
     and it is the calculation the 5e sends the reader to a Visual Basic program, a
     DOS program or a Mathcad worksheet to do.
 
-    ⚠️ **Not two two-phase calculations.** `vlle_binary` can solve the liquid-liquid
+    **Not two two-phase calculations.** `vlle_binary` can solve the liquid-liquid
     problem first and take a bubble point afterwards, because with activity
     coefficients the liquid compositions do not depend on pressure. Here they do, so
     all four unknowns -- both liquid compositions, the vapor composition and the
@@ -804,20 +804,20 @@ def eos_vlle_binary(eos, T, P_guess=None, guess=None, tol=1e-10, min_gap=1e-4):
     Four equations, four unknowns, and the Gibbs phase rule agrees: C = 2 and
     P = 3 leave one degree of freedom, which T has just used.
 
-    ⓘ Doing it as two separate calculations instead -- LLE at a guessed pressure,
+    Doing it as two separate calculations instead -- LLE at a guessed pressure,
     then a bubble point on one liquid -- is what the seeding below does, and for
     CO2 + n-decane it lands within 0.001 bar of the simultaneous answer because the
     liquid compositions barely move over the quarter-bar between the seed and the
     result. That is a fact about this system, not about the method.
 
-    ⛔ **There is a trivial root here too, and it is not the one `binary_lle`
+    **There is a trivial root here too, and it is not the one `binary_lle`
     guards against.** `y = x^II` satisfies the vapor equation *exactly* wherever
     the cubic has a single real root, because then the "vapor" root and the liquid
     root are the same number and phi^V(y) = phi^L(y) identically. Above the
     three-phase pressure that is the situation, so a solve seeded at, say, 30 bar
     converges to P = 30 bar with a "vapor" that is the CO2-rich liquid -- a
     perfectly convergent answer with three liquids in it. The check below rejects
-    it. ⚠️ **`PhiPhiVLE.bubble_pressure` has the same hole and is not guarded**:
+    it. **`PhiPhiVLE.bubble_pressure` has the same hole and is not guarded**:
     given an LLE composition and a seed above the three-phase pressure it returns
     the liquid-liquid state as a bubble point. Its default seed is far below, so
     the ordinary path is unaffected, and that is why this function does not lean on

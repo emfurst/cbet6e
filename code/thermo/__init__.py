@@ -14,7 +14,7 @@ CHEMEQ and its Appendix B.I/B.II equilibrium-constant programs.
 
 See code/thermo/README.md. Reads reference data from code/data/.
 
-⚠️ **Two different UNIQUACs.** `thermo.UNIFAC` is the group-contribution model of
+**Two different UNIQUACs.** `thermo.UNIFAC` is the group-contribution model of
 Sec. 9.6, which takes group counts. `thermo.UNIQUACModel` is the molecular model of
 Sec. 9.5, which takes r and q -- exported under that name so the two do not collide;
 it is `thermo.activity_models.UNIQUAC` in its own module.

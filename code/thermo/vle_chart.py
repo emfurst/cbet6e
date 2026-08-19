@@ -244,7 +244,7 @@ def _envelope(ax, x1, y1, v, *, unit, species, ylabel, liquid_side,
                 # offset does not work: 3.5 % of the ordinate range put both labels
                 # straight on top of their own lines on this figure.
                 #
-                # ⚠️ But the bubble and dew curves are not necessarily all that is on
+                # But the bubble and dew curves are not necessarily all that is on
                 # the axes. Figure 10.2-8 adds a second model's curves and 26 data
                 # points, and a label placed against the envelope alone landed on top
                 # of them (author, 2026-08-15). So the outermost thing ALREADY DRAWN at
@@ -453,7 +453,7 @@ def total_reflux_steps(ax, x1, y1, x_start, x_target=None, *, direction="down",
       TOWARD an azeotrope. Past a certain point it cannot do anything else, which is
       what a pinch is: the steps shrink geometrically and `pinched` comes back True.
 
-    ⚠️ **Both branches are needed to draw an azeotropic column, and asking for the
+    **Both branches are needed to draw an azeotropic column, and asking for the
     wrong one silently walks the other way.** Before 2026-08-14 this function applied
     only the inverse, so a caller who wanted the rectifying section got the stripping
     section instead -- steps marching to the far pure end rather than piling up
@@ -462,7 +462,7 @@ def total_reflux_steps(ax, x1, y1, x_start, x_target=None, *, direction="down",
     line up with the staircase, because the staircase was not the section the
     caption described. There is no way to infer the branch from `x_target` alone.
 
-    ⚠️ **`x_start` must not be the azeotrope itself.** It is a fixed point of both
+    **`x_start` must not be the azeotrope itself.** It is a fixed point of both
     maps, so a descent that begins there crawls out of the pinch over a dozen
     numerically meaningless steps before it separates anything, and the stage count
     then reports the arithmetic rather than the chemistry. Start from a real,
@@ -496,7 +496,7 @@ def total_reflux_steps(ax, x1, y1, x_start, x_target=None, *, direction="down",
         up 4 0.0 0
         down 4 0.0 0
 
-    ⚠️ For a minimum-boiling azeotrope the azeotrope is the most volatile condition
+    For a minimum-boiling azeotrope the azeotrope is the most volatile condition
     the mixture can reach, so the DISTILLATE is always driven toward the azeotropic
     composition and the BOTTOMS toward whichever pure component lies on the feed's
     side of it. Getting that backwards is erratum E17 in the 5e; see
@@ -529,7 +529,7 @@ def total_reflux_steps(ax, x1, y1, x_start, x_target=None, *, direction="down",
             (x_target < x_start and xn <= x_target))
         if reached and clip:
             xn = float(x_target)
-        # ⚠️ THE CORNER OF EACH STEP MUST LIE ON THE EQUILIBRIUM CURVE, and which
+        # THE CORNER OF EACH STEP MUST LIE ON THE EQUILIBRIUM CURVE, and which
         # corner that is depends on the direction. Descending, x_{n+1} = f^-1(x_n), so
         # the curve point is (x_{n+1}, x_n) -- go across, then down. Ascending,
         # x_{n+1} = f(x_n), so the curve point is (x_n, x_{n+1}) -- go UP first, then

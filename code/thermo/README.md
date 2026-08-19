@@ -5,7 +5,7 @@ A small, dependency-light package (numpy + scipy + pandas) providing the thermod
 activity coefficient models, UNIFAC, the property-chart machinery and the book's own data
 tables. Parameters and constants come from `code/data/`.
 
-⚠️ **This is not an "Aspen substitute," which is how this file used to describe it.**
+**This is not an "Aspen substitute," which is how this file used to describe it.**
 Python and Aspen are complementary parts of the toolbox — general-purpose scientific
 computing versus specialized process modeling, not a learning tool versus a real one. This
 package is open, inspectable and hackable and runs with nothing but a Python install;
@@ -35,9 +35,9 @@ it. That split, and everything still to be built, is [`ROADMAP.md`](ROADMAP.md).
 | [`data`](#the-data-tables--data) | every table above, plus the property and reaction databases | all |
 | [`charts`, `ph_chart`, `steam_chart`](#property-charts--charts-ph_chart-steam_chart) | the book's property charts | 3, 5, 6 |
 
-⬜ **Not built yet:** electrochemistry, and the ionization half of ch13 (Secs. 13.5–13.7 —
+**Not built yet:** electrochemistry, and the ionization half of ch13 (Secs. 13.5–13.7 —
 $K_a$ coupled to $\gamma_\pm$ through the ionic strength, which belongs with `electrolytes`).
-✅ Reaction equilibrium itself landed 2026-08-18 as [`reaction`](#chemical-reaction-equilibrium--reaction).
+Reaction equilibrium itself landed 2026-08-18 as [`reaction`](#chemical-reaction-equilibrium--reaction).
 See the roadmap.
 
 ## Peng–Robinson (pure fluids)
@@ -56,7 +56,7 @@ SI units throughout (T in K, P in Pa, V in m³/mol). `from_database` reads
 `vapor_pressure(Tb)` returns ≈ 1 atm for benzene, n-hexane, ammonia, and propane
 (within 1%).
 
-> **⚠️ The Cp coefficients in `pure_property.csv` are the Reid–Prausnitz–Poling set,
+> **The Cp coefficients in `pure_property.csv` are the Reid–Prausnitz–Poling set,
 > not the book's Appendix A.II set.** This README previously said Appendix A.II; that
 > was wrong, and the same mislabel is in two ch6 notebooks. It matters below room
 > temperature: for oxygen the two sets differ by 152 J/mol in H̲ and 1.23 J/(mol·K) in
@@ -66,7 +66,7 @@ SI units throughout (T in K, P in Pa, V in m³/mol). `from_database` reads
 > uses the book's Appendix A.II set, via `cp=APPENDIX_A2_CP[...]`, so ch6 and ch7 sit on
 > one basis. `pure_property.csv` is left as the RPP table it is.
 
-> **⚠️ Below 273 K, use `APPENDIX_A2_CP_CRYO` — not `APPENDIX_A2_CP`.** Appendix A.II's
+> **Below 273 K, use `APPENDIX_A2_CP_CRYO` — not `APPENDIX_A2_CP`.** Appendix A.II's
 > familiar row is valid **273–1800 K**, and Illustrations 6.4-1, 7.5-1 and 7.5-2 all run
 > below that. The extrapolation is *not* benign: for oxygen at 173 K it is 1.235 J/(mol·K)
 > (4.2%) low, worth **67 J/mol in H̲ and 0.32 J/(mol·K) in S̲** — a hundred times the error
@@ -76,7 +76,7 @@ SI units throughout (T in K, P in Pa, V in m³/mol). `from_database` reads
 > `data.py`. **Appendix A.II must gain these rows in print** — until it does, the printed
 > book does not contain the constants these notebooks use.
 
-> **⚠️ For oxygen, `from_database` is not just a different Cp — it is a different EOS.**
+> **For oxygen, `from_database` is not just a different Cp — it is a different EOS.**
 > `pure_property.csv` carries ω = 0.025 and Pc = 50.4 bar against the book's Table 6.6-1
 > values ω = **0.021** (κ = 0.4069, the number Illustration 6.4-1 prints) and
 > Pc = **5.046 MPa**. Build the object explicitly when reproducing a printed table.
@@ -167,7 +167,7 @@ Species are matched on **either** the name or the formula as Table 9.4-1 prints 
 book's three worked values: 0.010 ethane/n-butane (Illustration 9.4-3), 0.09
 methane/CO₂ (9.4-4), 0.018 n-pentane/benzene (9.4-5).
 
-> ⚠️ **A blank in Table 9.4-1 is not a zero, and this is where that bites.** The table is
+> **A blank in Table 9.4-1 is not a zero, and this is where that bites.** The table is
 > 65% blank, and its own footnote says to estimate the missing value from a similar
 > mixture. So a pair the table lacks is set to zero **and warned about** — that judgment
 > belongs to the caller, not to a default. Pass `warn_missing=False` once you have decided
@@ -199,12 +199,12 @@ and a strong positive-deviation system (γ_EtOH^∞ ≈ 53 in hexane).
 
 - **`kind="modified"`** — the book's model (Dortmund parameters,
   `Ψ = exp[-(a/T + b + cT)]`, combinatorial with `r^0.75`).
-- **`kind="original"`** — ⛔ **retired 2026-08-12.** The book teaches modified UNIFAC
+- **`kind="original"`** — **retired 2026-08-12.** The book teaches modified UNIFAC
   only: Table 9.5-2 *is* the Dortmund set and Eq. 9.6-12a carries the `r^0.75`
   modification (`revision_notes/c09.md` **D1**). The `original` branch stays
   unimplemented and `unifac_interactions_original.csv` is retained but unused.
 
-⚠️ **The book and this module do not compute the same Ψ.** Eq. 9.6-13b prints
+**The book and this module do not compute the same Ψ.** Eq. 9.6-13b prints
 `Ψ = exp(-a/T)`, a single temperature-independent constant per pair, where modified
 UNIFAC uses `a + bT + cT²` — which the parameter file carries and this module evaluates.
 Where they differ, the module is right; see c09.md **T5**.
@@ -234,7 +234,7 @@ vl.gex([0.6, 0.4], T=328.15)        # molar excess Gibbs energy, J/mol
 | UNIQUAC (9.5-19 … 9.5-23b) | `UNIQUACModel` | `r`, `q`, `tau_ij`, any *n* |
 | regular solution (9.6-8 … 9.6-11) | `RegularSolution` | `V`, `delta`, any *n* |
 
-⚠️ **`UNIQUACModel` is the molecular model of Sec. 9.5**; `UNIFAC` is the
+**`UNIQUACModel` is the molecular model of Sec. 9.5**; `UNIFAC` is the
 group-contribution model of Sec. 9.6. Exported under distinct names so the two cannot be
 confused. `UNIQUACModel.from_groups` builds *r* and *q* from Table 9.5-2, so the same
 molecular description feeds both.
@@ -247,17 +247,17 @@ Illustration 10.2-4. `fit_binary(model_cls, ...)` is the same fit as a free func
 `VanLaar` and `Wilson`, whose two constructor arguments *are* the two fitted parameters —
 useful for looping several models over one data set.
 
-⭐ **`check_gibbs_duhem(T)` is worth running.** Where the book prints both a G^ex
+**`check_gibbs_duhem(T)` is worth running.** Where the book prints both a G^ex
 expression *and* activity coefficient expressions, they must satisfy
 `G^ex/RT = Σ x_i ln γ_i` exactly — so coding both and comparing them is a real test rather
 than a tautology. Eight of the nine models have that independent expression to check
 against (regular solution does not, and returns `0.0` saying so); **all eight now return
 ≤6e-15**, worst case UNIQUAC.
 
-⛔ **Two of them did not, and both were errata in the book** — Eqs. 9.5-12b and 9.5-18,
+**Two of them did not, and both were errata in the book** — Eqs. 9.5-12b and 9.5-18,
 in print through five editions and corrected in the 6e manuscript
 (`revision_notes/c09.md` §12.1). The classes carry the corrected forms, and each takes a
-keyword to reproduce the printed one for comparison. ⚠️ **This is the check to run first on
+keyword to reproduce the printed one for comparison. **This is the check to run first on
 every model added from here on**; it is what makes the book disagree with itself.
 
 Tables 9.5-1 (van Laar constants for 30 binaries) and 9.6-1 (molar volumes and solubility
@@ -298,7 +298,7 @@ CuSO₄ (the three cases Fig. 9.10-1's caption states); Illustration 9.10-1's mo
 in the right order; and Illustration 9.10-2's fitted **δ = 0.137**, recovered as 0.1371
 and stable to the fourth decimal under either weighting.
 
-⭐ **Table 9.10-1 was audited, and it is correct.** Its two columns are not independent —
+**Table 9.10-1 was audited, and it is correct.** Its two columns are not independent —
 Debye–Hückel theory makes $\alpha\rho/\beta^3$ a pure constant, 33.03, at every
 temperature. All fourteen rows return 33.04 ± 0.08%. Drop the solvent density and the
 ratio instead drifts monotonically by 4.3% from 0 to 100 °C, which is exactly how much
@@ -307,7 +307,7 @@ numbers were computed from theory and transcribed correctly. The two illustratio
 ever use the 25 °C row, so nothing else in the chapter would have caught an error in the
 other thirteen.
 
-⚠️ **The book's 25 °C constant is not self-consistent to four digits.** Illustration
+**The book's 25 °C constant is not self-consistent to four digits.** Illustration
 9.10-2's Eqs. (1)–(3) use $\alpha = 1.178$ where Table 9.10-1 prints 1.175. It is a 0.26%
 discrepancy that does not reach the answer — δ comes out 0.137 either way — but pass
 `alpha=1.178` if you want the illustration's printed equations exactly.
@@ -335,12 +335,12 @@ ws.check_boundary(x, T)             # the two conditions the rule is derived fro
 which needs no mixture data at all). Both combining rules of Eq. 9.9-10 are available
 via `combining=`.
 
-⚠️ **`b` is temperature dependent here**, unlike the van der Waals one-fluid `b`, and
+**`b` is temperature dependent here**, unlike the van der Waals one-fluid `b`, and
 neither `a` nor `b` is a polynomial in mole fraction — both come out of $Q/(1-D)$, and
 $D$ carries the whole activity coefficient model. That is the point of the method, not
 a side effect.
 
-⚠️ **$D > 1$ is normal, not an error.** $D$ is dominated by $\sum_i x_i a_i/(b_i RT)$,
+**$D > 1$ is normal, not an error.** $D$ is dominated by $\sum_i x_i a_i/(b_i RT)$,
 about 12 for liquid water at 25 °C and greater than 1 for any fluid below its Boyle
 temperature. $Q$ is negative for the same reason and the two divide to a positive `b`;
 the pure-component limit runs through $1-D < 0$ and returns $b_i$ exactly. Guard on
@@ -361,19 +361,19 @@ against itself, which `code/ch9/` does:
 | Euler identities on the composition derivatives | exact |
 | **Eq. 9.9-11 vs `PRMixture`, fed vdW one-fluid input** | **0 to 3e-16** |
 
-⭐ **The last one is the check that reaches outside §9.9.** Eq. 9.9-11 claims to be the
+**The last one is the check that reaches outside §9.9.** Eq. 9.9-11 claims to be the
 general cubic-mixture fugacity coefficient, written with composition derivatives instead
 of $b_i$ and $2\sum_j x_j a_{ij}$. Feeding it the van der Waals one-fluid rules must
 therefore reproduce `PRMixture`, which was verified against **Illustration 9.4-3** — and
 it does, exactly.
 
-⭐ **And Eq. 9.9-8 was confirmed by brute force.** Taking the equation of state to
+**And Eq. 9.9-8 was confirmed by brute force.** Taking the equation of state to
 $10^{11}$ bar, $\underline A^{ex}$ converges on $C^*[a/b - \sum x_i a_i/b_i]$ to seven
 figures while $\underline G^{ex}$ diverges to $-5\times10^{10}$ J/mol — which verifies
 the equation, the Peng–Robinson value of $C^*$ (left as Problem 9.31), and the section's
 argument for using Helmholtz rather than Gibbs, all at once.
 
-⚠️ **Eq. 9.9-10a is sign-ambiguous as printed.** Its cross term is the square root of a
+**Eq. 9.9-10a is sign-ambiguous as printed.** Its cross term is the square root of a
 product of two pure second virial coefficients, and below the Boyle temperature both are
 negative — so the principal root is *positive* where both diagonals are negative, and
 $Q$ collapses through zero mid-composition. `cross_matrix` carries the sign of the pures
@@ -415,7 +415,7 @@ P, y, xI, xII = vlle_binary(gp, 310.95)                 # Illustration 11.3-1
 | P–x and T–x with the LLE region resolved | `pxy_lle`, `txy_lle` | Figs. 11.3-1, 11.3-2, 11.3-4 |
 | **the equation-of-state route** — liquid root in both phases | `eos_binary_lle`, `eos_vlle_binary` | 11.2-5, 11.3-2 |
 
-⛔ **Equation 11.2-2 has a trivial root.** $x^{\rm I} = x^{\rm II}$ satisfies it at every
+**Equation 11.2-2 has a trivial root.** $x^{\rm I} = x^{\rm II}$ satisfies it at every
 temperature for every model, and it is what a solver handed a plain guess converges to.
 `binary_lle` is therefore not seeded by a guess: it takes the **lower convex hull** of the
 Gibbs energy of mixing — the common-tangent construction of Fig. 11.2-5, done numerically
@@ -424,11 +424,11 @@ checks that the tangent it found lies below the curve everywhere. A pair of comp
 that satisfies Eq. 11.2-2 to 1e-12 and is still not the equilibrium state is the ordinary
 failure of this calculation, not a hypothetical one.
 
-⚠️ **Models whose parameters depend on temperature.** Every function that varies T
+**Models whose parameters depend on temperature.** Every function that varies T
 accepts either an `ActivityModel` or a **callable `T -> model`**, which is what
 Illustration 11.2-6 needs (χ = 1473/T).
 
-⭐ **Two routes, two signatures, and the difference is physical.** `eos_binary_lle` and
+**Two routes, two signatures, and the difference is physical.** `eos_binary_lle` and
 `eos_vlle_binary` take anything with an `ln_phi(x, T, P, phase=...)` — `PRMixture` or the
 Wong-Sandler mixing rule — and they take **P as an argument**, because a cubic has no
 incompressible-liquid shortcut. `eos_vlle_binary` therefore solves all four unknowns
@@ -440,16 +440,16 @@ from thermo import eos_vlle_binary
 P, y, xI, xII = eos_vlle_binary(pr_mixture, 235.65)     # Illustration 11.3-2
 ```
 
-⛔ **The vapor equation has a trivial root of its own**, and it is a different one:
+**The vapor equation has a trivial root of its own**, and it is a different one:
 $y = x^{\rm II}$ satisfies it *exactly* wherever the cubic has a single real root, since
 then the "vapor" root and the liquid root are the same number. That is the situation
 above the three-phase pressure, so a badly seeded solve returns a converged answer with
 three liquids in it. `eos_vlle_binary` rejects any solution whose vapor is
-indistinguishable from either liquid. ⚠️ `PhiPhiVLE.bubble_pressure` has the same hole
+indistinguishable from either liquid. `PhiPhiVLE.bubble_pressure` has the same hole
 and is **not** guarded — its default seed is far below, so the ordinary path is
 unaffected; see `revision_notes/c11.md` §13.
 
-✅ Validated in `code/ch11/validation/lle_module_validation.ipynb` against Illustrations
+Validated in `code/ch11/validation/lle_module_validation.ipynb` against Illustrations
 11.2-1, 11.2-2, 11.2-3, 11.2-4, 11.2-6, 11.2-7, 11.2-8, 11.2-9, 11.3-1, 11.3-2 and
 11.3-3, the fourteen-row $x_i\gamma_i$ table of Illustration 11.2-2, the thirty-two
 printed values of Illustration 11.3-2, and — with no rounding in them — the analytic
@@ -457,13 +457,13 @@ results of Eqs. 11.2-11, 11.2-13, 11.2-14 and Problem 11.2-1(a,b). That pass fou
 defects in the chapter, and a sixth in this module; they are filed in
 `revision_notes/c11.md`.
 
-⚠️ **Illustration 11.3-2 needs SIS Table 6.6-1's constants, not `pure_property.csv`'s.**
+**Illustration 11.3-2 needs SIS Table 6.6-1's constants, not `pure_property.csv`'s.**
 The database is Reid, Prausnitz and Poling and gives ω = 0.239 for carbon dioxide where
 the book prints 0.225 — a 2 % systematic error in the three-phase pressure. Build the
 `PengRobinson` objects explicitly when reproducing a printed table, the same way
 `APPENDIX_A2_CP` exists for heat capacities.
 
-⛔ **Still not here:** Illustration 11.2-5's *Wong-Sandler* curve. Its UNIQUAC parameters
+**Still not here:** Illustration 11.2-5's *Wong-Sandler* curve. Its UNIQUAC parameters
 were "fit only to the data at 235.65 K" and are not printed, so that curve has to be
 refitted rather than reproduced. The van der Waals half of the same figure runs today
 with `eos_binary_lle`.
@@ -490,13 +490,13 @@ slope — and the ch8 notebooks run both to show they agree.
 **Unit-agnostic**: it never mentions volume or enthalpy, which is the point of Eq. 8.6-10.
 The caller keeps SI.
 
-> ⚠️ **The derivative is far more sensitive to the fit order than the fit is.** Adding a
+> **The derivative is far more sensitive to the fit order than the fit is.** Adding a
 > term barely moves the curve and can move the infinite-dilution partial molar properties
 > by ten percent or more — those are the endpoints, the one place the correlation
 > extrapolates. `loo_rms` and `scan_order` exist so a notebook can *show* that instead of
 > hiding it behind a default.
 >
-> ⚠️ **The summation identity is exact by construction**, so agreement there is not
+> **The summation identity is exact by construction**, so agreement there is not
 > evidence the fit is good — `residuals` is. It is still worth checking, because a
 > *graphical* construction does not satisfy it: the 5e's Table 8.6-4 misses it by up to
 > 16 J/mol (`code/ch8/validation/`).
@@ -509,7 +509,7 @@ $\bar V_1$ column.
 
 ## The data tables — `data`
 
-⭐ **The database is the linchpin.** These CSVs are the book's own tables — effectively a
+**The database is the linchpin.** These CSVs are the book's own tables — effectively a
 digitized Appendix A plus the model-parameter tables of ch6–9 — in plain text, so a student
 can read them, check one against the NIST WebBook, or add a compound. That is the thing a
 licensed black box will not allow, and it is why the data layer is documented here rather
@@ -517,12 +517,12 @@ than treated as an implementation detail.
 
 | what | loader | source |
 |---|---|---|
-| pure-component constants (Tc, Pc, ω, Cp, Antoine) | `load_pure_properties()`, `get_compound(key)` | `pure_property.csv` — the RPP set ⚠️ below |
-| ideal-gas $C_p^*$, **as the book prints it** | `APPENDIX_A2_CP`, `APPENDIX_A2_CP_CRYO` | Appendix A.II (+ the cryogenic refit ⚠️ below) |
+| pure-component constants (Tc, Pc, ω, Cp, Antoine) | `load_pure_properties()`, `get_compound(key)` | `pure_property.csv` — the RPP set below |
+| ideal-gas $C_p^*$, **as the book prints it** | `APPENDIX_A2_CP`, `APPENDIX_A2_CP_CRYO` | Appendix A.II (+ the cryogenic refit below) |
 | PR constants **as the book prints them** | `TABLE_6_6_1` | Table 6.6-1 — oxygen, nitrogen, methane |
 | PR binary interaction parameters | `load_pr_kij()`, `pr_kij_matrix(keys)` | Table 9.4-1 — 127 pairs / 20 species |
 | UNIFAC subgroups: R, Q, main group, examples | `load_unifac_subgroups()`, `unifac_groups(name)` | Table 9.5-2 — 92 subgroups / 46 main groups |
-| UNIFAC group-interaction parameters $a, b, c$ | `load_unifac_interactions()` | legacy `UNIFAC_data.mat` ⚠️ below |
+| UNIFAC group-interaction parameters $a, b, c$ | `load_unifac_interactions()` | legacy `UNIFAC_data.mat` below |
 | formation $\Delta_f G$, $\Delta_f H$ + $C_p^*$ | `load_reaction_properties()`, `get_reaction_species(name)`, `reaction_cp`, `formation_enthalpy`, `formation_gibbs` | Appendices A.IV + A.II — 99 species |
 | property change on mixing | `load_mixing_data(key)` | Tables 8.6-1, 8.6-3 |
 | steam tables (`steam_*.csv`) | `SteamTables` — in `steam_chart`, not `data`, because it interpolates as well as loads | Appendix A.III |
@@ -543,20 +543,20 @@ the longer path says so:
 from thermo.data import unifac_groups, load_unifac_subgroups, pr_kij_matrix
 ```
 
-⚠️ **`load_unifac_subgroups` validates on every load, not on request.** A duplicate
+**`load_unifac_subgroups` validates on every load, not on request.** A duplicate
 subgroup number or an R/Q that disagrees with its main group changes every activity
 coefficient it touches, silently — so the integrity rules run each time the file is read.
 They are not decorative: they caught duplicate subgroup numbers and silicon names sitting
 on the Dortmund cyclic groups in the legacy `.mat` extraction (`revision_notes/c09.md`
-§12.3). ⬜ **Check the other legacy-derived tables the same way as ch10–15 open.**
+§12.3). **Check the other legacy-derived tables the same way as ch10–15 open.**
 
-> ⚠️ **R and Q come from the book; the $a_{mn}$ do not.** `unifac_subgroups.csv` is the
+> **R and Q come from the book; the $a_{mn}$ do not.** `unifac_subgroups.csv` is the
 > printed Table 9.5-2, but the *numbers* identifying each subgroup and main group are
 > printed nowhere in the chapter, and `unifac_interactions_modified.csv` is keyed on the
 > main-group number — so both come from the legacy extraction, which the book cannot check.
 > The asymmetry is deliberate and is recorded in `code/data/README.md`.
 
-> ⚠️ **`react_property.csv` stores the heat-capacity coefficients as Appendix A.II
+> **`react_property.csv` stores the heat-capacity coefficients as Appendix A.II
 > *prints* them** — $b$, $c$, $d$ multiplied by $10^{2}$, $10^{5}$, $10^{9}$. Evaluating
 > the raw columns is wrong by three orders of magnitude and nothing warns you. Always go
 > through `reaction_cp`. Verified 2026-08-09: the scaled columns reproduce Illustration
@@ -590,7 +590,7 @@ cubic would be a step backwards from data the reader already has — and for met
 nitrogen it tabulates nothing, which is why those come from the equation of state the
 reader is about to be taught.
 
-⚠️ **PR puts saturated-liquid density about 12 % high**, the textbook failing of a cubic.
+**PR puts saturated-liquid density about 12 % high**, the textbook failing of a cubic.
 It lands on exactly one family — the constant-volume curves in the compressed-liquid
 region — which should not be read quantitatively there. The dome, isotherms and
 isentropes are unaffected.
@@ -637,7 +637,7 @@ tern.check_labels(ax)                               # ⬅ before saving
 | `read_construction` | **Fig. 11.2-7** — how a point is read, one line per species |
 | `check_labels` | fails if any two labels overlap |
 
-⚠️ **Which edge carries which species is not arbitrary, and the obvious guess is
+**Which edge carries which species is not arbitrary, and the obvious guess is
 wrong.** A species' fraction is proportional to the perpendicular distance from the
 edge **opposite** its corner — that is the geometry. But the printed **ruler** is on an
 **adjacent** edge, the one ending at its own corner, so each scale runs *toward* the
@@ -645,7 +645,7 @@ thing it measures. The first draft put the apex species on the left edge; the 5e
 Figs. 11.2-7 and 11.2-8 put it on the right, and the convention was taken from those
 two figures rather than invented.
 
-⭐ **`check_labels` is `check_print_art.py`'s blind spot, made reusable.** That gate
+**`check_labels` is `check_print_art.py`'s blind spot, made reusable.** That gate
 reads color and font family and cannot see two labels sitting on top of each other —
 and a triangular diagram crowds three scales, three corner names and three edge symbols
 around one small perimeter. It caught `x_C = 0.25` running through the `0.2` tick at a
@@ -668,7 +668,7 @@ lever-rule path reproduces **Illustration 11.2-8**: feed 15 % A / 75 % MIK / 10 
 
 ## Chemical reaction equilibrium — `reaction`
 
-⭐ **This module is the replacement for CHEMEQ** and for "the chemical equilibrium constant
+**This module is the replacement for CHEMEQ** and for "the chemical equilibrium constant
 calculation programs of Appendix B.I or B.II" — the Visual Basic executables the 5e shipped
 on its website. It was written from that source, not reverse-engineered from the printed
 output: `chemeq_source.zip` was unpacked and `frmChemEq.frm` read, and the two routines
@@ -704,14 +704,14 @@ Appendix A.IV (`'N2O4'`, `'H2O(g)'`, `'nC6H14(l)'`).
 
 ### Guards, and what they caught
 
-⛔ **`equilibrium_extent` never takes a bare initial guess.** The extent is bounded by
+**`equilibrium_extent` never takes a bare initial guess.** The extent is bounded by
 exhaustion — no species may end with a negative mole number — which gives a closed bracket,
 and the solve is a bracketed Brent on it. Monotonicity of $\prod a_i^{\nu_i}$ across that
 bracket is *checked and reported*, not assumed, and on failure the solver raises rather than
 returning its last iterate. Illustration 13.1-5 is the chapter's own example of an equation
 whose extra roots converge perfectly well and mean nothing.
 
-⛔ **A pure condensed phase stays out of the mole-fraction denominator.** Mark it
+**A pure condensed phase stays out of the mole-fraction denominator.** Mark it
 `phases={"C": "solid"}` and it has unit activity, does not dilute the fluid, and does not
 bound the extent. Getting this wrong moves the answer by 0.11 in mole fraction — and it is
 the same error Illustration 13.3-1's own note attributes to Aspen Plus.
@@ -727,7 +727,7 @@ the analytic integration against quadrature, $\Delta_{rxn}G^\circ(T)$ by two rou
 share no arithmetic, the minimum of $G(X)$ against the root of $K_a=\prod a_i^{\nu_i}$, and
 the coupled-extent solve against Gibbs minimization.
 
-⛔ **The one failure is a finding about the book, not the module**: Illustration 13.1-8's
+**The one failure is a finding about the book, not the module**: Illustration 13.1-8's
 printed $K_a$ table is not reproducible from Appendix A by any route the chapter offers, and
 it contradicts the book's own $K_a(450\ \mathrm{K})$ for the same reaction. It is filed as
 Q8 in `revision_notes/c13.md`, and nothing here is tuned to match it.
@@ -740,7 +740,7 @@ Refactored from the validated ch6/ch7 notebooks (PR), the legacy MATLAB `unifac.
 from the book's own equations and verified against its printed numbers, not ported.
 See Appendix B and `code/data/README.md`.
 
-⭐ **Writing them that way is what found the errata.** Making two printed expressions for
+**Writing them that way is what found the errata.** Making two printed expressions for
 the same quantity compute against each other — $\underline G^{ex}/RT = \sum_i x_i\ln\gamma_i$
 for the activity models, $P\hat V = \hat H - \hat U$ for the steam tables, the summation
 identity for Redlich–Kister — has now caught errors in Eqs. 9.5-12b and 9.5-18, in Table
