@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Homework: outlet temperature of throttled ethane — Ch 6</title>
+<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]}};</script>
+<script async src="../vendor/mathjax/tex-mml-svg.js"></script>
+<style>
+ body{font:16px/1.55 -apple-system,Segoe UI,Roboto,sans-serif;max-width:60rem;margin:2rem auto;padding:0 1rem;color:#1a1a1a}
+ h1{margin-bottom:.2rem} .sub{color:#666;margin-top:0}
+ nav a{margin-right:1rem} .pill{background:#eef;border-radius:1rem;padding:.1rem .6rem;font-size:.8rem}
+ /* `priority: high` items — the conventions an assistant most often gets wrong.
+    A faint tint plus an amber marker/rule, not a highlighter-pen fill: the flag
+    has to read as an annotation, not as broken row striping. */
+ .hi{background:#fff8ea}
+ li.hi::marker{color:#c07f0a}
+ ul.conv{padding-left:1.6rem} ul.conv li{padding:.2rem .5rem;margin:.35rem 0}
+ /* reserve the rule's width on every row so flagged rows don't shift 3px right */
+ tr td:first-child{border-left:3px solid transparent}
+ tr.hi td:first-child{border-left-color:#dda63f}
+ .legend{font-size:.85rem;color:#666;margin:.2rem 0 .7rem}
+ /* each legend swatch mimics its own section's cue: an amber bullet for the
+    conventions list, an amber left rule for the symbols table */
+ .swatch{display:inline-block;background:#fff8ea;padding:0 .25rem;color:#c07f0a}
+ .swatch-rule{border-left:3px solid #dda63f;padding:0 .3rem 0 .15rem}
+ table{border-collapse:collapse;width:100%}
+ td{border-bottom:1px solid #eee;padding:.35rem .5rem;vertical-align:top}
+ td.sym{width:9rem;white-space:nowrap} .eq{margin:.6rem 0;padding:.4rem .8rem;border-left:3px solid #ccd}
+ .eq .note{color:#555;font-size:.9rem} code{background:#f5f5f7;padding:.05rem .3rem;border-radius:.2rem}
+ .copy{display:inline-block;background:#2456d6;color:#fff;border:0;border-radius:.4rem;padding:.4rem .8rem;cursor:pointer;font-size:.9rem;text-decoration:none}
+ .copy:hover{background:#1840a8}
+ .ghost{display:inline-block;background:#fff;color:#2456d6;border:1px solid #2456d6;border-radius:.4rem;padding:.4rem .8rem;cursor:pointer;font-size:.9rem;text-decoration:none}
+ .ghost:hover{background:#eef2ff}
+ .actions{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.3rem 0}
+ /* Notebook-page action stack. Full-width tap targets because the commonest way
+    into these pages is a phone scanning a margin QR off the printed page. */
+ .btnstack{max-width:32rem;margin:1rem 0}
+ .btnstack a{display:block;padding:.85rem 1rem;margin:.5rem 0;border:1px solid #c9c9d0;
+      border-radius:.6rem;text-decoration:none;color:inherit;font-weight:600;background:#fff}
+ .btnstack a:hover{background:#f2f2f6;border-color:#2456d6}
+ .btnstack a .k{display:block;font-weight:400;font-size:.85rem;color:#666;margin-top:.1rem}
+ pre.raw{display:none} .prompt{border:1px solid #e3e3e8;border-radius:.5rem;padding:.8rem 1rem;margin:.7rem 0}
+ .prompt h4{margin:.1rem 0} .prompt pre{white-space:pre-wrap;background:#f7f7fa;padding:.6rem;border-radius:.4rem;font-size:.85rem}
+ .hint{background:#f0f4ff;border:1px solid #dde4ff;border-radius:.4rem;padding:.5rem .8rem;margin:.6rem 0;color:#334}
+ /* when .hint is itself a list, give the markers room INSIDE the tinted box —
+    otherwise list-style-position:outside puts 1./2./3. beyond the left border */
+ ol.hint,ul.hint{padding-left:2.1rem} ol.hint li,ul.hint li{margin:.3rem 0}
+ .warn{background:#fff4e5;border:1px solid #ffd9a8;border-radius:.4rem;padding:.5rem .8rem;margin:.6rem 0;color:#5c4300}
+ .toc{font-size:.9rem;margin:.2rem 0 1.2rem;color:#555} .toc a{margin-right:.35rem}
+ .check{color:#1a6} .fail{color:#b44} footer{color:#888;font-size:.85rem;margin-top:3rem;border-top:1px solid #eee;padding-top:1rem}
+</style></head><body>
+<nav><a href="../index.html">&larr; Index</a> <a href="../ch06.html">&larr; Chapter 6</a></nav>
+<p class="sub">Chapter 6: The Thermodynamic Properties of Real Substances</p>
+<h1>Homework: outlet temperature of throttled ethane <span class="pill">homework</span></h1>
+<p>Homework companion to the methane example — find the temperature of ethane after a throttle using PR departure functions. The thermo-package version works it with <code>thermo</code>, using guess-and-check plus a root-finder.</p>
+<p class="hint">Builds: <span class="pill">departure-functions</span> <span class="pill">energy-balance</span> <span class="pill">thermo-package</span> </p>
+<h3>Self-contained version &mdash; <code>ch6/PR_throttle_C2H6_homework.ipynb</code></h3>
+<div class="btnstack">
+<a href="https://github.com/emfurst/cbet6e/blob/main/code/ch6/PR_throttle_C2H6_homework.ipynb">📊 View the notebook<span class="k">Reads it on GitHub &mdash; code, explanation, and the saved figure &mdash; with nothing to install.</span></a>
+<a href="https://colab.research.google.com/github/emfurst/cbet6e/blob/main/code/ch6/PR_throttle_C2H6_homework.ipynb">▶️ Run it in Colab<span class="k">Runs in the browser. Colab already provides the libraries it imports.</span></a>
+<a href="../codes/ch6/PR_throttle_C2H6_homework.ipynb" download="PR_throttle_C2H6_homework.ipynb">⬇️ Download the .ipynb<span class="k">Open it in Jupyter, or in an editor with an AI coding assistant that can run the cells.</span></a>
+</div>
+<h3>Thermo package version &mdash; <code>ch6/PR_throttle_C2H6_homework_thermo.ipynb</code></h3>
+<div class="btnstack">
+<a href="https://github.com/emfurst/cbet6e/blob/main/code/ch6/PR_throttle_C2H6_homework_thermo.ipynb">📊 View the notebook<span class="k">Reads it on GitHub &mdash; code, explanation, and the saved figure &mdash; with nothing to install.</span></a>
+<a href="https://colab.research.google.com/github/emfurst/cbet6e/blob/main/code/ch6/PR_throttle_C2H6_homework_thermo.ipynb">▶️ Run it in Colab<span class="k">Runs in the browser. The first cell fetches the <code>thermo</code> package and the property data when they are not already present.</span></a>
+<a href="../codes/ch6/PR_throttle_C2H6_homework_thermo.ipynb" download="PR_throttle_C2H6_homework_thermo.ipynb">⬇️ Download the .ipynb<span class="k">Open it in Jupyter, or in an editor with an AI coding assistant that can run the cells.</span></a>
+</div>
+<p class="hint"><b>Which version?</b> The <i>self-contained</i> notebook codes the method inline from the governing equations; the <i>thermo package</i> version imports the shared library instead. Read the self-contained one to see how the method works, the package one to see how it is reused.</p>
+<h3>Working on this with an AI assistant</h3>
+<p>Put this chapter&rsquo;s notation file in your project so the assistant follows the book&rsquo;s symbols and sign conventions. If you <a href="https://github.com/emfurst/cbet6e">cloned the repository</a> it is already there, as <code>code/grounding/ch06-notation.md</code>; if you downloaded the notebook on its own, save it alongside: <a href="../grounding/ch06-notation.md" download><code>ch06-notation.md</code></a>.</p>
+<p class="hint">Everything else for this chapter &mdash; the notation primer, the study prompts, and the rest of its notebooks &mdash; is on the <a href="../ch06.html">Chapter 6 page</a>.</p>
+<!-- Generated from 6e_companion_site/source by build.py. Do not edit generated HTML by hand; edit the source and rebuild. -->
+<footer>Thermodynamics companion site · Sandler and Furst, &quot;Chemical, Biochemical, and Engineering Thermodynamics,&quot; 6e</footer>
+</body></html>
