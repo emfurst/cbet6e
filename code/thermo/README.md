@@ -31,11 +31,14 @@ it. That split, and everything still to be built, is [`ROADMAP.md`](ROADMAP.md).
 | [`electrolytes`](#electrolyte-solutions--electrolytes) | Debye–Hückel and its extensions; ionic strength, $\gamma_\pm$ | 9, 15 |
 | [`wong_sandler`](#combined-eos--gex-the-wongsandler-mixing-rule--wong_sandler) | an activity coefficient model inside a cubic EOS | 9, 10 |
 | [`fitting`](#redlichkister-correlation-of-mixing-data--fitting) | Redlich–Kister correlation, partial molar properties | 8 |
+| [`reaction`](#chemical-reaction-equilibrium--reaction) | $K_a(T)$, the extent of reaction, Ellingham, Gibbs minimization — **replaces CHEMEQ** | 13 |
 | [`data`](#the-data-tables--data) | every table above, plus the property and reaction databases | all |
 | [`charts`, `ph_chart`, `steam_chart`](#property-charts--charts-ph_chart-steam_chart) | the book's property charts | 3, 5, 6 |
 
-⬜ **Not built yet:** chemical equilibrium and electrochemistry, for ch13–15. Chapters
-6–9 are complete; ch10's VLE drivers are next. See the roadmap.
+⬜ **Not built yet:** electrochemistry, and the ionization half of ch13 (Secs. 13.5–13.7 —
+$K_a$ coupled to $\gamma_\pm$ through the ionic strength, which belongs with `electrolytes`).
+✅ Reaction equilibrium itself landed 2026-08-18 as [`reaction`](#chemical-reaction-equilibrium--reaction).
+See the roadmap.
 
 ## Peng–Robinson (pure fluids)
 
@@ -377,6 +380,94 @@ $Q$ collapses through zero mid-composition. `cross_matrix` carries the sign of t
 through the root, which is the only reading consistent with the rule reducing to
 $b_i - a_i/RT$ on the diagonal. Worth a footnote in print; see `revision_notes/c09.md`.
 
+## Phase equilibrium — `vle` (Ch. 10) and `lle` (Ch. 11)
+
+`vle` is the γ–φ method: an activity coefficient model in the liquid, ideal gas in the
+vapor, with `GammaPhi.bubble_pressure / dew_pressure / bubble_temperature /
+dew_temperature / flash` and the diagram generators `pxy`, `txy`, `azeotrope`. Its
+solvers carry the **same names and signatures as `PRMixture`'s**, which is what lets one
+generator draw both Chapter 10's low-pressure diagrams and Sec. 10.3's high-pressure
+ones. It also holds the vapor-pressure correlations (`Antoine`, `ClausiusClapeyron`,
+`Wagner`, `Riedel`, `TabulatedPsat`, and `psat_from_database`).
+
+`lle`, added 2026-08-16, is SIS Secs. 11.2 and 11.3. The equilibrium condition loses its
+vapor pressure entirely — the pure-component fugacity cancels from both sides — and what
+is left is Eq. 11.2-2, $x_i^{\rm I}\gamma_i^{\rm I} = x_i^{\rm II}\gamma_i^{\rm II}$:
+
+```python
+from thermo import VanLaar, binary_lle, vlle_binary
+from thermo.lle import binary_lle_envelope, consolute_temperature, tie_line_split
+
+xI, xII = binary_lle(VanLaar(2.62, 3.02), 310.95)       # Illustration 11.2-2
+P, y, xI, xII = vlle_binary(gp, 310.95)                 # Illustration 11.3-1
+```
+
+| what | function | SIS |
+|---|---|---|
+| Gibbs energy of mixing, its curvature, stability | `gmix_over_RT`, `d2gmix_over_RT`, `is_stable` | 11.2-16, 11.2-9 |
+| limits of stability; the common-tangent brackets | `spinodal`, `common_tangent` | 11.2-10, Fig. 11.2-5 |
+| binary LLE, and the coexistence curve over T | `binary_lle`, `binary_lle_envelope` | 11.2-2 |
+| upper / lower consolute temperature | `consolute_temperature` | 11.2-14 |
+| multicomponent two-liquid flash | `lle_flash` | 11.2-2 + 11.2-24 |
+| lever rule and stream mixing (mass or mole) | `tie_line_split`, `mix_streams` | 11.2-1b |
+| activity coefficient from a solubility | `gamma_from_solubility`, `solubility_at_T` | 11.2-18, 11.2-22 |
+| three-phase P and T, immiscible limit, steam distillation | `vlle_binary`, `vlle_temperature`, `immiscible_pressure`, `steam_distillation` | 11.3-3, 11.3-5 |
+| P–x and T–x with the LLE region resolved | `pxy_lle`, `txy_lle` | Figs. 11.3-1, 11.3-2, 11.3-4 |
+| **the equation-of-state route** — liquid root in both phases | `eos_binary_lle`, `eos_vlle_binary` | 11.2-5, 11.3-2 |
+
+⛔ **Equation 11.2-2 has a trivial root.** $x^{\rm I} = x^{\rm II}$ satisfies it at every
+temperature for every model, and it is what a solver handed a plain guess converges to.
+`binary_lle` is therefore not seeded by a guess: it takes the **lower convex hull** of the
+Gibbs energy of mixing — the common-tangent construction of Fig. 11.2-5, done numerically
+— which cannot produce a trivial seed, and reports *no split* instead. After the solve it
+checks that the tangent it found lies below the curve everywhere. A pair of compositions
+that satisfies Eq. 11.2-2 to 1e-12 and is still not the equilibrium state is the ordinary
+failure of this calculation, not a hypothetical one.
+
+⚠️ **Models whose parameters depend on temperature.** Every function that varies T
+accepts either an `ActivityModel` or a **callable `T -> model`**, which is what
+Illustration 11.2-6 needs (χ = 1473/T).
+
+⭐ **Two routes, two signatures, and the difference is physical.** `eos_binary_lle` and
+`eos_vlle_binary` take anything with an `ln_phi(x, T, P, phase=...)` — `PRMixture` or the
+Wong-Sandler mixing rule — and they take **P as an argument**, because a cubic has no
+incompressible-liquid shortcut. `eos_vlle_binary` therefore solves all four unknowns
+(both liquid compositions, the vapor composition, the pressure) at once rather than
+solving LLE first and taking a bubble point, which `vlle_binary` legitimately can:
+
+```python
+from thermo import eos_vlle_binary
+P, y, xI, xII = eos_vlle_binary(pr_mixture, 235.65)     # Illustration 11.3-2
+```
+
+⛔ **The vapor equation has a trivial root of its own**, and it is a different one:
+$y = x^{\rm II}$ satisfies it *exactly* wherever the cubic has a single real root, since
+then the "vapor" root and the liquid root are the same number. That is the situation
+above the three-phase pressure, so a badly seeded solve returns a converged answer with
+three liquids in it. `eos_vlle_binary` rejects any solution whose vapor is
+indistinguishable from either liquid. ⚠️ `PhiPhiVLE.bubble_pressure` has the same hole
+and is **not** guarded — its default seed is far below, so the ordinary path is
+unaffected; see `revision_notes/c11.md` §13.
+
+✅ Validated in `code/ch11/validation/lle_module_validation.ipynb` against Illustrations
+11.2-1, 11.2-2, 11.2-3, 11.2-4, 11.2-6, 11.2-7, 11.2-8, 11.2-9, 11.3-1, 11.3-2 and
+11.3-3, the fourteen-row $x_i\gamma_i$ table of Illustration 11.2-2, the thirty-two
+printed values of Illustration 11.3-2, and — with no rounding in them — the analytic
+results of Eqs. 11.2-11, 11.2-13, 11.2-14 and Problem 11.2-1(a,b). That pass found five
+defects in the chapter, and a sixth in this module; they are filed in
+`revision_notes/c11.md`.
+
+⚠️ **Illustration 11.3-2 needs SIS Table 6.6-1's constants, not `pure_property.csv`'s.**
+The database is Reid, Prausnitz and Poling and gives ω = 0.239 for carbon dioxide where
+the book prints 0.225 — a 2 % systematic error in the three-phase pressure. Build the
+`PengRobinson` objects explicitly when reproducing a printed table, the same way
+`APPENDIX_A2_CP` exists for heat capacities.
+
+⛔ **Still not here:** Illustration 11.2-5's *Wong-Sandler* curve. Its UNIQUAC parameters
+were "fit only to the data at 235.65 K" and are not printed, so that curve has to be
+refitted rather than reproduced. The van der Waals half of the same figure runs today
+with `eos_binary_lle`.
+
 ## Redlich–Kister correlation of mixing data — `fitting`
 
 ```python
@@ -515,6 +606,131 @@ supercritical isobars and lines of constant enthalpy, for methane, nitrogen and 
 The full charts render identically too: Fig. 3.3-2 gives 85 paths and 57 labels, and
 Fig. 3.3-1(b) 99 paths and 23 labels, with identical geometry, text, position and
 rotation in both cases.
+
+## Triangular composition diagrams — `ternary`
+
+Added 2026-08-16, for Figs. **11.2-7** through **11.2-11** — five figures nothing else
+in the book could draw. `charts` rules rectangular chart paper and `vle_chart` draws
+binary envelopes; a ternary diagram is neither. This module is **draftsmanship only**:
+the thermodynamics is in `lle` (`lle_flash`, `tie_line_split`, `mix_streams`) and
+nothing here solves anything.
+
+```python
+from thermo.charts import use_book_style
+from thermo import ternary as tern
+
+use_book_style()
+tern.ternary_axes(ax, top="A", left="MIK", right="W", symbol="w", percent=True)
+tern.plot(ax, acetone, mik, water)                  # the binodal
+tern.tie_line(ax, xI, xII)                          # one tie line
+tern.lever_arm(ax, z, xI, xII)                      # Illustrations 11.2-7/-8/-9
+tern.check_labels(ax)                               # ⬅ before saving
+```
+
+| function | what it draws |
+|---|---|
+| `to_xy` / `from_xy` | the coordinate pair, `(top, left, right)` ↔ `(x, y)` |
+| `ternary_axes` | triangle, three scales, corner names, edge symbols, two-tier grid |
+| `plot`, `scatter` | binodal curves; measured points as open circles |
+| `tie_line`, `lever_arm` | one tie line; the lever rule with the feed point marked |
+| `point`, `text`, `region_label` | a labeled composition; free text; a `2L`/`3L` region tag |
+| `read_construction` | **Fig. 11.2-7** — how a point is read, one line per species |
+| `check_labels` | fails if any two labels overlap |
+
+⚠️ **Which edge carries which species is not arbitrary, and the obvious guess is
+wrong.** A species' fraction is proportional to the perpendicular distance from the
+edge **opposite** its corner — that is the geometry. But the printed **ruler** is on an
+**adjacent** edge, the one ending at its own corner, so each scale runs *toward* the
+thing it measures. The first draft put the apex species on the left edge; the 5e's own
+Figs. 11.2-7 and 11.2-8 put it on the right, and the convention was taken from those
+two figures rather than invented.
+
+⭐ **`check_labels` is `check_print_art.py`'s blind spot, made reusable.** That gate
+reads color and font family and cannot see two labels sitting on top of each other —
+and a triangular diagram crowds three scales, three corner names and three edge symbols
+around one small perimeter. It caught `x_C = 0.25` running through the `0.2` tick at a
+0.4 px overlap, which looked deliberate at thumbnail size. Worth copying into the other
+figure notebooks.
+
+**Not `mpltern`.** The author's practice files use it, and it is a good library. It
+would be a new student-facing dependency in a `pyproject.toml` that is deliberately a
+short list of floors with no lock file, to keep resolving years from now — and the
+house rules (pure black ink, Computer Modern, nothing below 7 pt) are easier to obey
+owning ~200 lines of geometry than bending a third-party projection. Fig. 11.2-7 is not
+a data plot at all.
+
+**Validation.** The geometry is exact: the three corners land on their vertices, all
+three edges are unit length, `from_xy(to_xy(c)) == c` to machine precision on 500 random
+compositions, and lines of constant composition come out horizontal / 60° / 120° to
+within 6e-17. The drawing was checked against the two figures it imitates, and the
+lever-rule path reproduces **Illustration 11.2-8**: feed 15 % A / 75 % MIK / 10 % W, and
+3.720 / 0.280 kg against the book's 3.721 / 0.279.
+
+## Chemical reaction equilibrium — `reaction`
+
+⭐ **This module is the replacement for CHEMEQ** and for "the chemical equilibrium constant
+calculation programs of Appendix B.I or B.II" — the Visual Basic executables the 5e shipped
+on its website. It was written from that source, not reverse-engineered from the printed
+output: `chemeq_source.zip` was unpacked and `frmChemEq.frm` read, and the two routines
+that carry the whole program (`Ka_T298` and `cmdCalKa_Trange_Click`) are the analytic van 't
+Hoff integration below. CHEMEQ's own 99-row species database was read too, and it is
+identical to `code/data/react_property.csv` — every row, every column.
+
+```python
+from thermo import Reaction, equilibrium_extent
+
+rxn = Reaction.parse("0.5 N2 + 1.5 H2 = NH3").check_balance()
+rxn.Ka(450.0)                                   # 1.218, as Illustration 13.1-4 prints
+rxn.table([500, 600, 700, 800])                 # what CHEMEQ printed
+equilibrium_extent(rxn, 450.0, {"N2": 0.5, "H2": 1.5}, P=4.0)   # X = 0.6306
+```
+
+Coefficients are **negative for reactants**, and species are named by the formulas of
+Appendix A.IV (`'N2O4'`, `'H2O(g)'`, `'nC6H14(l)'`).
+
+| what | entry point | SIS |
+|---|---|---|
+| $K_a(T)$ four ways — full Cp polynomial, constant $\Delta C_P$, constant $\Delta H$, quadrature | `Reaction.ln_Ka`, `Reaction.Ka` | 13.1-18, 13.1-22 |
+| $\Delta_{rxn}G^\circ(T)$, $\Delta_{rxn}H^\circ(T)$, $\Delta_{rxn}S^\circ(T)$ | `Reaction.delta_G`, `.delta_H`, `.delta_S` | 13.1-21 |
+| the CHEMEQ output table | `Reaction.table` | — |
+| the chapter's mass-balance tables | `Reaction.balance_table`, `.moles` | Table 13.1-1, Eq. 13.1-5 |
+| the extent of reaction, at fixed $T,P$ or fixed $T,V$ | `equilibrium_extent` | 13.1-19 |
+| $K_c$, $K_x$, $K_y$, $K_p$ | `Reaction.K_ratio` | Table 13.1-3, 13.1-23 |
+| $K_\nu$ from an EOS, $K_\gamma$ from a $\gamma$ model | `K_nu_from_eos`, `K_gamma_from_model` | 13.1-23d |
+| several reactions at once | `multireaction_extents` | 13.3 |
+| the same state without choosing reactions | `gibbs_minimization` | 13.3 |
+| $G$ against the extent — the figure the chapter opens with | `gibbs_curve` | Fig. 13.1-1 |
+| the Ellingham construction | `ellingham` | 13.2, Fig. 13.2-3 |
+
+### Guards, and what they caught
+
+⛔ **`equilibrium_extent` never takes a bare initial guess.** The extent is bounded by
+exhaustion — no species may end with a negative mole number — which gives a closed bracket,
+and the solve is a bracketed Brent on it. Monotonicity of $\prod a_i^{\nu_i}$ across that
+bracket is *checked and reported*, not assumed, and on failure the solver raises rather than
+returning its last iterate. Illustration 13.1-5 is the chapter's own example of an equation
+whose extra roots converge perfectly well and mean nothing.
+
+⛔ **A pure condensed phase stays out of the mole-fraction denominator.** Mark it
+`phases={"C": "solid"}` and it has unit activity, does not dilute the fluid, and does not
+bound the extent. Getting this wrong moves the answer by 0.11 in mole fraction — and it is
+the same error Illustration 13.3-1's own note attributes to Aspen Plus.
+
+### Validated against Chapter 13 — 33 of 34 checks
+
+`code/ch13/validation/reaction_module_validation.ipynb`. Illustration 13.1-3 reproduces to
+**every printed digit** (including the internal identity that 56 189 and −6758.4 are the same
+number twice), Illustration 13.1-4's three extents come out exactly (0.6306, 0.4072, 0.5741),
+and Illustration 13.2-2's decomposition-pressure table reproduces across **25 orders of
+magnitude** to 0.66 %. Ten of the checks are identities with no rounding in them at all —
+the analytic integration against quadrature, $\Delta_{rxn}G^\circ(T)$ by two routes that
+share no arithmetic, the minimum of $G(X)$ against the root of $K_a=\prod a_i^{\nu_i}$, and
+the coupled-extent solve against Gibbs minimization.
+
+⛔ **The one failure is a finding about the book, not the module**: Illustration 13.1-8's
+printed $K_a$ table is not reproducible from Appendix A by any route the chapter offers, and
+it contradicts the book's own $K_a(450\ \mathrm{K})$ for the same reaction. It is filed as
+Q8 in `revision_notes/c13.md`, and nothing here is tuned to match it.
 
 ## Provenance
 

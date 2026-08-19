@@ -294,6 +294,12 @@ def pr_kij_matrix(keys, strict=False):
 # Verified: the group sums reproduce Illustration 9.5-2 exactly -- benzene as 6 ACH
 # gives r = 2.2578 and q = 2.5926, and 2,2,4-trimethyl pentane as 5 CH3 + CH2 + CH + C
 # gives r = 5.0600 and q = 6.3675.
+#
+# That is true of the 6e, which recomputed the illustration on this table. The 5e's
+# version of it printed 3.1878 / 2.4000 and 5.8463 / 5.0080 -- ORIGINAL-UNIFAC sums --
+# while citing Table 9.5-2. Those 5e values are the source of
+# code/data/unifac_subgroups_original.csv; see
+# ch10/validation/unifac_original_vs_dortmund_validation.ipynb.
 def _check_subgroups(df):
     """Integrity rules the table must satisfy. A silent violation here changes every
     activity coefficient, so it is checked on every load rather than documented.
@@ -318,22 +324,52 @@ def _check_subgroups(df):
     return df
 
 
-def load_unifac_subgroups():
-    """Table 9.5-2: subgroup_no, main_group_no, subgroup_name, main_group_name, R, Q,
-    example. The R/Q are the **modified (Dortmund)** values -- the only set the book
-    prints (see revision_notes/c09.md D1)."""
-    return _check_subgroups(pd.read_csv(DATA_DIR / "unifac_subgroups.csv"))
+def load_unifac_subgroups(kind="modified"):
+    """Subgroup volume and surface-area parameters.
+
+    `modified` is Table 9.5-2 in full: subgroup_no, main_group_no, subgroup_name,
+    main_group_name, R, Q, example. This is the book's model (revision_notes/c09.md D1).
+
+    `original` is Table 7.5-2 of **this book's 2nd edition** in full: 85 subgroups over
+    44 main groups, which is exactly the main-group set
+    `unifac_interactions_original.csv` is keyed on. It replaced a six-row stub on
+    2026-08-17; those six rows, recovered from the 5e's Illustration 9.5-2, now serve
+    as an independent check on the transcription and agree to the last digit.
+
+    ⛔ The two tables share subgroup numbers 1-26 and 40-77 and **disagree on 27,
+    37-39 and 78-85** -- 27 is `FCH2O` here and `cy-CH2 OCH2` there. Both numbers
+    exist in both tables, so a group assignment carried across kinds does not raise.
+    Use `unifac_groups(name, kind)`.
+
+    ⛔ **Never mix the two sets.** The R/Q and the a_mn must come from the same
+    parameter set; the 6e's own footnote to Table 9.5-2 says so. `UNIFAC(kind=...)`
+    pairs them, which is why this loader is not meant to be called directly.
+    """
+    if kind == "modified":
+        return _check_subgroups(pd.read_csv(DATA_DIR / "unifac_subgroups.csv"))
+    if kind == "original":
+        return _check_subgroups(pd.read_csv(DATA_DIR / "unifac_subgroups_original.csv"))
+    raise ValueError(f"kind must be 'modified' or 'original', got {kind!r}")
 
 
-def unifac_groups(name):
-    """Look up the group assignment the book's Example Assignments column gives.
+def unifac_groups(name, kind="modified"):
+    """Look up the group assignment the parameter set's Example Assignments column gives.
 
     Returns {subgroup_no: count} ready for `UNIFAC.gamma`, so a notebook can write
     `unifac_groups("benzene")` instead of hand-transcribing `{9: 6}` and risking the
-    wrong subgroup number. Only the species Table 9.5-2 uses as examples are
-    available; anything else has to be assigned by hand from the table.
+    wrong subgroup number. Only the species the table uses as examples are available;
+    anything else has to be assigned by hand from the table.
+
+    ⛔ **`kind` must match the `UNIFAC(kind=...)` the result is handed to.** The two
+    parameter sets share subgroup numbers 1-26 and 40-77, but **27, 37-39 and 78-85
+    name different groups in each** -- 27 is the original set's `FCH2O` and Dortmund's
+    `cy-CH2 OCH2`, 78-80 are `SiH3`/`SiH2`/`SiH` against `cy-CH2`/`cy-CH`/`cy-C`. Both
+    numbers exist in both tables, so a mismatched assignment does not raise; it returns
+    a plausible wrong answer. Tetrahydrofuran is the trap in miniature: original UNIFAC
+    calls it 1 FCH2O + 3 CH2, Dortmund 1 cy-CH2 OCH2 + 2 cy-CH2 -- different numbers,
+    different counts, same species.
     """
-    df = load_unifac_subgroups()
+    df = load_unifac_subgroups(kind)
     key = str(name).strip().lower()
     num = dict(zip(df.subgroup_name.str.replace(" ", ""), df.subgroup_no))
     for ex in df.example.dropna():
@@ -356,11 +392,11 @@ def unifac_groups(name):
             count = int(m.group(1)) if m.group(1) else 1
             sub = m.group(2).replace(" ", "")
             if sub not in num:
-                raise KeyError(f"Table 9.5-2 example {ex!r} names subgroup {sub!r}, "
-                               f"which is not a row of the table")
+                raise KeyError(f"example {ex!r} names subgroup {sub!r}, which is not a "
+                               f"row of the {kind!r} table")
             groups[int(num[sub])] = groups.get(int(num[sub]), 0) + count
         return groups
-    raise KeyError(f"{name!r} is not an example species in Table 9.5-2")
+    raise KeyError(f"{name!r} is not an example species in the {kind!r} table")
 
 
 def load_unifac_interactions(kind="modified"):

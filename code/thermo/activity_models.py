@@ -19,11 +19,54 @@ replacement for the 4th-edition ACTCOEFF worksheet.
 
 **Every model here is temperature-aware at the interface even when its parameters are
 not.** `gamma(x, T)` requires T throughout. For van Laar, Wilson, NRTL and UNIQUAC the
-book's parameters already absorb T (Table 9.5-1 tabulates alpha and beta per
-temperature *range*), so T only sets the scale of `gex`; for Margules, Redlich-Kister
-and regular solution T enters the activity coefficient itself. Requiring it everywhere
-costs one argument and removes the class of error where a Margules A in J/mol is
-silently used as A/RT.
+book's parameters already absorb T, so T only sets the scale of `gex`; for Margules,
+Redlich-Kister and regular solution T enters the activity coefficient itself. Requiring
+it everywhere costs one argument and removes the class of error where a Margules A in
+J/mol is silently used as A/RT.
+
+## Reusing a model at a second temperature -- read this before extrapolating
+
+⚠️ "Absorb T" means **at the temperature the parameters were fitted at.** Three of these
+models are defined by an energy divided by RT, and the book prints the law:
+
+    Wilson    Lambda_ij = (V_j/V_i) exp[-(lambda_ij - lambda_ii)/RT]   Eq. 9.5-11
+    NRTL      tau_ij    = (g_ij - g_jj)/RT                             Eq. 9.5-13
+    UNIQUAC   ln tau_ij = -(u_ij - u_jj)/RT                            para. 1303
+
+So the **temperature-independent parameter is the energy**, and Lambda or tau carries a
+1/T. A model built with `NRTL(tau12=..., tau21=...)` stores the ratio, not the energy;
+it has no way to move it, and its `lngamma(x, T)` therefore uses the same numbers at
+every T. That is correct for one isotherm and wrong for an extrapolation, and the
+failure is silent: the fit at the reference temperature is identical either way, because
+the map between the energy and the ratio is one-to-one there.
+
+**Reuse across temperature is therefore an explicit choice, and this module makes you
+make it.** Evaluating one instance at a second temperature emits a `UserWarning`, once
+per instance. Three ways to say what you meant:
+
+    NRTL(tau12=dg12 / (R * T), tau21=dg21 / (R * T), alpha=0.3)   # rebuild at each T
+    NRTL(t12, t21, alpha=0.3).at_T(298.15)                        # declare the origin
+    m.rescaled_to(523.15)                                         # move it, by the law
+
+`at_T(T)` records the temperature the parameters were fitted at and returns the model,
+so the warning can name it. `rescaled_to(T)` returns a **new** model with the parameters
+carried to T by the law above -- NRTL and UNIQUAC only, because Wilson's Lambda bundles
+the volume ratio V_j/V_i in with the exponential and the energy cannot be recovered from
+Lambda alone (build Wilson from lambda_ij and the volumes instead).
+
+Rebuilding by hand is the clearest of the three in a notebook, because it puts the 1/T
+on the page next to the equation. The other two are for code that is handed a model it
+did not build.
+
+ⓘ **Not guarded, on purpose:** van Laar (Table 9.5-1 tabulates alpha and beta per
+temperature *range* -- the book gives no law to apply, so there is nothing to correct)
+and Flory-Huggins (chi's temperature dependence is substance-specific and the book fits
+it per system, so the notebooks already build a fresh model at each T). Margules,
+Redlich-Kister and regular solution hold energies in J/mol and divide by RT themselves.
+
+⭐ This guard exists because the class of error cost a session on Fig. 11.2-6, where the
+Wong-Sandler curve missed the measured liquid-liquid dome badly with tau frozen and
+matched it to 0.004 in mole fraction with the energies frozen.
 
 ## Units
 
@@ -56,6 +99,9 @@ the same identity, applied to the 5e's own hand-drawn tangent construction in Ta
 Eric M. Furst
 August 2026
 """
+import functools
+import warnings
+
 import numpy as np
 from scipy import constants, optimize
 
@@ -67,11 +113,42 @@ R = constants.R
 CC_PER_MOL = 1e-6                                  # cc/mol   -> m^3/mol
 CAL_CC_HALF = np.sqrt(constants.calorie / 1e-6)     # (cal/cc)^(1/2) -> Pa^(1/2)
 
-__all__ = ["ActivityModel", "OneConstantMargules", "TwoConstantMargules",
+__all__ = ["ActivityModel", "FrozenParameterWarning",
+           "OneConstantMargules", "TwoConstantMargules",
            "RedlichKisterGex", "VanLaar", "Wilson", "NRTL", "FloryHuggins",
            "UNIQUAC", "RegularSolution", "fit_binary",
            "TABLE_9_5_1_VAN_LAAR", "TABLE_9_6_1", "TABLE_9_6_1_BLOCK",
            "CC_PER_MOL", "CAL_CC_HALF"]
+
+
+# ---------------------------------------------------------------------------
+# the temperature guard -- see "Reusing a model at a second temperature" above
+# ---------------------------------------------------------------------------
+class FrozenParameterWarning(UserWarning):
+    """One model instance was evaluated at two temperatures.
+
+    Its stored parameter is a ratio that hides a 1/T (Eq. 9.5-11, 9.5-13, para.
+    1303), so the second evaluation is a different model from the one that was
+    fitted -- silently, because both give the same answer at the first temperature.
+    """
+
+
+def _guard_T(func):
+    """Wrap `lngamma` / `gex_over_RT` so the temperature they are called at is seen.
+
+    Both are wrapped, because they are independent entry points: `gamma` routes
+    through `lngamma`, but `gex` routes through `gex_over_RT`, and the Sec. 9.5
+    models override the latter with the book's own printed expression for G^ex.
+    `WongSandler` calls `gex(x, T)`, so guarding only `lngamma` would miss the case
+    this guard was written for.
+    """
+    @functools.wraps(func)
+    def wrapper(self, x, T, *args, **kwargs):
+        self._note_T(T)
+        return func(self, x, T, *args, **kwargs)
+
+    wrapper._guards_T = True
+    return wrapper
 
 
 # ---------------------------------------------------------------------------
@@ -87,6 +164,64 @@ class ActivityModel:
 
     #: number of species the model is written for; None means any
     n = None
+
+    #: The book's law for the stored parameter, for the models whose parameter is an
+    #: energy divided by RT. Not None means one instance describes **one**
+    #: temperature; see the module docstring. None means the parameters are energies
+    #: in J/mol and `lngamma` divides by RT itself, so the model travels freely.
+    _T_LAW = None
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        for name in ("lngamma", "gex_over_RT"):
+            f = cls.__dict__.get(name)
+            if f is not None and not getattr(f, "_guards_T", False):
+                setattr(cls, name, _guard_T(f))
+
+    # -- temperature bookkeeping -------------------------------------------
+    def at_T(self, T):
+        """Declare the temperature these parameters were fitted at; returns `self`.
+
+        Only bookkeeping -- it changes no number. It lets the warning name the
+        reference temperature, and it is the honest way to record a fit whose
+        parameters arrived as bare ratios from a table or a paper.
+        """
+        self._T_ref = float(T)
+        return self
+
+    def rescaled_to(self, T):
+        """A **new** model with the parameters carried to `T` by the book's law.
+
+        Defined where the law can be inverted from what is stored. `self` is left
+        alone, because the fitted model is a record of a measurement and should not
+        change under the reader's feet.
+        """
+        if self._T_LAW is None:
+            return self                     # parameters are energies; nothing to move
+        raise NotImplementedError(
+            f"{type(self).__name__} has no rescaling: its stored parameter cannot be "
+            f"inverted for the energy on its own ({self._T_LAW}). Build the model "
+            f"from the energies at the temperature you want.")
+
+    def _note_T(self, T):
+        """Warn the first time this instance is used at a second temperature."""
+        if self._T_LAW is None or T is None:
+            return
+        T = float(T)
+        seen = self.__dict__.get("_T_ref")
+        if seen is None:
+            self.__dict__["_T_ref"] = T
+        elif abs(T - seen) > 1e-6 and not self.__dict__.get("_T_warned"):
+            self.__dict__["_T_warned"] = True
+            warnings.warn(
+                f"{type(self).__name__} built for T = {seen:g} K is being evaluated "
+                f"at T = {T:g} K, and its parameters were not moved. The book defines "
+                f"{self._T_LAW}, so the temperature-independent quantity is the "
+                f"energy, not what is stored here -- the two agree at {seen:g} K and "
+                f"nowhere else. Rebuild the model at each temperature, or call "
+                f"`.rescaled_to(T)`. If holding it fixed is deliberate, say so with "
+                f"`warnings.simplefilter('ignore', FrozenParameterWarning)`.",
+                FrozenParameterWarning, stacklevel=3)
 
     # -- the two public answers -------------------------------------------
     def gamma(self, x, T):
@@ -435,6 +570,18 @@ class FloryHuggins(ActivityModel):
     found the discrepancy, and returns ~1e-16 as written and ~5e-1 with the printed
     sign. Problem 9.29 asks the reader to derive Eq. 9.5-18, so a student who does the
     derivation correctly will disagree with the printed answer.
+
+    ⛔ **A SECOND ERRATUM, SIS Illustration 11.2-6.** That illustration restates these
+    equations "from Eqs. 9.5-18" and drops the **m** in front of chi phi_1^2. Its
+    printed table of PS/PMMA coexistence compositions was computed with the m missing
+    *and* with the sign the way this class writes it -- neither Eq. 9.5-18 as printed
+    nor the consistent form reproduces the table, and the combination
+    `printed_sign=False, printed_chi=True` reproduces every row of it to 0.0004 in
+    mole fraction. So the sign in Illustration 11.2-6 is a typesetting slip that did
+    not reach the arithmetic, and the missing m did. Set both flags to reproduce the
+    printed table; leave both alone to get the physics. The two answers differ by up
+    to 0.10 in mole fraction near the critical point and they disagree about where
+    the two polymers become miscible.
     """
 
     n = 2
@@ -451,16 +598,22 @@ class FloryHuggins(ActivityModel):
         d = x1 + self.m * x2
         return x1 / d, self.m * x2 / d
 
-    def lngamma(self, x, T, printed_sign=False):
-        """Set `printed_sign=True` to reproduce SIS Eq. 9.5-18 exactly as printed --
-        which is thermodynamically inconsistent; see the class docstring."""
+    def lngamma(self, x, T, printed_sign=False, printed_chi=False):
+        """Both flags select a printed variant of Eq. 9.5-18 over the consistent one.
+
+        `printed_sign=True` gives the +(m - 1) phi_1 of Eq. 9.5-18 as typeset;
+        `printed_chi=True` drops the m from m chi phi_1^2, as SIS Illustration 11.2-6
+        restates it. Either is thermodynamically inconsistent -- see the class
+        docstring for what each is for.
+        """
         x1, x2 = self._x(x)
         p1, p2 = self._phi(x1, x2)
         m, chi = self.m, self.chi
         s = +1.0 if printed_sign else -1.0
+        mc = 1.0 if printed_chi else m
         with np.errstate(divide="ignore", invalid="ignore"):
             ln1 = (np.log(p1 / x1) if x1 else np.log(1.0 / m)) + (1 - 1 / m) * p2 + chi * p2**2
-            ln2 = (np.log(p2 / x2) if x2 else np.log(m)) + s * (m - 1) * p1 + m * chi * p1**2
+            ln2 = (np.log(p2 / x2) if x2 else np.log(m)) + s * (m - 1) * p1 + mc * chi * p1**2
         return np.array([ln1, ln2])
 
     def gex_over_RT(self, x, T):
@@ -493,7 +646,14 @@ class Wilson(ActivityModel):
     ⛔ **Wilson cannot predict liquid-liquid immiscibility** for any parameter values
     -- the reason Chapter 11 reaches for NRTL or UNIQUAC instead. The model is not
     broken; the limitation is structural, and Sec. 9.11 says so.
+
+    ⚠️ **One instance is one temperature** -- see the module docstring. Wilson is the
+    one guarded model with no `rescaled_to`: Lambda_ij bundles the volume ratio
+    V_j/V_i in with the exponential, so the energy cannot be recovered from Lambda
+    alone. Build it from lambda_ij and the molar volumes at the temperature you want.
     """
+
+    _T_LAW = "Lambda_ij = (V_j/V_i) exp[-(lambda_ij - lambda_ii)/RT] (Eq. 9.5-11)"
 
     def __init__(self, Lambda, L21=None):
         if L21 is not None:
@@ -575,7 +735,12 @@ class NRTL(ActivityModel):
     `alpha` is the nonrandomness parameter; 0.2-0.47 in practice, and Renon and
     Prausnitz's own recommendation is to fix it rather than fit it, which is why it
     is a separate argument here.
+
+    ⚠️ **One instance is one temperature** -- tau_ij is an energy over RT, so it
+    scales as 1/T. See the module docstring; `rescaled_to` moves it.
     """
+
+    _T_LAW = "tau_ij = (g_ij - g_jj)/RT (Eq. 9.5-13)"
 
     def __init__(self, tau12=None, tau21=None, alpha=0.3, tau=None, alpha_matrix=None):
         if tau is not None:
@@ -621,6 +786,16 @@ class NRTL(ActivityModel):
         return np.array([t21 + t12 * np.exp(-a * t12),
                          t12 + t21 * np.exp(-a * t21)])
 
+    def rescaled_to(self, T):
+        """tau ~ 1/T, so tau(T) = tau(T_ref) T_ref/T. Eq. 9.5-13."""
+        T_ref = self.__dict__.get("_T_ref")
+        if T_ref is None:
+            raise ValueError(
+                "this NRTL does not know which temperature its tau belongs to; "
+                "call `.at_T(T_ref)` first, or build it from the energies")
+        return type(self)(tau=self.tau * (T_ref / float(T)),
+                          alpha_matrix=self.alpha).at_T(T)
+
     @classmethod
     def fit(cls, x1, gamma1, gamma2, alpha=0.3, p0=(0.5, 0.5)):
         """Fit tau12 and tau21 at fixed `alpha` -- Renon and Prausnitz's advice."""
@@ -656,9 +831,15 @@ class UNIQUAC(ActivityModel):
     ----------
     r, q : per-species volume and surface area parameters.
     tau : n x n matrix with tau_ii = 1, or pass (tau12, tau21) for a binary.
+
+    ⚠️ **One instance is one temperature.** para. 1303 defines ln tau_ij =
+    -(u_ij - u_jj)/RT, so tau_ij = exp(-a_ij/T) and the constant is a_ij, not tau.
+    See the module docstring; `rescaled_to` moves it. This is the model and the
+    mistake behind Fig. 11.2-6.
     """
 
     Z = 10.0
+    _T_LAW = "ln tau_ij = -(u_ij - u_jj)/RT (para. 1303)"
 
     def __init__(self, r, q, tau=None, tau12=None, tau21=None):
         self.r = np.asarray(r, dtype=float).ravel()
@@ -736,6 +917,19 @@ class UNIQUAC(ActivityModel):
                                              * np.log(th[nz] / ph[nz])))
         res = -float(np.sum(self.q * x * np.log(self.tau.T @ th)))
         return comb + res
+
+    def rescaled_to(self, T):
+        """tau = exp(-a/T), so tau(T) = tau(T_ref)**(T_ref/T). para. 1303.
+
+        tau_ii = 1 is a fixed point of the exponentiation, so the diagonal is safe.
+        """
+        T_ref = self.__dict__.get("_T_ref")
+        if T_ref is None:
+            raise ValueError(
+                "this UNIQUAC does not know which temperature its tau belongs to; "
+                "call `.at_T(T_ref)` first, or build it from the energies")
+        return type(self)(self.r, self.q,
+                          tau=self.tau ** (T_ref / float(T))).at_T(T)
 
     @classmethod
     def fit(cls, r, q, x1, gamma1, gamma2, p0=(1.0, 1.0)):

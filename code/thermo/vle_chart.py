@@ -333,19 +333,26 @@ def txy_chart(ax, x1, y1, T, *, species="species 1", unit=KELVIN, regions=True,
 # the x-y diagram
 # ---------------------------------------------------------------------------
 def xy_chart(ax, x1, y1, *, species="species 1", diagonal=True, data=None,
-             grid=None, lw=None, label_diagonal=True):
+             grid=None, lw=None, label_diagonal=True, diagonal_label_at=0.62):
     """An x-y diagram, with the x = y diagonal the chapter always draws beside it.
 
     The diagonal is not decoration. Section 10.1 says the gap between the equilibrium
     line and x = y "is an indication of how easy or difficult it will be to separate
     the components by distillation," and an azeotrope is precisely where the two
     touch -- so a bare x-y curve omits the one comparison the diagram exists to make.
+
+    `diagonal_label_at` is where along the diagonal the "$x = y$" label sits, in mole
+    fraction. The default puts it in the upper half, clear of the curve on a system
+    whose equilibrium line bows above the diagonal all the way across. It has to move
+    on an AZEOTROPIC system, where the curve touches the diagonal and the label lands
+    on the crossing: pass the composition of an open stretch instead.
     """
     lw = LW["sat"] if lw is None else lw
     if diagonal:
         ax.plot([0, 1], [0, 1], "--", color="k", lw=0.8)
         if label_diagonal:
-            ax.text(0.62, 0.58, "$x = y$", fontsize=6.5, color="k",
+            s = float(diagonal_label_at)
+            ax.text(s, s - 0.04, "$x = y$", fontsize=6.5, color="k",
                     ha="center", va="center", rotation=45, rotation_mode="anchor")
     ax.plot(x1, y1, "-", color="k", lw=lw)
     if data is not None:

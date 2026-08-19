@@ -47,6 +47,41 @@ a percent or so and the point of the section survives; at the 16 molal end of
 Illustration 9.10-1 they do not. This module is molal throughout and says so, which
 is the only way the arithmetic can be checked.
 
+## The solvent, and one place this module departs from the printed book
+
+`DebyeHuckel.ln_solvent_activity` is Appendix A9.3: the activity coefficient of the
+*solvent*, which the salt's fixes through the Gibbs-Duhem equation. Section 11.5 needs
+it, because the osmotic pressure of a salt solution is a logarithm of the solvent
+activity and its fourth decimal place is worth tenths of a bar.
+
+⚠️ **The appendix's own two equations disagree with its own note by a factor of 3, and
+this module follows the note.** Written with
+
+    sigma(y) = [1 + y - 2 ln(1+y) - 1/(1+y)] / y^3
+
+the appendix states sigma(0) = 1/3 and says that limit is what makes the beta a form
+reduce to the limiting law. It then prints both the beta a and the delta forms with
+`alpha/3` where the derivation gives `alpha`, so as printed they are 3 times too small
+in the correction term and do *not* reduce to the printed limiting law. Carrying out
+the integration confirms the note: the second term is alpha|z+ z-| sqrt(I) sigma, and
+the factor of 3 lives in sigma, once.
+
+The default here is therefore the derived form, and `as_printed=True` reproduces the
+printed one. Which is which is not a matter of taste, and the test does not require any
+data: integrating M d(ln gamma_pm) numerically from the module's *own* Eq. 9.10-18 and
+substituting into the Gibbs-Duhem equation reproduces the derived closed form to eight
+decimal places at 0.155, 1 and 6 molal, and misses the printed one by 6 % at every one
+of them. `code/ch11/osmotic_pressure_blood_example.ipynb` runs that check, and then runs
+the same integration over the *measured* gamma_pm of Illustration 9.10-2 -- which this
+module already carries -- so the comparison rests on data rather than on a correlation.
+
+For aqueous NaCl the two differ by little in dilute solution and a great deal in
+concentrated: at 0.1554 molal -- physiological saline -- gamma_water is 1.000 45
+derived against 1.000 10 printed, and at 6 molal the water activity is 0.7589 against
+0.7444. Illustration A9.3-1's printed table and Illustration 11.5-4's
+gamma_water = 1.000 13 both follow the printed form, so a notebook reproducing those
+printed numbers wants `as_printed=True` and one computing an osmotic pressure does not.
+
 ## Reused by Chapter 15
 
 Ionic strength, mean ionic molality and gamma_pm are the machinery of Sec. 15.2
@@ -61,7 +96,33 @@ import numpy as np
 from scipy import interpolate, optimize
 
 __all__ = ["Electrolyte", "DebyeHuckel", "ionic_strength", "water_parameters",
-           "TABLE_9_10_1", "ELECTROLYTES"]
+           "TABLE_9_10_1", "ELECTROLYTES", "MW_WATER", "MOLES_WATER_PER_KG"]
+
+MW_WATER = 0.018            # kg/mol, the value Appendix A9.3 uses in its own arithmetic
+MOLES_WATER_PER_KG = 55.51  # SIS uses this in Chapters 9, 11 and 15
+
+
+def _sigma(y):
+    """sigma(y) of Appendix A9.3, [1 + y - 2 ln(1+y) - 1/(1+y)]/y^3, with sigma(0)=1/3.
+
+    The bracket is the difference of three terms that each go to 1 + O(y), so it is
+    y^3/3 - y^4/2 + 3y^5/5 - ... and evaluating it directly loses every significant
+    digit for small y: at y = 1e-4 the closed form returns noise. Below y = 0.1 the
+    series is used instead, where four terms are good to 1e-12.
+    """
+    y = np.asarray(y, dtype=float)
+    small = np.abs(y) < 0.1
+    out = np.empty_like(y, dtype=float)
+    # sigma = SUM_{n>=3} (-1)^n (2/n - 1) y^(n-3)
+    ys = np.where(small, y, 0.0)
+    out = np.where(
+        small,
+        1.0 / 3.0 - ys / 2.0 + 3.0 * ys ** 2 / 5.0 - 2.0 * ys ** 3 / 3.0
+        + 5.0 * ys ** 4 / 7.0 - 3.0 * ys ** 5 / 4.0,
+        0.0)
+    yb = np.where(small, 1.0, y)
+    closed = (1.0 + yb - 2.0 * np.log1p(yb) - 1.0 / (1.0 + yb)) / yb ** 3
+    return np.where(small, out, closed)
 
 
 # ---------------------------------------------------------------------------
@@ -395,6 +456,60 @@ class DebyeHuckel:
         if in_log:
             return float(np.sqrt(np.mean((self.ln_gamma_pm(M) - np.log(g))**2)))
         return float(np.sqrt(np.mean((self.gamma_pm(M) - g)**2)))
+
+    # -- the solvent, Appendix A9.3 ---------------------------------------
+    def ln_solvent_activity(self, M, mw_solvent=MW_WATER, as_printed=False):
+        """ln(x_S gamma_S) for the *solvent*, Appendix A9.3.
+
+        The salt's activity coefficient fixes the solvent's through the Gibbs-Duhem
+        equation, and integrating it at fixed solvent gives
+
+            ln(x_S gamma_S) = -m_S nu M [1 - alpha|z+ z-| sqrt(I) sigma(beta a sqrt(I))
+                                           + delta I / 2]
+
+        with `m_S` the molecular weight of the solvent in kg/mol, nu = nu+ + nu-, and
+
+            sigma(y) = [1 + y - 2 ln(1+y) - 1/(1+y)] / y^3,   sigma(0) = 1/3
+
+        Each of Eqs. 9.10-15, 9.10-17 and 9.10-18 is a special case: with no beta a
+        the argument of sigma is 0 and sigma is exactly 1/3, and with no delta the
+        last term drops. `self.equation` says which one this instance is, and this
+        method follows it.
+
+        `as_printed=True` reproduces the printed appendix instead, which carries
+        alpha/3 in place of alpha where sigma already contributes the 1/3. See the
+        module note below for why the default is the derived form and what the two
+        differ by.
+
+        Returns ln(x_S gamma_S), from which the osmotic pressure follows by
+        Eq. 11.5-4 and the solvent activity coefficient by dividing out
+        `solvent_mole_fraction`.
+        """
+        I = self.salt.ionic_strength(M)
+        rootI = np.sqrt(np.asarray(I, dtype=float))
+        y = 0.0 if self.beta_a is None else self.beta_a * rootI
+        scale = 1.0 / 3.0 if as_printed else 1.0
+        term = self.slope * rootI * _sigma(y) * scale
+        if self.delta is not None:
+            term = term - self.delta * np.asarray(I, dtype=float) / 2.0
+        return -mw_solvent * self.salt.nu * np.asarray(M, dtype=float) * (1.0 - term)
+
+    def solvent_mole_fraction(self, M, moles_solvent_per_kg=MOLES_WATER_PER_KG):
+        """x_S for a completely dissociated salt at molality `M`.
+
+        Appendix A9.3 is emphatic about this one: "it is important to correctly
+        compute the mole fraction of the solvent," because the ions are separate
+        species. For a strong 1:1 salt in water it is 55.51/(55.51 + 2M), and the
+        factor of 2 is the whole point.
+        """
+        M = np.asarray(M, dtype=float)
+        return moles_solvent_per_kg / (moles_solvent_per_kg + self.salt.nu * M)
+
+    def solvent_gamma(self, M, mw_solvent=MW_WATER,
+                      moles_solvent_per_kg=MOLES_WATER_PER_KG, as_printed=False):
+        """The solvent's activity coefficient itself, Illustration A9.3-1's table."""
+        return (np.exp(self.ln_solvent_activity(M, mw_solvent, as_printed))
+                / self.solvent_mole_fraction(M, moles_solvent_per_kg))
 
     def __repr__(self):
         bits = [f"{self.salt.name!r}", f"T={self.T:g}"]

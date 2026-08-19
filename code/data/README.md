@@ -143,8 +143,8 @@ DECHEMA Chemistry Data Series Vol. VI, Frankfurt/Main (1982), and other sources.
   1220 nonzero pairs over 56 main groups.
 - `unifac_interactions_original.csv` — original UNIFAC main-group interactions:
   `main_i, main_j, a_ij` ($\Psi=\exp(-a/T)$), 838 nonzero pairs over 44 main groups.
-  ⛔ **Retained but unused**: the book teaches modified UNIFAC only, so `unifac.py`'s
-  `original` branch stays unimplemented (c09.md **D1**, 2026-08-12).
+  ✅ **In use**: `UNIFAC("original")` reads it. Superseded the 2026-08-12 "retained but
+  unused" note (c09.md **D1**), which was written when the `original` branch raised.
 
 ⚠️ **One asymmetry, and it is deliberate.** *R* and *Q* and the group inventory come from
 the book; the **subgroup and main-group numbers do not**, because the chapter prints no
@@ -169,6 +169,93 @@ $r$ = 2.2578 and $q$ = 2.5926; 2,2,4-trimethyl pentane as 5 CH₃ + CH₂ + CH +
 $r$ = 5.0600 and $q$ = 6.3675. `thermo.data.unifac_groups(name)` derives group
 assignments from the table's own *Example Assignments* column, so a notebook never
 hand-transcribes a subgroup number.
+
+> ⭐ **That is true of the 6e, and it is worth knowing why it has to be said.** The **5e's**
+> version of the same illustration printed 3.1878 / 2.4000 and 5.8463 / 5.0080 — **original**
+> UNIFAC sums — while citing Table 9.5-2, which by then held the Dortmund set. The 6e
+> recomputed it. Those 5e values are not a defect to fix; they are the **source** of
+> `unifac_subgroups_original.csv` below.
+
+## `unifac_subgroups_original.csv` — 85 subgroups over 44 main groups
+
+The **original**-UNIFAC *R*/*Q* set, digitized from **Table 7.5-2 of the 2nd edition of this
+book** (*Chemical and Engineering Thermodynamics*, pp. 333–334) — the parameter set the book
+itself published when it taught original UNIFAC.
+`research/references/ch10/SIS-CET-2e-table-7.5-2.pdf`, supplied by the author 2026-08-17.
+
+⚠️ Read from a **600-dpi render, not from `pdftotext`**: the OCR mangles the numerals
+(`1..4457`, `).6908`, `.9031`). Rebuild and re-check with
+`python3 tools/build_unifac_subgroups_original.py`, which carries the transcription and its
+tests together.
+
+**Why this file could not simply be extracted like the others.** The original *R*/*Q* did not
+survive in the 5e's materials: the Visual Basic package (`UNNRQnew.asc`) and the MATLAB
+`UNIFAC_data.mat` both carry the Dortmund values, and the Mathcad worksheets carry none. Only
+the original *interaction* matrix survived, as `Unfa44` in the `.mat`, which is where
+`unifac_interactions_original.csv` comes from. Until 2026-08-17 this file held **six** rows,
+recovered from the 5e's Illustration 9.5-2 — which had worked its whole calculation on
+original-UNIFAC values while citing Table 9.5-2. **Those six now serve as an independent check
+on the 2e transcription, and all six agree to the last digit.**
+
+### What arbitrates the transcription
+
+Four checks, chosen because they fail differently. All are in the build script.
+
+| check | what it catches |
+|---|---|
+| the **six recovered rows** reproduce | a wholly independent source, 5e print vs 2e print |
+| **main groups = the interaction matrix's keys**, exactly 1–44 | a dropped or invented main group |
+| **one hydrogen, one increment**: *R* falls 0.2274 per aliphatic H, 0.1661 per aromatic H | a transposed or misread digit |
+| the **5e's printed group sums** — benzene *r* = 3.1878, *q* = 2.4000; 2,2,4-trimethyl pentane *r* = 5.8463, *q* = 5.0080 | any error in the rows those sums touch |
+
+⚠️ **The increment law fails on the chlorinated series, and that is the source's doing.** The 2e
+prints CH₂Cl 1.4654, CHCl 1.2380, CCl 1.0060 — steps of 0.2274 then **0.2320** — and CH₂Cl₂
+2.2564, CHCl₂ 2.0606, CCl₂ 1.8016 — **0.1958** then **0.2590**. Both were re-read off the
+600-dpi render and are as printed. Recorded rather than quietly excluded, because the next
+reader will notice them too.
+
+⚠️ **One printed example was moved.** The 2e prints *"Chloroform"* against **CCl₄**, one row
+below where it belongs — chloroform is CHCl₃. Corrected in the row rather than in the consumer,
+with the reason in that row's `source` column.
+
+### ⛔ The numbering trap — the two sets do not agree on what a subgroup number means
+
+Subgroup numbers are **not in the table**; they are the standard UNIFAC numbering, which
+`unifac_subgroups.csv` already carries. The two parameter sets share it **through 77**, and
+then part company:
+
+| number | original | modified (Dortmund) |
+|---|---|---|
+| 27 | `FCH2O` | `cy-CH2 OCH2` |
+| 37–39 | `C5H5N`, `C5H4N`, `C5H3N` | `AC2H2N`, `AC2HN`, `AC2N` |
+| 78–81 | `SiH3`, `SiH2`, `SiH`, `Si` | `cy-CH2`, `cy-CH`, `cy-C`, `OH(s)` |
+| 82–85 | `SiH2O`, `SiHO`, `SiO`, `NMP` | `OH(t)`, two `cy-CH2 O` variants, `CNH2` |
+
+**Both numbers exist in both tables, so a mismatched assignment does not raise — it returns a
+plausible wrong answer.** Tetrahydrofuran is the trap in miniature: original UNIFAC calls it
+1 `FCH2O` + 3 `CH2` = `{27: 1, 2: 3}`, Dortmund 1 `cy-CH2 OCH2` + 2 `cy-CH2` = `{27: 1, 78: 2}`.
+Different numbers, different counts, same molecule. ⭐ This is also why the legacy MATLAB file
+carried *silicon* names on main groups 42 and 43 while holding Dortmund's cyclic values — the
+same collision, seen from the other side (see the digitization audit above).
+
+**So call `unifac_groups(name, kind)`**, which reads the matching table, instead of reusing a
+group dict across kinds. `UNIFAC(kind=...)` pairs *R*/*Q* with $a_{mn}$ for the same reason.
+
+### ⭐ DECIDED 2026-08-17 — the original model is a supported option, not a one-off
+
+**AUTHOR:** *"We made the decision to use new Dortmund UNIFAC versus old UNIFAC, but have built
+the code now such that it can use both. That's a similar approach to packages like Aspen, and
+we should just make it available. Our default will still be Dortmund UNIFAC, but the option to
+try the other will be there."*
+
+So `kind` is a first-class choice, exactly as Aspen Plus offers `UNIFAC` against `UNIF-DMD`,
+with Dortmund the default everywhere in the book. With this table in place the option is real
+across the whole group inventory — water, alcohols, ketones and the rest — and not just for the
+hydrocarbons and aldehydes Figure 10.2-8 needed.
+
+> ⛔ **Never mix the two sets.** *R*, *Q* and $a_{mn}$ come from one regression together; the
+> 6e's own footnote to Table 9.5-2 says so. `UNIFAC(kind=...)` selects both together, which is
+> why neither table is meant to be loaded on its own.
 
 ## `steam_*.csv` — Appendix A.III, the thermodynamic properties of water and steam
 
