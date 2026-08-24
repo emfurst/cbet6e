@@ -139,6 +139,17 @@ __all__ = ["Reaction", "Extent", "equilibrium_extent", "multireaction_extents",
 #: `Ca(OH)2` cannot be handled by stripping either.
 PHASE_TAGS = ("(g)", "(l)", "(s)", "(aq)", "(red)", "(yellow)", "qrtz")
 
+#: The two `phases` values that mean "a pure condensed phase, not part of the fluid".
+#: Kept in one place because `mole_fractions`, `balance_table` and `equilibrium_extent`
+#: must agree about it -- a solid that is in the denominator for one and out of it for
+#: another is the defect Illustration 13.3-1 reports hitting in Aspen Plus.
+CONDENSED_PHASES = ("solid", "pure")
+
+
+def _condensed(phases):
+    """The set of species `phases` marks as a pure condensed phase."""
+    return {s for s, kind in dict(phases or {}).items() if kind in CONDENSED_PHASES}
+
 #: Names whose formula no rule recovers. `EtC6H6` is ethylbenzene, so `Et` is C2H5 and
 #: the ring keeps its own hydrogens; the rest are isomer or position prefixes that carry
 #: no atoms at all. Verified against the RPP molecular weights.
@@ -360,13 +371,29 @@ class Reaction:
             out[s] = out.get(s, 0.0) + v * X
         return out
 
-    def mole_fractions(self, initial, X):
-        """The mole fractions at extent X -- the last column of the balance table."""
+    def mole_fractions(self, initial, X, phases=None):
+        """The mole fractions at extent X -- the last column of the balance table.
+
+        `phases` maps a species to `'gas'`, `'liquid'`, `'solid'`, `'pure'` or
+        `'molal'`, the same vocabulary `equilibrium_extent` uses. **A species marked
+        `'solid'` or `'pure'` is a condensed phase that does not mix with the fluid: it
+        is left out of the denominator AND out of the result**, because it has no mole
+        fraction in the fluid at all. Illustration 13.2-1 prints exactly this
+        distinction, in a column headed *"Present in Gas-Phase"* that is blank for its
+        solid carbon -- and putting the solid back into the denominator is the defect
+        that illustration's own note reports hitting in Aspen Plus.
+
+        Default: every species is in the fluid, which is Sec. 13.1.
+        """
+        condensed = _condensed(phases)
         N = self.moles(initial, X)
-        total = sum(N.values())
+        fluid = {s: n for s, n in N.items() if s not in condensed}
+        total = sum(fluid.values())
         if total <= 0:
-            raise ValueError(f"no moles left at X = {X:g}")
-        return {s: n / total for s, n in N.items()}
+            raise ValueError(
+                f"no fluid moles left at X = {X:g}"
+                + (f" (condensed: {sorted(condensed)})" if condensed else ""))
+        return {s: n / total for s, n in fluid.items()}
 
     def extent_bracket(self, initial, inset=1e-9, in_excess=()):
         """The physically possible range of X: no species may go negative.
@@ -401,16 +428,21 @@ class Reaction:
         span = hi - lo
         return lo + inset * span, hi - inset * span
 
-    def balance_table(self, initial, X=None):
+    def balance_table(self, initial, X=None, phases=None):
         """The mass balance table Chapter 13 prints -- Table 13.1-1 and its siblings.
 
         Returns a DataFrame indexed by species with the initial mole number, the final
         mole number as a function of X, and the mole fraction. With `X` given, the two
         numeric columns are evaluated there as well; without it, the table is the
         symbolic one the book prints.
+
+        `phases` is read as in `mole_fractions`: a species marked `'solid'` or `'pure'`
+        stays out of the total and its mole-fraction cell reads `--`, which is how
+        Illustration 13.2-1 sets its own table.
         """
         import pandas as pd
 
+        condensed = _condensed(phases)
         rows, total_terms = {}, []
         for s in list(dict.fromkeys(list(initial) + self.species)):
             N0, v = float(initial.get(s, 0.0)), self.nu.get(s, 0.0)
@@ -423,19 +455,25 @@ class Reaction:
                 if abs(v) == 1:
                     final = f"{N0:g} {'+' if v > 0 else '-'} X"
             rows[s] = {"initial": N0, "final": final}
-            total_terms.append((N0, v))
+            if s not in condensed:
+                total_terms.append((N0, v))
         N_total0 = sum(n for n, _ in total_terms)
-        dnu = self.delta_nu
+        dnu = sum(v for _, v in total_terms)
         total = f"{N_total0:g}" if dnu == 0 else \
-                f"{N_total0:g} {'+' if dnu > 0 else '-'} {abs(dnu):g} X"
+                f"{N_total0:g} {'+' if dnu > 0 else '-'} " \
+                f"{'' if abs(dnu) == 1 else f'{abs(dnu):g} '}X"
         for s, row in rows.items():
-            row["mole fraction"] = f"({row['final']})/({total})"
+            row["mole fraction"] = ("--" if s in condensed
+                                    else f"({row['final']})/({total})")
         table = pd.DataFrame(rows).T
-        table.loc["Total"] = {"initial": N_total0, "final": total, "mole fraction": "1"}
+        label = "Total" if not condensed else "Total fluid"
+        table.loc[label] = {"initial": N_total0, "final": total, "mole fraction": "1"}
         if X is not None:
-            N, y = self.moles(initial, X), self.mole_fractions(initial, X)
-            table["N at X"] = [N.get(s, 0.0) for s in table.index[:-1]] + [sum(N.values())]
-            table["y at X"] = [y.get(s, 0.0) for s in table.index[:-1]] + [1.0]
+            N = self.moles(initial, X)
+            y = self.mole_fractions(initial, X, phases=phases)
+            table["N at X"] = ([N.get(s, 0.0) for s in table.index[:-1]]
+                               + [sum(n for s, n in N.items() if s not in condensed)])
+            table["y at X"] = ([y.get(s, float("nan")) for s in table.index[:-1]] + [1.0])
         return table
 
     # -- standard-state properties -------------------------------------------

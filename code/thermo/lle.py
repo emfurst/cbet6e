@@ -678,7 +678,7 @@ def steam_distillation(psat_organic, psat_water, T, mw_organic, mw_water=18.015)
 # Secs. 11.2 and 11.3 -- the equation-of-state route
 #
 # Everything above solves Eq. 11.2-2, in which the pure-component fugacity has
-# cancelled and only activity coefficients remain. An equation of state does not
+# canceled and only activity coefficients remain. An equation of state does not
 # work that way: it computes the fugacity of a species in a phase directly, so the
 # equilibrium condition stays in its original form,
 #

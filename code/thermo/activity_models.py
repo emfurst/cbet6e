@@ -1116,7 +1116,7 @@ TABLE_9_5_1_VAN_LAAR = {
 # at 90 K and liquid solvents at 25 C -- and the book does not say the parameters
 # transfer between them. Sec. 9.6 does note that (delta_1 - delta_2) is often nearly
 # temperature independent, so the table "may be used at temperatures other than the
-# one at which they were obtained." That licence is the book's; the block a species
+# one at which they were obtained." That license is the book's; the block a species
 # came from is recorded here so a notebook can say which it is relying on.
 TABLE_9_6_1 = {
     # liquefied gases at 90 K

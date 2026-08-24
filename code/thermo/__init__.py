@@ -77,6 +77,14 @@ from .reaction import (Reaction, Extent, equilibrium_extent, multireaction_exten
                        gibbs_minimization, gibbs_curve, ellingham, activity,
                        K_nu_from_eos, K_gamma_from_model, elements,
                        formation_gibbs_T)
+from .ionization import (WeakAcid, PolyproticAcid, AminoAcid, IonizableGroup,
+                         Ka_water, pKw, pK, pH_from_activity, gamma_pm,
+                         strong_acid, strong_base, fraction_deprotonated,
+                         fraction_protonated_amine, titration_strong_acid,
+                         titration_weak_acid, amino_acid_titration,
+                         water_titration_pH, protein_charge, isoelectric_point,
+                         zwitterion_constants, apparent_K, pK_at_temperature,
+                         LYSOZYME, TABLE_13_5_1)
 
 _LAZY = {"charts", "ph_chart", "steam_chart", "vle_chart", "ternary"}
 
@@ -131,4 +139,11 @@ __all__ = ["CubicEOS", "PengRobinson", "VanDerWaals", "PRMixture", "UNIFAC",
            "Reaction", "Extent", "equilibrium_extent", "multireaction_extents",
            "gibbs_minimization", "gibbs_curve", "ellingham", "activity",
            "K_nu_from_eos", "K_gamma_from_model", "elements", "formation_gibbs_T",
+           "WeakAcid", "PolyproticAcid", "AminoAcid", "IonizableGroup",
+           "Ka_water", "pKw", "pK", "pH_from_activity", "gamma_pm",
+           "strong_acid", "strong_base", "fraction_deprotonated",
+           "fraction_protonated_amine", "titration_strong_acid",
+           "titration_weak_acid", "amino_acid_titration", "water_titration_pH",
+           "protein_charge", "isoelectric_point", "zwitterion_constants",
+           "apparent_K", "pK_at_temperature", "LYSOZYME", "TABLE_13_5_1",
            "charts", "ph_chart", "steam_chart", "vle_chart", "ternary"]

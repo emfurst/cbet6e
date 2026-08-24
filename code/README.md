@@ -152,6 +152,103 @@ EOS — the self-contained version shows the method, the twin shows the reuse.
 
 `ch7/README.md` documents exporting a notebook to PDF via `nbconvert`.
 
+**`ch8/` — the thermodynamics of multicomponent mixtures**
+| Notebook | What it teaches |
+|---|---|
+| `RK_partial_molar_volume_water_methanol_example.ipynb` | Table 8.6-2: partial molar volumes from density data |
+| `RK_partial_molar_enthalpy_water_methanol_example.ipynb` | Table 8.6-4: partial molar enthalpies from heat-of-mixing data |
+| `Hrxn_temperature_N2O4_example.ipynb` | Illustration 8.5-2: the standard heat of reaction versus temperature |
+
+`ch8/README.md` and `ch8/validation/` document how the two partial-molar tables were
+rebuilt from the printed density and heat-of-mixing data.
+
+**`ch9/` — the Gibbs energy and fugacity of a component in a mixture**
+| Notebook | What it teaches |
+|---|---|
+| `PR_species_fugacity_ethane_butane_example.ipynb` | Species fugacity in a mixture from the Peng-Robinson EOS (ethane / n-butane) |
+| `Lewis_Randall_vs_PR_CO2_methane_example.ipynb` | Lewis-Randall rule against the Peng-Robinson EOS (CO2 / methane) |
+| `activity_coefficient_correlation_benzene_TMP_example.ipynb` | Correlating activity coefficients (benzene / 2,2,4-trimethyl pentane) |
+| `regular_solution_benzene_TMP_example.ipynb` | Regular solution theory (benzene / 2,2,4-trimethyl pentane) |
+| `UNIFAC_benzene_TMP_example.ipynb` | Modified (Dortmund) UNIFAC (benzene / 2,2,4-trimethyl pentane) |
+| `Margules_activity_coefficients_figure.ipynb` | The one-constant Margules activity coefficients |
+| `Gex_composition_curves_figure.ipynb` | Excess Gibbs energy against composition |
+| `Debye_Huckel_HCl_NaCl_example.ipynb` | Electrolyte solutions — Debye-Hückel and its extensions (HCl, NaCl) |
+| `Wong_Sandler_mixing_rule_acetone_water_example.ipynb` | The Wong-Sandler mixing rule — an activity coefficient model inside an equation of state (acetone / water) |
+| `hemoglobin_activity_coefficient_example.ipynb` | Activity coefficient of a protein on a Henry's law basis (hemoglobin in water) |
+
+`ch9/README.md` covers the activity-coefficient models and which of them the `thermo`
+package implements.
+
+**`ch10/` — vapor–liquid equilibrium in mixtures**
+| Notebook | What it teaches |
+|---|---|
+| `raoult_diagrams_pentane_heptane_example.ipynb` | Vapor-liquid equilibrium diagrams for an ideal mixture (n-pentane / n-heptane) |
+| `hexane_triethylamine_diagrams_figure.ipynb` | Phase diagrams for a nearly ideal mixture (hexane / triethylamine) |
+| `vle_correlation_benzene_TMP_example.ipynb` | Correlating vapor-liquid equilibrium data (benzene / 2,2,4-trimethyl pentane) |
+| `excess_properties_benzene_TMP_figure.ipynb` | Excess enthalpy and entropy from the temperature dependence of $G^{ex}$ (benzene / 2,2,4-trimethyl pentane) |
+| `azeotrope_to_vanlaar_benzene_cyclohexane_example.ipynb` | A phase diagram from one azeotropic point (benzene / cyclohexane) |
+| `pressure_swing_methyl_acetate_methanol_example.ipynb` | Nonideal phase diagrams, an azeotrope, and how to separate it (methyl acetate / methanol) |
+| `pr_vle_co2_isopentane_figure.ipynb` | One binary parameter, and what it is worth (carbon dioxide / isopentane) |
+| `acetone_water_mixing_rules_figure.ipynb` | Four ways to model a very nonideal mixture (acetone / water) |
+| `azeotrope_test_ethyl_acetate_benzene_homework.ipynb` | Does this system have an azeotrope? Two models that disagree (ethyl acetate / benzene) |
+| `unifac_pentane_propionaldehyde_example.ipynb` | Three ways to get a phase diagram, and how little data each needs (n-pentane / propionaldehyde) |
+| `flory_huggins_benzene_PIB_example.ipynb` | A solvent above a polymer, where mole fraction stops being useful (benzene / polyisobutylene) |
+
+`ch10/README.md` lists the four mixing rules the chapter compares.
+
+**`ch11/` — other phase equilibria in fluid mixtures**
+| Notebook | What it teaches |
+|---|---|
+| `gas_solubility_co2_toluene_example.ipynb` | Solubility of a gas in a liquid from an equation of state (CO2 in toluene) |
+| `lle_isobutane_furfural_example.ipynb` | Liquid-liquid equilibrium from an activity coefficient model (isobutane / furfural) |
+| `polymer_compatibility_PS_PMMA_example.ipynb` | Are two molten polymers compatible? (polystyrene / PMMA) |
+| `vlle_eos_co2_decane_example.ipynb` | Three-phase equilibrium from an equation of state (CO2 / n-decane) |
+| `lle_eos_mixing_rules_co2_decane_example.ipynb` | Two mixing rules against one measured phase diagram (CO2 / n-decane) |
+| `fluorocarbon_solubility_figure.ipynb` | Consolute temperatures of fluorocarbon + hydrocarbon mixtures (Figure 11.2-3) |
+| `margules_azeotrope_vs_phase_split_homework.ipynb` | When does an azeotrope become a phase split? (Problem 11.2-17) |
+| `vlle_isobutane_furfural_figure.ipynb` | When should you suspect a second liquid phase? (Figures 11.3-1 and 11.3-2) |
+| `ternary_extraction_MIK_acetone_water_example.ipynb` | Liquid-liquid extraction on a triangular diagram (MIK / acetone / water) |
+| `staged_extraction_MIK_acetone_water_example.ipynb` | Two-stage liquid-liquid extraction (MIK / acetone / water) |
+| `ternary_mass_balance_example.ipynb` | Reading a triangular diagram (a mass balance on three components) |
+| `distribution_coefficient_bromine_CCl4_water_example.ipynb` | An activity coefficient measured with a separatory funnel (bromine / CCl4 / water) |
+| `octanol_water_partition_coefficient_example.ipynb` | The octanol-water partition coefficient: estimating it and using it |
+| `partition_coefficient_correlation_pollutants_example.ipynb` | Testing a correlation against 160 printed numbers (Table 11.4-1) |
+| `gibbs_energy_of_transfer_amino_acids_example.ipynb` | The hydrophobic effect, from six solubilities (amino acids, water to ethanol) |
+| `osmometry_molecular_weight_PVC_albumin_example.ipynb` | A molecular weight from a column of liquid (PVC, and serum albumin) |
+| `osmotic_virial_chymotrypsin_example.ipynb` | A molecular weight and a second virial coefficient from one osmometer (alpha-chymotrypsin) |
+| `osmotic_pressure_blood_example.ipynb` | Why saline is 0.9 % (the osmotic pressure of blood) |
+| `reverse_osmosis_seawater_example.ipynb` | Pushing water the other way (reverse osmosis of seawater) |
+
+**`ch12/` — phase equilibria involving solids**
+| Notebook | What it teaches |
+|---|---|
+| `solid_solubility_naphthalene_hexane_example.ipynb` | How much solid dissolves, and what the activity coefficient is worth (naphthalene / n-hexane) |
+| `supercritical_solubility_naphthalene_co2_figure.ipynb` | Naphthalene in supercritical carbon dioxide, three ways (Figure 12.1-1) |
+| `heat_of_fusion_from_solubility_insulin_example.ipynb` | A heat of fusion you cannot measure in a calorimeter (insulin hexamer) |
+| `freezing_point_and_eutectic_figure.ipynb` | Freezing points, and the eutectic as a crossing (Figure 12.3-1, ethyl benzene / toluene) |
+| `environmental_partitioning_benzo_a_pyrene_example.ipynb` | One chemical, one measurement, five compartments (benzo[a]pyrene) |
+| `pcb_bioconcentration_example.ipynb` | Bioconcentration, with a field measurement to check it against (PCBs in St. Lawrence eels) |
+
+**`ch13/` — chemical equilibrium**
+| Notebook | What it teaches |
+|---|---|
+| `nitrogen_tetroxide_dissociation_example.ipynb` | Nitrogen tetroxide, three questions about one reaction (Figures 13.1-3 and 13.1-4) |
+| `high_pressure_ammonia_equilibrium_example.ipynb` | Ammonia synthesis at high pressure (Figures 13.1-5 and 13.1-6) |
+| `acetic_acid_ionization_constant_example.ipynb` | Reaction in the liquid phase: an esterification and an ionization (Figure 13.1-7) |
+| `ideal_gas_pressure_and_equilibrium_ratios_example.ipynb` | Pressure, dilution, and the three equilibrium ratios (Figure 13.1-2) |
+| `measured_equilibrium_constants_example.ipynb` | When the equilibrium constant is measured, not computed (Figure 13.1-1) |
+| `heterogeneous_gas_solid_equilibrium_example.ipynb` | When a solid is one of the reactants: four heterogeneous equilibria (Figure 13.2-1) |
+| `solubility_product_silver_chloride_example.ipynb` | The solubility product of silver chloride, and what an inert salt does to it (Figure 13.2-2) |
+| `steam_carbon_multireaction_example.ipynb` | Coal and steam: three reactions at once (Figures 13.3-1 and 13.3-2) |
+| `coupled_reactions_common_ion_and_atp_example.ipynb` | Two reactions at once, twice over: a common ion and a coupled hydrolysis |
+| `combined_chemical_phase_ammonia_example.ipynb` | Reaction and condensation at once: ammonia over water |
+| `titration_strong_and_weak_acids_example.ipynb` | Two titration curves, and why only one of them is interesting |
+| `deprotonation_benzoyl_tyrosine_figure.ipynb` | When does an acid group carry its charge? (Figure 13.5-1) |
+| `dibasic_acid_phthalic_figure.ipynb` | A molecule with two places to lose a proton (Figures 13.6-1 and 13.6-2) |
+| `amino_acid_charge_glycine_example.ipynb` | The charge on an amino acid, and how it moves with temperature (Figures 13.6-5, 13.6-6 and 13.6-11) |
+| `amino_acid_titration_glycine_example.ipynb` | An amino acid as its own buffer (Figures 13.6-8 and 13.6-9) |
+| `protein_charge_lysozyme_figure.ipynb` | Thirty-two ionizable groups on one molecule (Figure 13.6-7) |
+
 ### `data/` — reference data
 
 Pure-component and reaction property tables exported from the legacy companion database

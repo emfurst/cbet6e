@@ -16,15 +16,32 @@ def get_compound(key):
     """Look up a compound by Formula or Name (case-insensitive). Returns a Series.
 
     Tries exact Formula, then exact Name, then a Name substring match.
+
+    THE SUBSTRING MATCH MUST BE UNAMBIGUOUS. `'hydrogen'` matches nine rows of
+    `pure_property.csv` -- hydrogen bromide, chloride, cyanide, deuteride, fluoride,
+    iodide, sulfide, and the two rows for hydrogen itself -- and the first of them in
+    file order is *hydrogen bromide*. Returning `.iloc[0]` from that set silently
+    hands back the wrong species, and every number computed from it converges and
+    looks reasonable: it cost the ammonia-synthesis figures of Illustration 13.1-8
+    an order of magnitude in K_nu before the disagreement with the printed art was
+    noticed. So an ambiguous substring is an error that names its candidates,
+    not a guess.
     """
     df = load_pure_properties()
     k = str(key).strip().lower()
     for mask in (df["Formula"].str.lower() == k,
-                 df["Name"].str.lower() == k,
-                 df["Name"].str.lower().str.contains(k, na=False, regex=False)):
+                 df["Name"].str.lower() == k):
         hit = df[mask]
         if len(hit):
             return hit.iloc[0]
+    hit = df[df["Name"].str.lower().str.contains(k, na=False, regex=False)]
+    if len(hit) == 1:
+        return hit.iloc[0]
+    if len(hit) > 1:
+        names = ", ".join(repr(n) for n in hit["Name"].tolist()[:12])
+        raise KeyError(f"compound {key!r} is ambiguous: it is a substring of "
+                       f"{len(hit)} names in pure_property.csv ({names}"
+                       f"{', ...' if len(hit) > 12 else ''}). Name one exactly.")
     raise KeyError(f"compound {key!r} not found in pure_property.csv")
 
 

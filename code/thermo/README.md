@@ -624,7 +624,7 @@ tern.ternary_axes(ax, top="A", left="MIK", right="W", symbol="w", percent=True)
 tern.plot(ax, acetone, mik, water)                  # the binodal
 tern.tie_line(ax, xI, xII)                          # one tie line
 tern.lever_arm(ax, z, xI, xII)                      # Illustrations 11.2-7/-8/-9
-tern.check_labels(ax)                               # ⬅ before saving
+tern.check_labels(ax)                               # before saving
 ```
 
 | function | what it draws |

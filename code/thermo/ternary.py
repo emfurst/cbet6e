@@ -143,7 +143,7 @@ def _edge_points(f):
 
 def ternary_axes(ax, *, top, left, right, ticks=0.2, minors=2, grid=True,
                  percent=False, symbol=None, corner_values=True,
-                 label_size=9, tick_size=7, lw=0.9, pad=0.040, grey_grid=False):
+                 label_size=9, tick_size=7, lw=0.9, pad=0.040, gray_grid=False):
     """Draw the triangle, its scales, its labels and (optionally) its grid.
 
     `top`, `left`, `right` are the species names at the three corners. Pass
@@ -159,13 +159,13 @@ def ternary_axes(ax, *, top, left, right, ticks=0.2, minors=2, grid=True,
     **An earlier version of this docstring claimed a triangular grid was "the one
     place tint is allowed." It is not, and `tools/check_print_art.py` said so**: it
     rejected the first Figure 11.2-8 on `0.7 G` and `0.87 G` in the content stream.
-    That gate carries an allowlist of author-granted grey waivers and this was not on
+    That gate carries an allowlist of author-granted gray waivers and this was not on
     it. [[black-not-gray]] is the rule -- separate lines by **weight, dash and
     geometry, never by tint** -- and it is satisfied here the way the rule says: the
     grid is 0.20 pt black where the binodal is 1.1 pt black, a factor of five in
-    weight. Pass `grey_grid=True` for a screen figure that will never be staged.
+    weight. Pass `gray_grid=True` for a screen figure that will never be staged.
 
-    Nothing else in the book stages grey art, and `charts.GRID_MAJOR`/`GRID_MINOR`
+    Nothing else in the book stages gray art, and `charts.GRID_MAJOR`/`GRID_MINOR`
     are unused by any staged figure -- this module was about to be the first, which is
     what makes the gate worth having.
 
@@ -177,7 +177,7 @@ def ternary_axes(ax, *, top, left, right, ticks=0.2, minors=2, grid=True,
     if min(label_size, tick_size) < 7:
         raise ValueError("nothing in a printed figure goes below 7 pt; shorten the "
                          "label instead [[no-figure-text-below-7pt]]")
-    if grey_grid:
+    if gray_grid:
         from .charts import GRID_MAJOR, GRID_MINOR
     else:
         GRID_MAJOR = dict(color="k", lw=0.30)
