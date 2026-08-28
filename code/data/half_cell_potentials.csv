@@ -1,0 +1,42 @@
+# Standard half-cell (reduction) potentials at 25 C, the E0 column of Table 14.6-1.
+#
+# ONLY E0 AND n ARE DATA HERE. Table 14.6-1's other two columns, dG/RT and dG in kJ,
+# are DERIVED -- dG = -n F E0 -- and the ch14 electrochemical-cell notebook regenerates
+# them from this file rather than transcribing them. That is deliberate: transcribing a
+# derived column hides the four cells in the printed table that do not follow from their
+# own E0 (Au, Ag, Hg2/Hg, Na). See code/ch14/electrochemical_cell_potentials_example.ipynb.
+#
+# Values are conventional standard reduction potentials against the standard hydrogen
+# electrode, as tabulated in the book. They agree with the CRC Handbook of Chemistry and
+# Physics (Electrochemical Series) to the two decimals printed here, except that the CRC
+# gives Fe3+ + 3e- = Fe as -0.037 V, which the book rounds to -0.04.
+#
+# CAVEAT on Au+ + e- = Au. This is one of the soft entries in any electrochemical series:
+# Au+ disproportionates, so the potential is derived rather than measured directly, and
+# published compilations run from about 1.69 V to about 1.83 V. This file carries the CRC
+# value (1.692, printed 1.69), which is what the rest of the table follows. Do NOT "correct"
+# it to 1.83 -- the printed table's bad Au cells imply 1.793 V, which is neither value, and
+# three other rows (Ag, Hg2/Hg, Na) fail the same self-consistency check with potentials
+# nobody disputes. The defect is transcription in the derived columns, not the dataset.
+#
+# oxidant     : the species reduced, as the book writes it
+# electrons   : n, electrons transferred as the half-reaction is written
+# reductant   : the product
+# E0_V        : standard half-cell potential, V
+oxidant,electrons,reductant,E0_V
+Au+,1,Au,1.69
+Cl2,2,2Cl-,1.36
+Br2,2,2Br-,1.09
+Ag+,1,Ag,0.80
+Hg2 2+,2,2Hg,0.79
+Fe3+,1,Fe2+,0.77
+Cu2+,2,Cu,0.34
+AgCl,1,Ag + Cl-,0.22
+2H+,2,H2,0.00
+Fe3+,3,Fe,-0.04
+Pb2+,2,Pb,-0.13
+Zn2+,2,Zn,-0.76
+Al3+,3,Al,-1.66
+Mg2+,2,Mg,-2.36
+Na+,1,Na,-2.71
+Li+,1,Li,-3.05

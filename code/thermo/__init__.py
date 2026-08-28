@@ -8,7 +8,11 @@ is one equation -- the equality of fugacities with a pure solid -- solved for th
 composition in Sec. 12.1 and for the temperature in Sec. 12.3. Chapter 13 adds
 `reaction`, which is where the equilibrium constant, the extent of reaction, the
 Ellingham construction and Gibbs minimization live -- and which replaces the 5e's
-CHEMEQ and its Appendix B.I/B.II equilibrium-constant programs.
+CHEMEQ and its Appendix B.I/B.II equilibrium-constant programs. Chapter 15 adds
+`bioreactor`, which is Sec. 15.7's fermenter written once: C/H/N/O atom balances in
+yield-factor form, closed by an energy balance built from heats of combustion and
+bounded by the second law. Import it by name -- `from thermo.bioreactor import
+Fermentation` -- since nothing in the core namespace needs it.
 
     from thermo import PengRobinson, VanDerWaals, UNIFAC, VanLaar, NRTL
 

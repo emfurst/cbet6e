@@ -701,8 +701,28 @@ Appendix A.IV (`'N2O4'`, `'H2O(g)'`, `'nC6H14(l)'`).
 | the same state without choosing reactions | `gibbs_minimization` | 13.3 |
 | $G$ against the extent — the figure the chapter opens with | `gibbs_curve` | Fig. 13.1-1 |
 | the Ellingham construction | `ellingham` | 13.2, Fig. 13.2-3 |
+| the adiabatic reaction temperature | `adiabatic_reaction_temperature` | 14.3-10a, Ill. 14.3-2 |
+| that Sec. 14.3's two energy-balance forms are one equation | `energy_balance_forms_agree` | 14.3-10a |
 
 ### Guards, and what they caught
+
+**`adiabatic_reaction_temperature` brackets DIRECTIONALLY, and that is not a nicety.** The
+energy-balance branch passes through zero at the inlet temperature by construction, so
+`T = T_in` is *always* a root of the difference between the two branches — an undirected
+bracket can converge on it, report a temperature rise of zero, and look perfectly converged.
+The default bracket therefore starts one degree away from `T_in`, on the side the sign of
+$\Delta_{rxn}H$ requires: an exothermic reaction heats its own effluent, an endothermic one
+cools it. If the branches do not cross inside the bracket it raises, with both end-point
+residuals in the message, rather than returning its last iterate.
+
+**`energy_balance_forms_agree` asserts an identity rather than trusting it.** Eq. 14.3-10a is
+usually written as the sensible heat of the *feed* plus $\Delta_{rxn}H$ at the *effluent*
+temperature; the total-enthalpy form heats the *effluent* composition and takes
+$\Delta_{rxn}H$ at the *inlet*. Those are two paths between the same pair of states, so they
+must give the same extent — and checking it costs one call, whereas discovering later that a
+sign or a limit was wrong costs a chapter. It was this check that made it safe to report
+Illustration 14.3-2's adiabatic temperature as 701.2 K against two different printed values.
+
 
 **`equilibrium_extent` never takes a bare initial guess.** The extent is bounded by
 exhaustion — no species may end with a negative mole number — which gives a closed bracket,
@@ -731,6 +751,65 @@ the coupled-extent solve against Gibbs minimization.
 printed $K_a$ table is not reproducible from Appendix A by any route the chapter offers, and
 it contradicts the book's own $K_a(450\ \mathrm{K})$ for the same reaction. It is filed as
 Q8 in `revision_notes/c13.md`, and nothing here is tuned to match it.
+
+## Bioreactors — `bioreactor` (Sec. 15.7)
+
+Eleven illustrations, one object. Sec. 15.7 balances **atoms** rather than species, because
+its products are cells and cells have no molecular formula — what they have is an elemental
+analysis, Roels' average biomass `CH1.8O0.5N0.2`. Everything is per **C-mole**: the species'
+formula divided through by its carbon count, so glucose C₆H₁₂O₆ is `CH2O` and ethanol
+C₂H₅OH is `CH3O0.5`.
+
+```python
+from thermo.bioreactor import CMole, Fermentation, from_table
+
+f = Fermentation(substrate=from_table("glucose"),
+                 biomass=CMole("CH1.8O0.5N0.2"),
+                 nitrogen=from_table("ammonia"),
+                 product=from_table("ethanol"))
+f.solve(Y_B_S=0.14, Y_O2_S=0.0)      # Illustration 15.7-3
+f.heat_load(0.14, 0.569, 0.028)      # Eq. 15.7-8b, kJ per C-mole
+f.second_law(0.14, 0.569, 0.028)     # Eq. 15.7-19, as a Constraint
+```
+
+| SIS | what | entry point |
+|---|---|---|
+| Eq. 15.7-9 | the generalized degree of reduction ξ | `CMole.xi` |
+| Eqs. 15.7-1 … 15.7-4 | the four atom balances in yield-factor form | `Fermentation.solve` |
+| Eq. 15.7-12 | the 4C + H − 2O combination, i.e. the oxygen balance as ξ | `Y_O2_from_xi` |
+| Eq. 15.7-8b | the energy balance, from heats of **combustion** | `heat_load` |
+| Eq. 15.7-10 | the energy regularity principles, 112 ξ and 110.9 ξ | `regularity_G`, `regularity_H` |
+| Eq. 15.7-19 | the second-law constraint | `second_law` |
+| Eq. 15.7-26a | the entropy generated per C-mole | `entropy_generated` |
+| Table 15.7-2 | ξ, Δ_cG, Δ_cH and the molecular formula, 53 compounds | `TABLE_15_7_2`, `from_table` |
+
+**Three design decisions, each of them a guard.**
+
+*The balances are solved as a linear system, not substituted by hand.* Each illustration
+fixes a different pair of the six yield factors, and Sec. 15.7 walks the substitutions in a
+different order every time — which is where its printed slips are (Illustration 15.7-4's
+oxygen balance is set as `1 + 2 Y_W/S + Y_W/S`, with no oxygen term in it). `solve` assembles
+`A y = b` over whichever factors are open and **raises** on an over- or under-specified
+problem instead of returning one arbitrary solution of many.
+
+*The second law returns a `Constraint`, not a boolean* — both sides, the slack and the
+efficiency ratio — because the three illustrations that use Eq. 15.7-19 each want a
+different one of those, and a `True` would have thrown away all three.
+
+*Table 15.7-2 ships each compound's molecular formula, which the printed table does not
+carry.* That is what makes its ξ column self-checking: Eq. 15.7-9 regenerates all 53 values
+from the formulas alone, and all 53 agree. The printed table's two right-hand columns are
+derived and are regenerated rather than transcribed — the Table 14.6-1 contract, written
+after four of that table's cells turned out not to follow from their own data.
+
+**What it found.** Illustration 15.7-6 quotes ammonia's heat of combustion as 383.0 where
+Table 15.7-2 gives 348.1 and the arithmetic uses 348.1; Illustration 15.7-8 prints
+"6 × 14.5 = 81" where the heat load one line above is 13.5, and a second-law sum of 450.2
+where the ratio two clauses later uses the correct 450.5; Illustration 15.7-11's entropy
+balance multiplies the ethanol yield by 684.5, which is ethanol's Δ_cH where Δ_cG = 659.5 is
+needed and is what the printed answer used; Eq. 15.7-26b is missing the 112 kJ/C-mole that
+makes it an entropy; and Figure 15.7-3's vertical axis runs −200 to −700 kJ/C-mole where the
+equation beside it runs −443.6 to 0.
 
 ## Provenance
 

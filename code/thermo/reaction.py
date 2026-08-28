@@ -1364,3 +1364,161 @@ def ellingham(reactions, T, mode="full", per_mole_O2=False):
             rxn = rxn.scaled(1.0 / abs(nu_O2))
         columns[label] = np.atleast_1d(rxn.delta_G(T, mode=mode)) / 1e3
     return pd.DataFrame(columns, index=pd.Index(T, name="T (K)"))
+
+
+def adiabatic_reaction_temperature(reaction, initial, T_in, P=None, Ka=None,
+                                   T_bracket=(None, None), n_curve=200, mode="full"):
+    """Adiabatic reaction temperature: where the energy balance meets equilibrium.
+
+    Solves the pair of conditions Sec. 14.3 sets up for an adiabatic reactor whose
+    effluent is in chemical equilibrium -- Eq. 14.3-10a and the equilibrium relation --
+    for the single unknown pair (T_ad, X).
+
+    The energy balance is written as a total enthalpy balance,
+
+        sum_i N_i,out H_i(T_ad)  =  sum_i N_i,in H_i(T_in)
+
+    which is linear in X at fixed T_ad, so `X_energy(T)` is explicit. That is the same
+    equation as the illustration's
+
+        0 = integral_{T_in}^{T_ad} Cp,feed dT + dH_rxn(T_ad) X
+
+    -- the two differ only by which path is taken between the same two states, and
+    `energy_balance_forms_agree` below asserts it rather than asserting it in a comment.
+
+    Parameters
+    ----------
+    reaction : Reaction
+    initial : dict
+        Inlet moles, species -> N. Inerts are allowed and carry sensible heat.
+    T_in : float
+        Inlet temperature, K.
+    P : float, optional
+        Pressure in bar, passed to `equilibrium_extent`. Only affects the equilibrium
+        branch, and only when sum(nu) is nonzero.
+    Ka : callable, optional
+        Ka(T). Defaults to the reaction's own, from Appendix A.IV and A.II.
+    T_bracket : (float, float)
+        Search bracket. Defaults to (T_in + 1, T_in + 1500) for an exothermic
+        reaction and (T_in - 1500, T_in - 1) for an endothermic one -- see Notes.
+    n_curve : int
+        Points in the two returned curves.
+
+    Returns
+    -------
+    dict with keys `T_ad`, `X`, `y` (effluent mole fractions), and `curves`
+    (a DataFrame of the equilibrium and energy-balance branches over the bracket).
+
+    Notes
+    -----
+    ** THE BRACKET IS DIRECTIONAL, AND THAT IS THE POINT. ** Two curves crossing on a
+    plot is the situation where a solver happily returns the wrong root: X_energy(T_in)
+    is exactly zero, so T = T_in is ALWAYS a root of the difference when X_eq(T_in)
+    happens to be near zero, and an undirected bracket can converge on it. The default
+    bracket therefore starts one degree away from T_in, on the side the sign of
+    dH_rxn says the temperature must move: an exothermic reaction heats its own
+    effluent, an endothermic one cools it. A root on the wrong side of T_in is not a
+    solution, it is a solver artifact [spurious-root-is-the-default].
+
+    Raises if the two branches do not cross inside the bracket, rather than returning
+    the last iterate.
+    """
+    import pandas as pd
+
+    T_in = float(T_in)
+    initial = {k: float(v) for k, v in initial.items()}
+    if Ka is None:
+        Ka = lambda T: float(reaction.Ka(T, mode=mode))
+
+    species = list(dict.fromkeys(list(initial) + list(reaction.nu)))
+    inert = [s for s in species if s not in reaction.nu]
+
+    def _H(s, T):
+        """Enthalpy on the formation scale, J/mol."""
+        row = get_reaction_species(s)
+        c = reaction_cp(s)
+        a, b, cc, d, e = c
+        def I(T2):
+            return (a * T2 + b / 2 * T2**2 + cc / 3 * T2**3 + d / 4 * T2**4 - e / T2)
+        return float(row["DH"]) * 1e3 + (I(T) - I(T_REF))
+
+    def X_energy(T):
+        """Extent the energy balance permits at effluent temperature T."""
+        H_in = sum(N * _H(s, T_in) for s, N in initial.items())
+        # H_out(X) = sum_i (N_i,in + nu_i X) H_i(T);  linear in X.
+        H0 = sum(N * _H(s, T) for s, N in initial.items())
+        slope = sum(reaction.nu[s] * _H(s, T) for s in reaction.nu)
+        if slope == 0.0:
+            raise ValueError("the reaction has no enthalpy of reaction at this T; "
+                             "the energy balance does not determine X")
+        return (H_in - H0) / slope
+
+    def X_eq(T):
+        return float(equilibrium_extent(reaction, T, initial, P=P, Ka=Ka(T),
+                                        mode=mode).X)
+
+    lo, hi = T_bracket
+    if lo is None or hi is None:
+        exo = float(reaction.delta_H(T_in)) < 0.0
+        lo = T_in + 1.0 if exo else max(T_in - 1500.0, 10.0)
+        hi = T_in + 1500.0 if exo else T_in - 1.0
+    lo, hi = float(lo), float(hi)
+
+    f = lambda T: X_eq(T) - X_energy(T)
+    if f(lo) * f(hi) > 0:
+        raise ValueError(
+            f"the equilibrium and energy-balance branches do not cross between "
+            f"{lo:.1f} K and {hi:.1f} K (difference {f(lo):+.4f} and {f(hi):+.4f}). "
+            f"Widen T_bracket, or check that the reaction runs the direction assumed."
+        )
+    T_ad = float(optimize.brentq(f, lo, hi, xtol=1e-9, rtol=1e-12))
+    X = X_eq(T_ad)
+
+    moles = {s: initial.get(s, 0.0) + reaction.nu.get(s, 0.0) * X for s in species}
+    total = sum(moles.values())
+    y = {s: n / total for s, n in moles.items()}
+
+    grid = np.linspace(lo, hi, int(n_curve))
+    curves = pd.DataFrame(
+        {"X_equilibrium": [X_eq(t) for t in grid],
+         "X_energy_balance": [X_energy(t) for t in grid]},
+        index=pd.Index(grid, name="T (K)"))
+    return {"T_ad": T_ad, "X": X, "y": y, "curves": curves,
+            "X_energy": X_energy, "X_equilibrium": X_eq, "inert": inert}
+
+
+def energy_balance_forms_agree(reaction, initial, T_in, T, mode="full", rtol=1e-9):
+    """Assert that Sec. 14.3's two energy-balance forms are the same equation.
+
+    Eq. 14.3-10a is usually written as sensible heat of the FEED plus dH_rxn at the
+    EFFLUENT temperature; the total-enthalpy form used by
+    `adiabatic_reaction_temperature` heats the EFFLUENT composition and takes dH_rxn at
+    the INLET. They are two paths between the same pair of states, so they must give the
+    same X -- and checking it is cheap, whereas discovering later that they disagree is
+    not. Returns the two values of X.
+    """
+    def _H(s, TT):
+        row = get_reaction_species(s)
+        a, b, cc, d, e = reaction_cp(s)
+        I = lambda t: a * t + b / 2 * t**2 + cc / 3 * t**3 + d / 4 * t**4 - e / t
+        return float(row["DH"]) * 1e3 + (I(TT) - I(T_REF))
+
+    def icp(s, T1, T2):
+        a, b, cc, d, e = reaction_cp(s)
+        I = lambda t: a * t + b / 2 * t**2 + cc / 3 * t**3 + d / 4 * t**4 - e / t
+        return I(T2) - I(T1)
+
+    H_in = sum(N * _H(s, T_in) for s, N in initial.items())
+    H0 = sum(N * _H(s, T) for s, N in initial.items())
+    slope = sum(reaction.nu[s] * _H(s, T) for s in reaction.nu)
+    X_total = (H_in - H0) / slope
+
+    sensible = sum(N * icp(s, T_in, T) for s, N in initial.items())
+    X_classic = -sensible / float(reaction.delta_H(T))
+
+    if not np.isclose(X_total, X_classic, rtol=rtol):
+        raise AssertionError(
+            f"the two energy-balance forms disagree at T = {T} K: "
+            f"{X_total!r} vs {X_classic!r}. One of them is wrong."
+        )
+    return X_total, X_classic
