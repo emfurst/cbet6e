@@ -77,23 +77,59 @@ class SteamTables:
     def __init__(self, data_dir=None):
         d = data_dir or _default_data_dir()
         self.data_dir = d
-        self.sat = pd.read_csv(f"{d}/steam_saturation_T.csv")      # the dome
+        self.sat = pd.read_csv(f"{d}/steam_saturation_T.csv")      # the dome, vs T
+        self.satP = pd.read_csv(f"{d}/steam_saturation_P.csv")     # the dome, vs P
         self.sh = pd.read_csv(f"{d}/steam_superheat.csv")          # superheated vapor
         self.cl = pd.read_csv(f"{d}/steam_compressed_liquid.csv")  # compressed liquid
         self.solid = pd.read_csv(f"{d}/steam_solid_vapor.csv")     # solid-vapor
 
         self.ALL_P = tuple(sorted(self.sh.P_MPa.unique()))
         # the dome, as smooth functions of temperature
-        self.dome = {c: PchipInterpolator(self.sat.T_C, self.sat[c]) for c in
-                     ("P_MPa", "Hl", "Hv", "Sl", "Sv", "dH", "dS")}
-        self.Tsat_of_P = PchipInterpolator(self.sat.P_MPa, self.sat.T_C)
+        self.dome_knots = self._dome_knots()
+        self.dome = {c: PchipInterpolator(self.dome_knots.T_C, self.dome_knots[c])
+                     for c in ("P_MPa", "Hl", "Hv", "Sl", "Sv", "dH", "dS")}
+        self.Tsat_of_P = PchipInterpolator(self.dome_knots.P_MPa,
+                                           self.dome_knots.T_C)
 
         self.CL = self.cl[~self.cl["sat"]].copy()
 
         self._isobar_cache = {}
         self._merged_cache = {}
+        self._isotherm_cache = {}
 
     # --- the dome ----------------------------------------------------------
+    def _dome_knots(self):
+        """The saturation curve's knots: the temperature table, plus what the PRESSURE
+        table carries inside the gap the temperature table leaves below the critical
+        point.
+
+        Appendix A.III tabulates saturation twice, once against temperature and once
+        against pressure, and over the 66 temperatures the two share they agree to
+        0.0002 kJ/(kg K) in entropy and 0.03 kJ/kg in enthalpy. In one place they do
+        not, and it is the one place it matters. The temperature table's last two rows
+        are **370 C and the critical point at 374.14** -- a 4.14 K interval across
+        which the saturated liquid's entropy climbs 0.32 kJ/(kg K) and the vapor's
+        falls 0.37. The pressure table has a row inside it, at 22 MPa: 373.80 C.
+
+        Without that row the dome is drawn through one wide chord on each side and
+        meets itself at the critical point in a CORNER -- dT/dS is +10.6 coming up the
+        liquid branch and -9.3 coming up the vapor branch, where thermodynamics
+        requires 0, since the critical point is a maximum of T on the saturation
+        curve. The error is not only in the shape: at 373.80 C the interpolant built
+        without the row misses the printed saturated-liquid enthalpy by 56 kJ/kg.
+
+        So the rule is: any pressure-table row that falls strictly inside the
+        temperature table's final interval, and is not within 0.25 K of either end of
+        it, becomes a knot. Today that is exactly one row. It is printed data, not a
+        near-critical scaling law, and every original row is still honored exactly.
+        """
+        lo, hi = self.sat.T_C.iloc[-2], self.sat.T_C.iloc[-1]
+        fill = self.satP[(self.satP.T_C > lo + 0.25) & (self.satP.T_C < hi - 0.25)]
+        if fill.empty:
+            return self.sat
+        return (pd.concat([self.sat, fill[self.sat.columns]], ignore_index=True)
+                  .sort_values("T_C").reset_index(drop=True))
+
     def quality_line(self, x, T=None):
         """(S, H) along a line of constant quality x, swept up the dome (lever rule)."""
         T = np.linspace(self.sat.T_C.min(), TC, 400) if T is None else T
@@ -111,6 +147,10 @@ class SteamTables:
             return self._isobar_cache[(P, raw)]
         if table is None and P < self.ALL_P[0]:        # below the superheat table
             out = self.low_pressure_isobar(P)
+            self._isobar_cache[(P, raw)] = out
+            return out
+        if table is None and not raw and P not in self.ALL_P:
+            out = self.intermediate_isobar(P)          # between two tabulated ones
             self._isobar_cache[(P, raw)] = out
             return out
         t = self.sh if table is None else table
@@ -163,6 +203,76 @@ class SteamTables:
         return (np.r_[Sa, S0[keep] + R_M * np.log(0.01 / P)],
                 np.r_[self.dome["Hv"](Ta), H0[keep]],
                 np.r_[Ta, T0[keep]])
+
+    # MPa. The ceiling on an isobar built by interpolating between two tabulated
+    # ones. Below it the leave-one-out test in the chapter 3 notebook -- delete a
+    # tabulated isobar and rebuild it from its neighbors, a reach in ln P twice as
+    # long as any intermediate line actually needs -- returns the deleted curve to
+    # 0.003 kJ/(kg K) in entropy and 1.4 kJ/kg in enthalpy, both an order of
+    # magnitude finer than the printed line is wide. Above it the same test fails,
+    # by 0.3 and 210: the isobars fan apart as they approach the critical point and
+    # a curve drawn between two of them would be a guess, so intermediate_isobar
+    # raises above this pressure rather than returning one.
+    P_INTERP_MAX = 10.0
+
+    # The temperature ladder every intermediate isobar is sampled on. One shared
+    # ladder rather than one per pressure, so the isotherms the sampling needs are
+    # built once and reused by all of them. Close-spaced up to 400 C, where the
+    # isobars turn as they leave the dome, and coarser above it, where they are
+    # nearly straight.
+    _T_LADDER = np.r_[np.arange(45.0, 400.0, 2.5),
+                      np.arange(400.0, 1300.001, 12.5)]
+
+    def _isotherm_cached(self, T):
+        """`isotherm(T)`, memoized: the intermediate isobars all reuse the same ones."""
+        if T not in self._isotherm_cache:
+            self._isotherm_cache[T] = self.isotherm(T)
+        return self._isotherm_cache[T]
+
+    def intermediate_isobar(self, P):
+        """(S, H, T) for an isobar at a pressure BETWEEN two the superheat table has.
+
+        The chart needs these because the appendix tabulates unevenly: thirteen
+        isobars between 1 and 10 MPa, and not one between 0.01 and 0.05. Drawing only
+        what is tabulated leaves the low-pressure half of the Mollier chart, which is
+        the half a turbine calculation is read off, bare.
+
+        The construction is a slice across the chart's own isotherms. `isotherm`
+        already builds each one as a smooth function of ln P through every tabulated
+        isobar and the saturated vapor, and that is the curve family the chart draws;
+        reading it at an intermediate pressure adds no assumption the chart is not
+        already making. The line still begins exactly on the dome, at the saturation
+        temperature of its own pressure, so it leaves the saturation curve where it
+        must.
+
+        Only below `P_INTERP_MAX`, which is also below the critical pressure -- so
+        there is always a dome to start on. See the note there for what the test was.
+        """
+        if P > self.P_INTERP_MAX:
+            raise KeyError(
+                f"no isobar at P = {P} MPa: it is not tabulated, and above "
+                f"{self.P_INTERP_MAX} MPa the isobars fan out toward the critical "
+                "point too fast to interpolate one between two that are")
+        lp = np.log10(P)
+        Tsat = float(self.Tsat_of_P(P))
+        T = [Tsat]                     # start it on the dome, exactly
+        S = [float(self.dome["Sv"](Tsat))]
+        H = [float(self.dome["Hv"](Tsat))]
+        for t in self._T_LADDER:
+            if t <= Tsat + 0.5:        # 0.5 C: do not crowd the dome anchor
+                continue
+            Si, Hi, Pi = self._isotherm_cached(float(t))
+            if not Pi[0] <= P <= Pi[-1]:
+                continue
+            l = np.log10(Pi)
+            T.append(float(t))
+            S.append(float(np.interp(lp, l, Si)))
+            H.append(float(np.interp(lp, l, Hi)))
+        if len(T) < 3:
+            raise KeyError(f"no isobar at P = {P} MPa: too few isotherms reach it")
+        T, S, H = np.array(T), np.array(S), np.array(H)
+        fine = np.linspace(T.min(), T.max(), 400)
+        return (PchipInterpolator(T, S)(fine), PchipInterpolator(T, H)(fine), fine)
 
     def liquid_branch(self, P):
         """(S, H, T) up the liquid side of an isobar, from the compressed-liquid table.
@@ -288,6 +398,10 @@ class SteamTables:
                for P in self.ALL_P
                for S, H, Tl in [self.isobar(P)]
                if Tl.min() <= T <= Tl.max()]
+        if not pts:
+            raise ValueError(
+                f"no isotherm at T = {T} C: no tabulated isobar reaches it. The "
+                "lowest is 45.81 C, where 0.01 MPa saturates")
         P, S, H = (np.array(a) for a in zip(*sorted(pts)))
 
         if T < TC:                             # anchor it on the dome
@@ -421,16 +535,53 @@ class SteamTables:
 # whole lower-right corner is empty and the constant-quality lines stop in mid air.
 # They end on the triple-point isobar, the lowest pressure at which steam has a
 # saturated liquid at all.
-MOLLIER_P = (P_TRIPLE, 0.001, 0.002, 0.005,
-             0.01, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 40.0, 60.0)
+#
+# The labeled set is 1-2-5 in every decade, so a reader who has found one label knows
+# what the next one will be. 0.02 MPa is there for that reason and no other: the
+# appendix does not tabulate it, and without it the 0.01-to-0.05 band is the one band
+# on the chart that is a full 0.7 of a decade wide.
+MOLLIER_P = (P_TRIPLE, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05,
+             0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 40.0, 60.0)
+
+# The unlabeled isobars between them. Isobars on a Mollier chart are spaced roughly
+# evenly in ln P, so a set that repeats the SAME pattern in every decade puts them at
+# the same pitch everywhere on the chart -- which is what lets a reader interpolate
+# between two labeled lines the same way wherever they are working. This is the
+# pattern the appendix itself uses between 1 and 10 MPa, where it is densest; below
+# 1 MPa the appendix thins out and `intermediate_isobar` fills the gaps.
+_DECADE_MINOR = (1.2, 1.4, 1.6, 1.8, 2.5, 3.0, 3.5, 4.0, 4.5, 6.0, 7.0, 8.0, 9.0)
+MOLLIER_P_MINOR = tuple(
+    sorted(P for k in range(-4, 1) for v in _DECADE_MINOR
+           for P in [round(v * 10.0 ** k, 12)] if P > P_TRIPLE)
+    # above 10 MPa the pattern is not interpolable (see `P_INTERP_MAX`), so these are
+    # the tabulated isobars the appendix happens to carry
+) + (12.5, 15.0, 17.5, 25.0, 30.0, 35.0, 50.0)
+
 MOLLIER_T = (100, 200, 300, 400, 500, 600, 700, 800)
-MOLLIER_T_MINOR = (150, 250, 350, 450, 550, 650, 750)
+
+# One isotherm every 25 C, so the spacing of the family is half the 50 C the chart
+# carried before. The ladder starts at 50 C rather than 100: below 100 C the only
+# tabulated isobar is 0.01 MPa, and the isotherms there are what give the bottom right
+# of the frame -- the low-pressure end of an expansion -- something to read against.
+# It cannot start lower. 45.81 C is where 0.01 MPa saturates, and an isotherm below
+# that has no tabulated isobar to be built from at all.
+MOLLIER_T_MINOR = tuple(T for T in range(50, 800, 25) if T % 100)
 MOLLIER_X = (0.75, 0.80, 0.85, 0.90, 0.95)
 MOLLIER_X_MINOR = (0.725, 0.775, 0.825, 0.875, 0.925, 0.975)
 
 TS_P = (0.01, 0.1, 1.0, 5.0, 10.0, 20.0, 40.0, 60.0)
+
+# The same per-decade ladder the Mollier chart uses, from 0.01 MPa up -- including the
+# pressures that chart labels and this one does not, which are minor lines here. The
+# sub-0.01 MPa isobars are left out: on this projection their vapor branches lie beyond
+# the right-hand edge of the frame.
+TS_P_MINOR = tuple(P for P in sorted(set(MOLLIER_P) | set(MOLLIER_P_MINOR))
+                   if P >= 0.01 and P not in TS_P)
+
 TS_H = (400, 800, 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000)
-TS_H_MINOR = (200, 600, 1000, 1400, 1800, 2200, 2600, 3000, 3400, 3800)
+# One line every 100 kJ/kg rather than every 200: three between each labeled line, and
+# twice as many lines in the family as before.
+TS_H_MINOR = tuple(H for H in range(100, 4000, 100) if H % 400)
 TS_X = (0.2, 0.4, 0.6, 0.8)
 TS_X_MINOR = (0.1, 0.3, 0.5, 0.7, 0.9)
 
@@ -441,7 +592,7 @@ def minor_isobars(st, major):
 
 
 def mollier(ax, st, *, S_lim=(4.5, 9.5), H_lim=(2000, 4200),
-            isobars=MOLLIER_P, isobars_minor=None,
+            isobars=MOLLIER_P, isobars_minor=MOLLIER_P_MINOR,
             isotherms=MOLLIER_T, isotherms_minor=MOLLIER_T_MINOR,
             qualities=MOLLIER_X, qualities_minor=MOLLIER_X_MINOR,
             label_H=4080, T_key=True, T_key_title=True, grid=True,
@@ -457,7 +608,7 @@ def mollier(ax, st, *, S_lim=(4.5, 9.5), H_lim=(2000, 4200),
     # --- minor lines first, so the labeled majors sit on top of them ---
     for Tv in isotherms_minor:
         S, H, _ = st.isotherm(Tv, extend_to=S_edge)
-        ax.plot(S, H, "-", color=GRAY_MINOR, lw=LW["T_minor"], zorder=1)
+        ax.plot(S, H, "-", color=GRAY_MINOR, lw=LW["T_minor_mollier"], zorder=1)
     for x in qualities_minor:
         S, H = st.quality_line(x)
         ax.plot(S, H, "--", color=GRAY_MINOR, lw=LW["x_minor"], zorder=1,
@@ -543,7 +694,7 @@ def mollier(ax, st, *, S_lim=(4.5, 9.5), H_lim=(2000, 4200),
 
 
 def temperature_entropy(ax, st, *, S_lim=(0, 10), T_lim=(0, 800),
-                        isobars=TS_P, isobars_minor=None,
+                        isobars=TS_P, isobars_minor=TS_P_MINOR,
                         isenthalps=TS_H, isenthalps_minor=TS_H_MINOR,
                         qualities=TS_X, qualities_minor=TS_X_MINOR,
                         grid=True, liquid_isobars=True, mark_critical=False,
@@ -684,5 +835,5 @@ def temperature_entropy(ax, st, *, S_lim=(0, 10), T_lim=(0, 800),
 
 __all__ = ["SteamTables", "mollier", "temperature_entropy", "minor_isobars",
            "TC", "PC", "HC", "SC", "R_M", "P_TRIPLE",
-           "MOLLIER_P", "MOLLIER_T", "MOLLIER_T_MINOR", "MOLLIER_X",
-           "MOLLIER_X_MINOR", "TS_P", "TS_H", "TS_H_MINOR", "TS_X", "TS_X_MINOR"]
+           "MOLLIER_P", "MOLLIER_P_MINOR", "MOLLIER_T", "MOLLIER_T_MINOR", "MOLLIER_X",
+           "MOLLIER_X_MINOR", "TS_P", "TS_P_MINOR", "TS_H", "TS_H_MINOR", "TS_X", "TS_X_MINOR"]

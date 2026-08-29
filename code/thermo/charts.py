@@ -37,12 +37,21 @@ import numpy as np
 # how heavy any family is on any chart in the book.
 LW = {
     "sat": 1.7,                    # the saturation line: every chart's spine
-    "P": 1.0, "P_minor": 0.4,      # isobars            (T-S, Mollier)
+    "P": 1.0, "P_minor": 0.25,     # isobars            (T-S, Mollier)
     "T": 1.0, "T_minor": 0.4,      # isotherms          (P-H)
     "S": 0.7, "S_minor": 0.3,      # isentropes         (P-H)
     "V": 0.7, "V_minor": 0.3,      # constant volume    (P-H)
     "x": 0.7, "x_minor": 0.3,      # constant quality
-    "H": 0.7, "H_minor": 0.3,      # constant enthalpy  (T-S)
+    "H": 0.7,                      # constant enthalpy  (T-S)
+    # A MINOR TIER HAS TO BE TOLD APART FROM THE GRID, and the two tiers below cannot
+    # do it on ink. They are drawn in GRAY_MINOR, 0.62, against a grid whose major
+    # division is 0.70 -- lighter by almost nothing, and thicker at 0.45 pt -- so at
+    # the 0.25-0.3 pt a minor tier would otherwise take, they read as grid. Both
+    # therefore sit ABOVE the grid's 0.45 pt, and stay clear of their own labeled
+    # tier. The minor isobars need none of this: at 0.25 gray they are near-black, and
+    # separate from any grid tint on ink alone.
+    "H_minor": 0.5,                # constant enthalpy  (T-S)
+    "T_minor_mollier": 0.55,       # isotherms          (Mollier)
 }
 
 GRAY, GRAY_MINOR = "0.40", "0.62"
