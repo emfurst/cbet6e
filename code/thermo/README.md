@@ -9,8 +9,7 @@ tables. Parameters and constants come from `code/data/`.
 Python and Aspen are complementary parts of the toolbox — general-purpose scientific
 computing versus specialized process modeling, not a learning tool versus a real one. This
 package is open, inspectable and hackable and runs with nothing but a Python install;
-Aspen owns flowsheets and plant-scale design. `revision_notes/bapp02.md` is the print-facing
-version of that argument.
+Aspen owns flowsheets and plant-scale design.
 
 ```python
 import sys; sys.path.append("..")      # so `import thermo` works from a chapter folder
@@ -84,8 +83,7 @@ SI units throughout (T in K, P in Pa, V in m³/mol). `from_database` reads
 > was wrong, and the same mislabel is in two ch6 notebooks. It matters below room
 > temperature: for oxygen the two sets differ by 152 J/mol in H̲ and 1.23 J/(mol·K) in
 > S̲ at 73 K, which is the difference between reproducing printed Tables 7.5-1 and
-> 7.5-2 and not. Pass `cp=` explicitly when you need the book's numbers. See
-> `revision_notes/c07.md`, *ch6 heat-capacity inconsistency* — **decided 2026-08-03**: ch6
+> 7.5-2 and not. Pass `cp=` explicitly when you need the book's numbers. Chapter 6
 > uses the book's Appendix A.II set, via `cp=APPENDIX_A2_CP[...]`, so ch6 and ch7 sit on
 > one basis. `pure_property.csv` is left as the RPP table it is.
 
@@ -119,8 +117,8 @@ w.kappa_T(300)   # kappa at 300 K; kappa0 alone for standard PR
 ```
 
 κ₀ is coded with the **minus** sign on ω², following Stryjek and Vera, *Can. J. Chem.
-Eng.* **64**, 323 (1986). The 5e prints a plus in Eq. 7.5-2, which is an erratum — see
-`revision_notes/c07_manuscript_edits_7.5-3.md`. Verified against Illustration 7.5-3:
+Eng.* **64**, 323 (1986). The fifth edition prints a plus in Eq. 7.5-2, which is an
+erratum. Verified against Illustration 7.5-3:
 with the book's own Tc and Pc (SIS Table 6.6-1), κ₀ = 0.87188 and the printed PRSV
 column reproduces to four figures (0.6092 vs 0.6094 kPa at 273.15 K; 1550.1 vs 1550.0
 at 473.15 K). Note that PRSV with `kappa1=0` is **not** standard Peng–Robinson: κ₀ and
@@ -224,8 +222,8 @@ and a strong positive-deviation system (γ_EtOH^∞ ≈ 53 in hexane).
   `Ψ = exp[-(a/T + b + cT)]`, combinatorial with `r^0.75`).
 - **`kind="original"`** — **retired 2026-08-12.** The book teaches modified UNIFAC
   only: Table 9.5-2 *is* the Dortmund set and Eq. 9.6-12a carries the `r^0.75`
-  modification (`revision_notes/c09.md` **D1**). The `original` branch stays
-  unimplemented and `unifac_interactions_original.csv` is retained but unused.
+  modification. The `original` branch is fully implemented and carries its own
+  subgroup and interaction tables; select it with `UNIFAC("original")`.
 
 **The book and this module do not compute the same Ψ.** Eq. 9.6-13b prints
 `Ψ = exp(-a/T)`, a single temperature-independent constant per pair, where modified
@@ -278,8 +276,8 @@ against (regular solution does not, and returns `0.0` saying so); **all eight no
 ≤6e-15**, worst case UNIQUAC.
 
 **Two of them did not, and both were errata in the book** — Eqs. 9.5-12b and 9.5-18,
-in print through five editions and corrected in the 6e manuscript
-(`revision_notes/c09.md` §12.1). The classes carry the corrected forms, and each takes a
+in print through five editions and corrected in the sixth
+edition. The classes carry the corrected forms, and each takes a
 keyword to reproduce the printed one for comparison. **This is the check to run first on
 every model added from here on**; it is what makes the book disagree with itself.
 
@@ -401,7 +399,7 @@ product of two pure second virial coefficients, and below the Boyle temperature 
 negative — so the principal root is *positive* where both diagonals are negative, and
 $Q$ collapses through zero mid-composition. `cross_matrix` carries the sign of the pures
 through the root, which is the only reading consistent with the rule reducing to
-$b_i - a_i/RT$ on the diagonal. Worth a footnote in print; see `revision_notes/c09.md`.
+$b_i - a_i/RT$ on the diagonal. Worth a footnote in print.
 
 ## Phase equilibrium — `vle` (Ch. 10) and `lle` (Ch. 11)
 
@@ -470,15 +468,14 @@ above the three-phase pressure, so a badly seeded solve returns a converged answ
 three liquids in it. `eos_vlle_binary` rejects any solution whose vapor is
 indistinguishable from either liquid. `PhiPhiVLE.bubble_pressure` has the same hole
 and is **not** guarded — its default seed is far below, so the ordinary path is
-unaffected; see `revision_notes/c11.md` §13.
+unaffected.
 
-Validated in `code/ch11/validation/lle_module_validation.ipynb` against Illustrations
+Validated against Illustrations
 11.2-1, 11.2-2, 11.2-3, 11.2-4, 11.2-6, 11.2-7, 11.2-8, 11.2-9, 11.3-1, 11.3-2 and
 11.3-3, the fourteen-row $x_i\gamma_i$ table of Illustration 11.2-2, the thirty-two
 printed values of Illustration 11.3-2, and — with no rounding in them — the analytic
 results of Eqs. 11.2-11, 11.2-13, 11.2-14 and Problem 11.2-1(a,b). That pass found five
-defects in the chapter, and a sixth in this module; they are filed in
-`revision_notes/c11.md`.
+defects in the chapter, and a sixth in this module.
 
 **Illustration 11.3-2 needs SIS Table 6.6-1's constants, not `pure_property.csv`'s.**
 The database is Reid, Prausnitz and Poling and gives ω = 0.239 for carbon dioxide where
@@ -522,7 +519,7 @@ The caller keeps SI.
 > **The summation identity is exact by construction**, so agreement there is not
 > evidence the fit is good — `residuals` is. It is still worth checking, because a
 > *graphical* construction does not satisfy it: the 5e's Table 8.6-4 misses it by up to
-> 16 J/mol (`code/ch8/validation/`).
+> 16 J/mol.
 
 Verified against the book's own printed constants: with $a = (-4.0034, -0.17756, 0.54139,
 0.60481)\times10^{-6}$ m³/mol, Eqs. 8.6-6a,b reproduce **eleven of the twelve rows of
@@ -570,8 +567,7 @@ from thermo.data import unifac_groups, load_unifac_subgroups, pr_kij_matrix
 subgroup number or an R/Q that disagrees with its main group changes every activity
 coefficient it touches, silently — so the integrity rules run each time the file is read.
 They are not decorative: they caught duplicate subgroup numbers and silicon names sitting
-on the Dortmund cyclic groups in the legacy `.mat` extraction (`revision_notes/c09.md`
-§12.3). **Check the other legacy-derived tables the same way as ch10–15 open.**
+on the Dortmund cyclic groups in the legacy `.mat` extraction.
 
 > **R and Q come from the book; the $a_{mn}$ do not.** `unifac_subgroups.csv` is the
 > printed Table 9.5-2, but the *numbers* identifying each subgroup and main group are
@@ -761,7 +757,7 @@ the same error Illustration 13.3-1's own note attributes to Aspen Plus.
 
 ### Validated against Chapter 13 — 33 of 34 checks
 
-`code/ch13/validation/reaction_module_validation.ipynb`. Illustration 13.1-3 reproduces to
+Illustration 13.1-3 reproduces to
 **every printed digit** (including the internal identity that 56 189 and −6758.4 are the same
 number twice), Illustration 13.1-4's three extents come out exactly (0.6306, 0.4072, 0.5741),
 and Illustration 13.2-2's decomposition-pressure table reproduces across **25 orders of
@@ -773,7 +769,7 @@ the coupled-extent solve against Gibbs minimization.
 **The one failure is a finding about the book, not the module**: Illustration 13.1-8's
 printed $K_a$ table is not reproducible from Appendix A by any route the chapter offers, and
 it contradicts the book's own $K_a(450\ \mathrm{K})$ for the same reaction. It is filed as
-Q8 in `revision_notes/c13.md`, and nothing here is tuned to match it.
+and nothing here is tuned to match it.
 
 ## Bioreactors — `bioreactor` (Sec. 15.7)
 

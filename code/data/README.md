@@ -136,8 +136,7 @@ DECHEMA Chemistry Data Series Vol. VI, Frankfurt/Main (1982), and other sources.
 - **`unifac_subgroups.csv` — 92 subgroups over 46 main-group names**, digitized from the
   book's own **Table 9.5-2** (5e pp. 457–458):
   `subgroup_no, main_group_no, subgroup_name, main_group_name, R, Q, example`.
-  These *R*/*Q* are the **modified (Dortmund)** values — the only set the book prints
-  (`revision_notes/c09.md` D1).
+  These *R*/*Q* are the **modified (Dortmund)** values — the only set the book prints.
 - `unifac_interactions_modified.csv` — modified (Dortmund) main-group interactions:
   `main_i, main_j, a_ij, b_ij, c_ij` (temperature-dependent, $\Psi=\exp[-(a/T+b+cT)]$),
   1220 nonzero pairs over 56 main groups.
@@ -153,14 +152,13 @@ numbers come from the legacy MATLAB `UNIFAC_data.mat` extraction, and they have 
 because `unifac_interactions_modified.csv` is keyed on the main-group number — the two
 files must agree or every $\Psi_{mn}$ is wrong.
 
-**What the digitization found.** Full audit trail:
-`code/ch9/validation/unifac_subgroups_table_9.5-2_validation.ipynb`.
+**What the digitization found.**
 
 | | |
 |---|---|
 | **the legacy file had duplicate subgroup numbers** | 37, 38 and 39 each appeared twice — the *original*-UNIFAC pyridine subgroups (C5H5N, C5H4N, C5H3N) and the Dortmund ones (AC2H2N, AC2HN, AC2N). `dict(zip(subgroup_no, R))` silently kept whichever row came last. `load_unifac_subgroups` now **refuses** a duplicate. |
 | **six subgroups carried silicon names** | legacy main group 42 was `SiH2` with subgroups `SiH2`/`SiH`/`Si`, and 43 was `SiO` — but their *R* and *Q* are *exactly* the book's `cy-CH2`/`cy-CH`/`cy-C` and the three `cy-CH2 O` subgroups. In modified UNIFAC, main groups 42 and 43 **are** the cyclic groups. Recovering them by *R*/*Q* fingerprint is what let the cyclic groups keep the numbers the interaction table already uses. |
-| **the book prints `CHO` twice** | the aldehyde and the ether subgroup. The ether is stored as `CH-O`. Filed as an erratum. |
+| **the book prints `CHO` twice** | the aldehyde and the ether subgroup. The ether is stored as `CH-O`. |
 | **two values gained digits** | `AC2N` *Q* = 0.3539 (legacy 0.3530), `cy-CON-CH3` *R* = 3.9819 (legacy 3.9810). The book wins. |
 | **`CHCl3` is its own main group** | the book prints chloroform and CCl₃ under one `CCl3` heading, but the parameter set gives chloroform main group 45 and CCl₃ main group 23 — which is why their *R* differ where subgroups of a genuine main group always share *R*. This is the only place the printed heading and the parameter set's main groups disagree, and it accounts exactly for 46 names over 47 numbers. |
 
@@ -181,12 +179,9 @@ hand-transcribes a subgroup number.
 The **original**-UNIFAC *R*/*Q* set, digitized from **Table 7.5-2 of the 2nd edition of this
 book** (*Chemical and Engineering Thermodynamics*, pp. 333–334) — the parameter set the book
 itself published when it taught original UNIFAC.
-`research/references/ch10/SIS-CET-2e-table-7.5-2.pdf`, supplied by the author 2026-08-17.
 
 Read from a **600-dpi render, not from `pdftotext`**: the OCR mangles the numerals
-(`1..4457`, `).6908`, `.9031`). Rebuild and re-check with
-`python3 tools/build_unifac_subgroups_original.py`, which carries the transcription and its
-tests together.
+(`1..4457`, `).6908`, `.9031`).
 
 **Why this file could not simply be extracted like the others.** The original *R*/*Q* did not
 survive in the 5e's materials: the Visual Basic package (`UNNRQnew.asc`) and the MATLAB
@@ -259,8 +254,7 @@ hydrocarbons and aldehydes Figure 10.2-8 needed.
 
 ## `steam_*.csv` — Appendix A.III, the thermodynamic properties of water and steam
 
-A digitization of the book's **own Appendix A.III**, extracted from the page proofs by
-`tools/parse_appendix_A3.py`. Figure 3.3-1(a) (the Mollier diagram) and 3.3-1(b) (the
+A digitization of the book's **own Appendix A.III**, extracted from the page proofs. Figure 3.3-1(a) (the Mollier diagram) and 3.3-1(b) (the
 $T$–$S$ diagram) are drawn from these files, which is why the charts and the appendix a
 student reads them against cannot disagree.
 
@@ -284,10 +278,8 @@ printing precision, the saturation rows satisfy $\Delta\hat X = \hat X^{\rm V} -
 printed digit.
 
 **Five cells are corrected.** The 5e appendix carries five typeset errors, each
-established two independent ways before being changed; the arithmetic is worked out in
-`ch3/validation/Appendix_A3_corrections.ipynb`, which is the record for this table.
-They are applied by `tools/parse_appendix_A3.py` (`DATA_FIXES`) as it writes these
-files, so the CSVs remain exactly what the parser produces and a re-run cannot silently
+established two independent ways before being changed. They are applied by the parser as
+it writes these files, so the CSVs remain exactly what the parser produces and a re-run cannot silently
 revert them.
 
 | table | row | column | printed | corrected |
@@ -323,7 +315,6 @@ IAPWS.
 `pure_property.csv` / `react_property.csv` extracted from `pure_prop.mdb` (618 rows) and
 `React.mdb` (99 rows) — the shared property database embedded in the 5e Visual Basic
 Property / Peng-Robinson / ChemEq programs. `unifac_*.csv` extracted from the 5e MATLAB
-`UNIFAC_data.mat`. `steam_*.csv` extracted from the 5e page proofs of Appendix A.III by
-`tools/parse_appendix_A3.py`. `mixing_*.csv` transcribed from the 5e Tables 8.6-1 and
-8.6-3 and verified against each table's own identity (2026-08-09). See Appendix B and
-`revision_notes/bapp02.md` for the modernization decisions.
+`UNIFAC_data.mat`. `steam_*.csv` extracted from the 5e page proofs of Appendix A.III. `mixing_*.csv` transcribed from the 5e Tables 8.6-1 and
+8.6-3 and verified against each table's own identity. See Appendix B of the book for the
+modernization decisions.

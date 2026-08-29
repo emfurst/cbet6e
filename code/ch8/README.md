@@ -83,13 +83,11 @@ answer wrong by three orders of magnitude with no warning.
 ## Outputs
 
 `output/` holds the generated tables (`.csv` for downstream use, `.txt` formatted for
-reading); `pdf/` holds the figures. Neither is published — the allowlist in
-`6e_companion_site/tools/publish_code.sh` copies notebooks and this README only.
+reading); `pdf/` holds the figures. Both are written by the notebooks.
 
 ## Validation
 
-`validation/` compares the generated tables with the 5e as printed. It is author's
-material and is excluded from the public repo automatically (anything in a subdirectory of
-`code/chNN/` is). Its result, in one line: **Table 8.6-2 reproduces to the last digit and
+The generated tables were compared with the fifth edition as printed. The result, in
+one line: **Table 8.6-2 reproduces to the last digit and
 the check finds a sign error in the printed table; Table 8.6-4 does not reproduce at any
 order, because it was drawn rather than computed.**

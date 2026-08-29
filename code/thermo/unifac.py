@@ -27,12 +27,20 @@ original. Neither is a stub.
 The R/Q and the a_mn must come from the same parameter set, which is why `kind`
 selects both together and neither table is meant to be loaded on its own.
 
-**And the two sets do not agree on what a subgroup NUMBER means.** They share 1-26
-and 40-77, but 27, 37-39 and 78-85 name different groups in each -- 27 is `FCH2O` in
-the original set and `cy-CH2 OCH2` in Dortmund; 78-80 are `SiH3`/`SiH2`/`SiH` against
-`cy-CH2`/`cy-CH`/`cy-C`. Both numbers exist in both tables, so handing one set's group
-assignment to the other model does not raise. Use `data.unifac_groups(name, kind)`,
-which reads the matching table, rather than reusing a dict across kinds.
+**And the two sets do not agree on what a subgroup NUMBER means.** 27, 37-39 and
+78-85 name different groups in each -- 27 is `FCH2O` in the original set and
+`cy-CH2 OCH2` in Dortmund; 78-80 are `SiH3`/`SiH2`/`SiH` against `cy-CH2`/`cy-CH`/`cy-C`;
+81-82 are `Si`/`SiH2O` against `OH(s)`/`OH(t)`; 85 is `NMP` against `CNH2`.
+
+**Dortmund also splits the hydroxyl group and the original set does not**, which is the
+divergence inside the otherwise-shared low numbers: 14 is a plain `OH` in the original
+set and specifically `OH(p)` in Dortmund, where a secondary or tertiary alcohol takes 81
+or 82 instead. So 2-propanol decomposes differently in the two sets even though every
+number involved exists in both.
+
+Both numbers always exist in both tables, so handing one set's group assignment to the
+other model does not raise. Use `data.unifac_groups(name, kind)`, which reads the
+matching table, rather than reusing a dict across kinds.
 
 Faithful translation of the legacy MATLAB `calc_coeff` routine. An Aspen-optional
 substitute for activity-coefficient calculations.

@@ -165,12 +165,7 @@ which should return `CM*` names only.
 
 ## Other folders
 
-- `archive/` — earlier versions (was `old versions/`)
-- `pdf/` — rendered PDF exports (stale filenames; regenerate as needed)
+- `pdf/` — rendered PDF exports, written by the notebooks; regenerate as needed
 
-These notebooks are wired into the companion site via
-`6e_companion_site/source/chapters/ch06.yaml` (`codes:` block). Each topic is **one
-entry** that pairs its self-contained notebook (`file:`) with its `_thermo` twin
-(`file_thermo:`); the site collapses the pair into a single card offering two labeled
-download links (self-contained + thermo package). Update those paths if you rename
-anything here, then rerun `6e_companion_site/build.py`.
+Each topic appears on the companion site as a single card offering two labeled downloads:
+the self-contained notebook and its `_thermo` twin.

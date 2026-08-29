@@ -29,12 +29,11 @@ ranking (fitted correlation > UNIFAC > regular solution) is the chapter's argume
 vapor–liquid equilibrium measurements — and that is the source used here. Digitizing the
 figure art would be a worse source than the table the figure was drawn from.
 
-## `validation/`
+## Digitizing Table 9.5-2
 
-Not teaching material. [`unifac_subgroups_table_9.5-2_validation.ipynb`](validation/unifac_subgroups_table_9.5-2_validation.ipynb)
-is the audit trail for digitizing **Table 9.5-2** into `code/data/unifac_subgroups.csv`:
-the checks the table makes possible, and the five defects the comparison found. Excluded
-from the public repository by the same rule as the other `validation/` folders.
+`code/data/unifac_subgroups.csv` is **Table 9.5-2** transcribed. The transcription was
+audited against the checks the table itself makes possible, which found five defects in
+the legacy machine-readable copy; the CSV carries the corrected values.
 
 Its Colab bootstrap checks `../../thermo` as well as `../thermo`, because it sits one
 level deeper than the chapter notebooks. Without that, the bootstrap clones a published

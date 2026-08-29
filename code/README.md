@@ -79,17 +79,15 @@ Molar quantities use an **underbar** ($\underline{V}$, $\underline{H}$), specifi
 (per-mass) quantities a **caret** ($\hat{V}$), total quantities a **plain** symbol, and
 an **overbar** is reserved for a partial molar property ($\bar{G}_i$, introduced in
 Ch. 8). This matches the book. Per-chapter notation files for an AI coding assistant are
-generated alongside the companion site (`6e_companion_site/build/grounding/chNN-notation.md`).
+published on the companion website.
 
 ## Prose style in the code
 
 Everything a reader sees — markdown cells, docstrings, comments, and the text a cell
-prints — is plain prose with **no emoji**. Markers like the ones used for triage in the
-revision notes must not cross into a notebook or a module: a notebook is read on the
+prints — is plain prose with **no emoji**. Triage markers must not cross into a
+notebook or a module: a notebook is read on the
 companion site and on GitHub, and its stored output is part of what a student reads. Where
 a warning needs weight, say so in words (`NOT`, `must`, bold) rather than with a glyph.
-This was reset across `code/` on 2026-08-19, when 596 markers were removed from 75 files;
-`archive/` was left frozen on purpose.
 
 ## Layout
 
@@ -99,7 +97,6 @@ This was reset across `code/` on 2026-08-19, when 596 markers were removed from 
 
 Work through these **in order**. The first two are read rather than run; each of the last
 four is the anchor for one printed problem (1.9–1.12) and ends with a *Your turn* cell.
-Rewritten 2026-08-05 — the previous course-era versions are in `ch1/archive/`.
 
 | Notebook | What it teaches |
 |---|---|
@@ -159,8 +156,8 @@ EOS — the self-contained version shows the method, the twin shows the reuse.
 | `RK_partial_molar_enthalpy_water_methanol_example.ipynb` | Table 8.6-4: partial molar enthalpies from heat-of-mixing data |
 | `Hrxn_temperature_N2O4_example.ipynb` | Illustration 8.5-2: the standard heat of reaction versus temperature |
 
-`ch8/README.md` and `ch8/validation/` document how the two partial-molar tables were
-rebuilt from the printed density and heat-of-mixing data.
+`ch8/README.md` documents how the two partial-molar tables were rebuilt from the
+printed density and heat-of-mixing data.
 
 **`ch9/` — the Gibbs energy and fugacity of a component in a mixture**
 | Notebook | What it teaches |
@@ -273,13 +270,9 @@ Optional material for advanced students and the emerging-topics track:
   `https://github.com/emfurst/SimpleMD`).
 - `honors/honors maxwell boltzmann/` — the Maxwell–Boltzmann speed distribution.
 
-## Not part of the deliverable
+## Generated output
 
-Working and superseded material, excluded from the companion site:
-- `ch*/archive/` — superseded notebooks; `ch*/pdf/` — generated PDF exports (author's reference, not distributed).
-- `test code/` — experimental scratch (e.g. ternary diagrams).
-- `CHEG231_python_2025.ipynb` — a full-course working notebook.
-- `PLANNING_2024.txt` — the original 2024 planning outline for this code package.
+- `ch*/pdf/` — figure exports, written by the notebooks when they run.
 
 ## Provenance and scope
 
