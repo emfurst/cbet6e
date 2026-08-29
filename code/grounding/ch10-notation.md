@@ -192,7 +192,7 @@ Notation is written in LaTeX.
 | `\underline{A}^{\text{ex}}` | molar excess Helmholtz energy (Sec. 9.9, Wong-Sandler) | J/mol |
 | `\phi_i` | VOLUME (segment) fraction of species $i$, $x_ir_i/\sum_j x_jr_j$ — NOT a fugacity coefficient (Secs. 9.5, 9.6) | - |
 | `\phi_i^{\prime}` | volume fraction weighted by $r_i^{3/4}$, used only in the modified-UNIFAC combinatorial term (Eq. 9.6-12a) | - |
-| `\Phi_i` | volume fraction from molar volumes, $x_i\underline{V}_i/\underline{V}_{\text{mix}}$ — regular solution theory ONLY (kept as $\Phi_i$ deliberately, for consistency with earlier editions) | - |
+| `\Phi_i` | volume fraction from molar volumes, $x_i\underline{V}_i/\underline{V}_{\text{mix}}$ — regular solution theory ONLY (kept as $\Phi_i$ deliberately) | - |
 | `\theta_i` | SURFACE AREA fraction of species $i$, $x_iq_i/\sum_j x_jq_j$ (Secs. 9.5, 9.6); an undecorated $\theta$ elsewhere in the book is a generic property | - |
 | `r_i,\;q_i` | volume and surface area parameters of SPECIES $i$, summed from its functional groups | - |
 | `R_k,\;Q_k` | volume and surface area parameters of FUNCTIONAL GROUP $k$ (Table 9.5-2, modified/Dortmund set) | - |
@@ -369,11 +369,11 @@ Notation is written in LaTeX.
 - **(9.5-12a) Wilson activity coefficients (binary)** — `\ln\gamma_1 = -\ln(x_1+\Lambda_{12}x_2) + x_2\left[\dfrac{\Lambda_{12}}{x_1+\Lambda_{12}x_2} - \dfrac{\Lambda_{21}}{x_2+\Lambda_{21}x_1}\right]`
   The Wilson model, with $\Lambda_{ij}\neq\Lambda_{ji}$ and $\Lambda_{ii}=1$. It cannot predict liquid-liquid phase splitting, which is why Ch.11 does not use it.
 - **(9.5-12b) Wilson infinite-dilution activity coefficients (CORRECTED)** — `\ln\gamma_1^{\infty} = -\ln\Lambda_{12} + 1 - \Lambda_{21}, \qquad \ln\gamma_2^{\infty} = -\ln\Lambda_{21} + 1 - \Lambda_{12}`
-  CORRECTED ERRATUM — the 5e prints the SAME subscript twice in each expression ($\ldots+1-\Lambda_{12}$ in the first). The form above is the $x_1\to0$ and $x_2\to0$ limit of Eq. 9.5-12a. This is not cosmetic: for a Wilson fit to the chapter’s own benzene / 2,2,4-trimethyl pentane data the printed form returns $\gamma_1^{\infty}=0.61$ where the model itself gives $1.48$ — the SIGN of the deviation from ideality is wrong. If you have seen the printed form, discard it.
+  CORRECTED — the form usually printed repeats the SAME subscript twice in each expression ($\ldots+1-\Lambda_{12}$ in the first). The form above is the $x_1\to0$ and $x_2\to0$ limit of Eq. 9.5-12a. This is not cosmetic: for a Wilson fit to the chapter’s own benzene / 2,2,4-trimethyl pentane data the printed form returns $\gamma_1^{\infty}=0.61$ where the model itself gives $1.48$ — the SIGN of the deviation from ideality is wrong. If you have seen the printed form, discard it.
 - **(9.5-14b) NRTL infinite-dilution activity coefficients** — `\ln\gamma_1^{\infty} = \tau_{21} + \tau_{12}e^{-\alpha\tau_{12}}`
   Correct as printed — verified as the limit of the full NRTL expression. Included here as the counterexample to 9.5-12b: same kind of equation, same chapter, no error.
 - **(9.5-18) Flory-Huggins activity coefficient of the larger species (CORRECTED)** — `\ln\gamma_2 = \ln\dfrac{\phi_2}{x_2} - (m-1)\phi_1 + m\chi\phi_1^{2}`
-  CORRECTED ERRATUM — the 5e prints $+(m-1)\phi_1$. The sign above follows from differentiating the book’s own $\underline{G}^{\text{ex}}$ (Eq. 9.5-17). Its partner $\ln\gamma_1 = \ln(\phi_1/x_1)+(1-1/m)\phi_2+\chi\phi_2^{2}$ IS correct, so only one sign moves. The discrepancy reaches $1.75$ in $\ln\gamma$ at $m=3$, $\chi=0.5$, $x_1=0.7$. Here $\phi_i$ is a VOLUME FRACTION and $m$ the size ratio $v_2/v_1$.
+  CORRECTED — the form usually printed has $+(m-1)\phi_1$. The sign above follows from differentiating the book’s own $\underline{G}^{\text{ex}}$ (Eq. 9.5-17). Its partner $\ln\gamma_1 = \ln(\phi_1/x_1)+(1-1/m)\phi_2+\chi\phi_2^{2}$ IS correct, so only one sign moves. The discrepancy reaches $1.75$ in $\ln\gamma$ at $m=3$, $\chi=0.5$, $x_1=0.7$. Here $\phi_i$ is a VOLUME FRACTION and $m$ the size ratio $v_2/v_1$.
 - **(9.5-23b) UNIQUAC residual activity coefficient** — `\ln\gamma_i^{\text{residual}} = q_i\left[1 - \ln\!\left(\sum_j \theta_j\tau_{ji}\right) - \sum_j \dfrac{\theta_j\tau_{ij}}{\sum_k \theta_k\tau_{kj}}\right]`
   SUBSCRIPT ORDER IS LOAD-BEARING: $\tau_{ji}$ inside the logarithm, $\tau_{ij}$ in the sum. $\tau$ is not symmetric, so swapping them changes every computed $\gamma_i$ — and the pure-component limit does NOT catch the error ($\theta_i=1$, $\tau_{ii}=1$ gives $\ln\gamma_i=0$ either way). It only shows up in a mixture. Matches Abrams and Prausnitz (1975).
 - **(9.6-12a) Modified (Dortmund) UNIFAC combinatorial term** — `\phi_i^{\prime} = \dfrac{x_i r_i^{3/4}}{\sum_j x_j r_j^{3/4}}`
@@ -396,7 +396,7 @@ modify the cells directly rather than narrating code you cannot execute.
 - `ch3/refrigerant_comparison.ipynb` — Can a new refrigerant replace an old one?
 - `ch3/Steam_charts_from_appendix_A3.ipynb` — Figure 3.3-1: the steam charts, drawn from Appendix A.III
 - `ch3/PH_charts_methane_and_nitrogen.ipynb` — Figures 3.3-2 and 3.3-3: methane and nitrogen from the Peng-Robinson equation
-- `ch3/Heat_capacity_from_molecular_structure.ipynb` — Where a heat capacity comes from, and what fitting one costs
+- `ch3/Heat_capacity_from_molecular_structure.ipynb` — Where a heat capacity comes from, and why a wider fit is not a better one
 - `ch3/LJ_interaction_energy_figure.ipynb` — Figure 3.3-5: the interaction energy between two molecules
 - `ch5/Linde_liquefaction_CH4_figure.ipynb` — Figure 5.1-3: the liquefaction path of Illustration 5.1-1
 - `ch5/Rankine_cycle_steam_figure.ipynb` — Illustration 5.2-1: the Rankine cycle on the steam T-S chart
@@ -448,7 +448,7 @@ modify the cells directly rather than narrating code you cannot execute.
 - `ch10/excess_properties_benzene_TMP_figure.ipynb` — Excess enthalpy and entropy from the temperature dependence of $G^{ex}$ (benzene / 2,2,4-trimethyl pentane)
 - `ch10/azeotrope_to_vanlaar_benzene_cyclohexane_example.ipynb` — A phase diagram from one azeotropic point (benzene / cyclohexane)
 - `ch10/pressure_swing_methyl_acetate_methanol_example.ipynb` — Nonideal phase diagrams, an azeotrope, and how to separate it (methyl acetate / methanol)
-- `ch10/pr_vle_co2_isopentane_figure.ipynb` — One binary parameter, and what it is worth (carbon dioxide / isopentane)
+- `ch10/pr_vle_co2_isopentane_figure.ipynb` — One binary parameter, fitted once and used at both temperatures (carbon dioxide / isopentane)
 - `ch10/acetone_water_mixing_rules_figure.ipynb` — Four ways to model a very nonideal mixture (acetone / water)
 - `ch10/azeotrope_test_ethyl_acetate_benzene_homework.ipynb` — Does this system have an azeotrope? Two models that disagree (ethyl acetate / benzene)
 - `ch10/unifac_pentane_propionaldehyde_example.ipynb` — Three ways to get a phase diagram, and how little data each needs (n-pentane / propionaldehyde)

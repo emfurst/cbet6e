@@ -1,6 +1,6 @@
 # `thermo` — the book's models, in Python
 
-A small, dependency-light package (numpy + scipy + pandas) providing the thermodynamic
+A small, dependency-light package (numpy + scipy + pandas) — **24 modules** — providing the thermodynamic
 **models** the book teaches — cubic equations of state for pure fluids and mixtures, the
 activity coefficient models, UNIFAC, the property-chart machinery and the book's own data
 tables. Parameters and constants come from `code/data/`.
@@ -20,25 +20,48 @@ from thermo import PengRobinson, VanDerWaals, UNIFAC
 The package holds the *method*; the per-chapter notebooks are the *applications* that call
 it. That split, and everything still to be built, is [`ROADMAP.md`](ROADMAP.md).
 
+> **The complete, always-current module reference is generated from this source at
+> [cbethermo.org/thermo](https://cbethermo.org/thermo)** — every public class and function in all
+> 24 modules, parsed with `ast` when the site builds. ⛔ **Prefer it to the table below.** This
+> file's table used to list 13 of 24 modules and claimed the ionization half of Chapter 13 was
+> unbuilt while `ionization.py` sat beside it at 1,066 lines; a hand-kept list of a growing
+> package goes stale silently, which is precisely why the site page is generated.
+
 | module | what it holds | § |
 |---|---|---|
+| **Equations of state** | | |
 | [`cubic`](#what-the-two-share-cubiceos) | `CubicEOS` — roots, fugacity, spinodals, the $P^{vap}$ solver | 6, 7 |
 | [`peng_robinson`](#pengrobinson-pure-fluids) | pure-fluid PR and PRSV | 6, 7 |
 | [`van_der_waals`](#van-der-waals-pure-fluids) | pure-fluid vdW | 6, 7 |
-| [`pr_mixture`](#pengrobinson-mixtures) | vdW one-fluid mixing rules, species fugacity, bubble/dew/flash | 9, 10 |
-| [`activity_models`](#activity-coefficient-models--activity_models) | nine correlative and predictive γ models on one interface | 9 |
-| [`unifac`](#unifac-activity-coefficients) | modified (Dortmund) UNIFAC | 9 |
-| [`electrolytes`](#electrolyte-solutions--electrolytes) | Debye–Hückel and its extensions; ionic strength, $\gamma_\pm$ | 9, 15 |
+| [`pr_mixture`](#pengrobinson-mixtures) | vdW one-fluid mixing rules, species fugacity | 9, 10 |
+| `phi_phi` | the φ–φ drivers: bubble point, dew point, isothermal flash | 10 |
 | [`wong_sandler`](#combined-eos--gex-the-wongsandler-mixing-rule--wong_sandler) | an activity coefficient model inside a cubic EOS | 9, 10 |
+| **Liquid mixtures** | | |
+| [`activity_models`](#activity-coefficient-models--activity_models) | nine correlative and predictive γ models on one interface | 9 |
+| [`unifac`](#unifac-activity-coefficients) | UNIFAC by group contribution | 9 |
 | [`fitting`](#redlichkister-correlation-of-mixing-data--fitting) | Redlich–Kister correlation, partial molar properties | 8 |
+| [`electrolytes`](#electrolyte-solutions--electrolytes) | Debye–Hückel and its extensions; ionic strength, $\gamma_\pm$ | 9, 15 |
+| **Phase equilibrium** | | |
+| [`vle`](#phase-equilibrium--vle-ch-10-and-lle-ch-11) | low-pressure VLE by the γ–φ method | 10 |
+| [`lle`](#phase-equilibrium--vle-ch-10-and-lle-ch-11) | liquid–liquid and vapor–liquid–liquid equilibrium | 11 |
+| `sle` | solid–liquid and solid–fluid equilibrium | 12 |
+| `osmotic` | osmotic equilibrium and osmotic pressure | 11 |
+| `partition` | distribution of a solute between two liquid phases | 11 |
+| **Reaction, ionization, biology** | | |
 | [`reaction`](#chemical-reaction-equilibrium--reaction) | $K_a(T)$, the extent of reaction, Ellingham, Gibbs minimization — **replaces CHEMEQ** | 13 |
-| [`data`](#the-data-tables--data) | every table above, plus the property and reaction databases | all |
+| `ionization` | ionization, acidity, the charge on biomolecules | 13, 15 |
+| [`bioreactor`](#bioreactors--bioreactor-sec-157) | fermenter atom balances, energy balance, second-law analysis | 15 |
+| **Charts and diagrams** | | |
 | [`charts`, `ph_chart`, `steam_chart`](#property-charts--charts-ph_chart-steam_chart) | the book's property charts | 3, 5, 6 |
+| `vle_chart` | the drawing layer for Chapter 10's phase diagrams | 10 |
+| [`ternary`](#triangular-composition-diagrams--ternary) | triangular composition diagrams | 11 |
+| **Data** | | |
+| [`data`](#the-data-tables--data) | every table above, plus the property and reaction databases | all |
 
-**Not built yet:** electrochemistry, and the ionization half of ch13 (Secs. 13.5–13.7 —
-$K_a$ coupled to $\gamma_\pm$ through the ionic strength, which belongs with `electrolytes`).
-Reaction equilibrium itself landed 2026-08-18 as [`reaction`](#chemical-reaction-equilibrium--reaction).
-See the roadmap.
+Modules without a link have no prose section here yet; they are documented in full on the
+generated page. **Not in the package:** electrochemistry — Chapter 14's cell potentials are
+worked in `code/ch14/electrochemical_cell_potentials_example.ipynb` rather than as a module.
+`ionization` covers **Secs. 13.5–13.6**; Sec. 13.7 is not yet modeled. See the roadmap.
 
 ## Peng–Robinson (pure fluids)
 

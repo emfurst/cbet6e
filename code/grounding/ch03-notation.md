@@ -112,5 +112,5 @@ modify the cells directly rather than narrating code you cannot execute.
 - `ch3/refrigerant_comparison.ipynb` — Can a new refrigerant replace an old one?
 - `ch3/Steam_charts_from_appendix_A3.ipynb` — Figure 3.3-1: the steam charts, drawn from Appendix A.III
 - `ch3/PH_charts_methane_and_nitrogen.ipynb` — Figures 3.3-2 and 3.3-3: methane and nitrogen from the Peng-Robinson equation
-- `ch3/Heat_capacity_from_molecular_structure.ipynb` — Where a heat capacity comes from, and what fitting one costs
+- `ch3/Heat_capacity_from_molecular_structure.ipynb` — Where a heat capacity comes from, and why a wider fit is not a better one
 - `ch3/LJ_interaction_energy_figure.ipynb` — Figure 3.3-5: the interaction energy between two molecules
