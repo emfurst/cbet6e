@@ -70,8 +70,8 @@ reusable tool:
   tool than the straight-up notebooks.
 
 The `_thermo` twin notebooks in each chapter *apply* the package; their self-contained
-counterparts build the same method procedurally — see [`thermo/ROADMAP.md`](thermo/ROADMAP.md)
-for the package's design and build-out plan.
+counterparts build the same method procedurally — see [`thermo/README.md`](thermo/README.md)
+for the package's design.
 
 ## Notation
 
@@ -112,15 +112,16 @@ four is the anchor for one printed problem (1.9–1.12) and ends with a *Your tu
 |---|---|
 | `Heat_capacity_range_of_validity.ipynb` | why a correlation's temperature range is part of its data: Appendix A.II's two O₂ rows against NIST-JANAF over 100–1800 K, and what each costs once you integrate it into $\underline{H}$ and $\underline{S}$. **Also derives** the cryogenic-range rows in `thermo.APPENDIX_A2_CP_CRYO` — run it to check those coefficients |
 | `LJ_interaction_energy_figure.ipynb` | Figure 3.3-5: the Lennard-Jones interaction energy between two molecules, for argon and methane |
-| `Steam_charts_from_appendix_A3.ipynb` | Figure 3.3-1: the Mollier and $T$–$S$ charts for steam, drawn from Appendix A.III (`../data/steam_*.csv`) rather than from an equation of state, so chart and table agree by construction. Every line family is an argument — zoom in, redraw at your own scale, read values numerically. Ends by reading Illustration 3.4-1 off both charts |
+| `Steam_charts_from_appendix_A3.ipynb` | Figure 3.3-1: the Mollier and $T$–$S$ charts for steam, drawn from Appendix A.III (`data/steam_*.csv`) rather than from an equation of state, so chart and table agree by construction. Every line family is an argument — zoom in, redraw at your own scale, read values numerically. Ends by reading Illustration 3.4-1 off both charts |
 | `Heat_capacity_from_molecular_structure.ipynb` | where $C_P^*$ comes from: equipartition, and an Einstein term per vibrational mode. Methane from four spectroscopic frequencies, matching NIST-JANAF to 0.03 J/(mol·K), with the $4R$ floor no nonlinear gas can go under. Then the derived curve becomes noisy "experimental" data and is fitted 400 times — what the coefficients do, what the curve does, and why the fitted *range* is part of the correlation. Needs no data file |
 | `PH_charts_methane_and_nitrogen.ipynb` | Figures 3.3-2 and 3.3-3: pressure–enthalpy charts for methane and nitrogen, drawn entirely from Peng–Robinson — three constants, four heat-capacity coefficients, one cubic. Derives methane's cryogenic $C_P^*$ from its vibrational spectrum (the printed Appendix A.II row is 25% low at 100 K), checks the equation against the book's own Wagner constants before drawing, and ends by working Illustration 6.5-1 on the nitrogen chart |
 | `refrigerant_comparison.ipynb` | can R-1234yf replace HFC-134a? Three constants per fluid and Peng–Robinson: why matching *volumetric* refrigeration capacity, not heat of vaporization, is the test a drop-in has to pass |
 
-**`ch4/` — entropy**
+**`ch5/` — liquefaction and power cycles**
 | Notebook | What it teaches |
 |---|---|
-| `water_cp.ipynb` | plot the heat capacity of liquid water from triple point to critical point (NIST/IAPWS data) |
+| `Linde_liquefaction_CH4_figure.ipynb` | Figure 5.1-3: the liquefaction path of Illustration 5.1-1 |
+| `Rankine_cycle_steam_figure.ipynb` | The Rankine cycle of Illustration 5.2-1, drawn on the steam chart |
 
 **`ch6/` — thermodynamic properties of real substances (Peng–Robinson EOS)**
 | Notebook | What it teaches |
@@ -246,6 +247,25 @@ package implements.
 | `amino_acid_titration_glycine_example.ipynb` | An amino acid as its own buffer (Figures 13.6-8 and 13.6-9) |
 | `protein_charge_lysozyme_figure.ipynb` | Thirty-two ionizable groups on one molecule (Figure 13.6-7) |
 
+**`ch14/` — reactors, availability, and electrochemistry**
+| Notebook | What it teaches |
+|---|---|
+| `adiabatic_reaction_temperature_ethylbenzene_example.ipynb` | The adiabatic reaction temperature, and why the phase of the feed decides it |
+| `tank_batch_and_tubular_reactor_ethyl_acetate_example.ipynb` | One reaction, three reactors, and the same heat load |
+| `maximum_useful_work_availability_example.ipynb` | The most work a fuel can do: methane, gasoline, and a spoonful of sugar |
+| `electrochemical_cell_potentials_example.ipynb` | Cell potentials, equilibrium constants, and pH |
+
+**`ch15/` — biochemical applications**
+| Notebook | What it teaches |
+|---|---|
+| `protein_denaturation_examples.ipynb` | Proteins unfold when they are cold, too: six figures from one stability curve |
+| `protein_solubility_salt_and_temperature_examples.ipynb` | Salting in, salting out, and a precipitation temperature |
+| `solubility_vs_pH_examples.ipynb` | Four ionizable solids, one equation, and where each curve breaks |
+| `ligand_binding_cooperative_vs_single_site_example.ipynb` | One binding site or four, and what cooperativity buys an animal |
+| `gibbs_donnan_and_ultracentrifuge_examples.ipynb` | A protein that cannot cross a membrane rearranges everything that can |
+| `bioreactor_yield_factors_examples.ipynb` | Balancing a reactor whose products have no molecular formula |
+| `bioreactor_energy_and_second_law_examples.ipynb` | The second law decides how much a fermenter can make |
+
 ### `data/` — reference data
 
 Pure-component and reaction property tables exported from the legacy companion database
@@ -255,20 +275,14 @@ $C_P$ coefficients = Appendix A.II, formation properties, vapor-pressure constan
 
 ### `thermo/` — the reusable library (object-oriented)
 
-A small, class-based package (`PengRobinson`, `UNIFAC`) providing the pure-fluid
-Peng–Robinson EOS and UNIFAC activity coefficients, reading the `data/` tables. It is the
-reusable core of the Python **general-purpose computing** layer (see Appendix B) — open and
-inspectable, in contrast to a licensed process simulator. PR and modified (Dortmund) UNIFAC
-are complete and verified; original UNIFAC awaits its R/Q constants. The package is being
-built out to cover the mixture, phase-equilibrium, and chemical-equilibrium calculations of
-ch8–15 — see [`thermo/ROADMAP.md`](thermo/ROADMAP.md). API in [`thermo/README.md`](thermo/README.md).
-
-### `honors/` — advanced / molecular thermodynamics
-
-Optional material for advanced students and the emerging-topics track:
-- `honors/MD/` — a simple molecular-dynamics simulation in Python (see also
-  `https://github.com/emfurst/SimpleMD`).
-- `honors/honors maxwell boltzmann/` — the Maxwell–Boltzmann speed distribution.
+Twenty-four modules reading the `data/` tables: the cubic equations of state and their
+departure functions, the activity-coefficient models and their fitting, UNIFAC, mixture
+mixing rules, the vapor–liquid, liquid–liquid and solid–liquid equilibrium solvers, chemical
+reaction equilibrium, electrolytes, osmotic equilibrium, and the chart-drawing layer. It is
+the reusable core of the Python **general-purpose computing** layer (see Appendix B) — open
+and inspectable, in contrast to a licensed process simulator. Both UNIFAC parameter sets are
+complete and selectable: the original of Fredenslund, Jones and Prausnitz and the later
+temperature-dependent (Dortmund) revision. API in [`thermo/README.md`](thermo/README.md).
 
 ## Generated output
 
@@ -279,8 +293,8 @@ Optional material for advanced students and the emerging-topics track:
 These notebooks and the `thermo` package modernize the pedagogical numerical routines of
 the 5e Visual Basic, MATLAB, and Mathcad programs (pure-fluid EOS, departure functions,
 vapor pressure, phase diagrams, UNIFAC). In the 6e the Python stack is the **general-purpose
-computing** layer — for both learning and everyday engineering analysis — and is being
-extended to the mixture VLE/flash, activity-coefficient, and chemical-equilibrium
-calculations across ch8–15 (see [`thermo/ROADMAP.md`](thermo/ROADMAP.md)); **Aspen Plus** is
+computing** layer — for both learning and everyday engineering analysis, and it now covers
+the mixture VLE/flash, activity-coefficient, and chemical-equilibrium calculations across
+ch8–15; **Aspen Plus** is
 the complementary tool for specialized process modeling. See Appendix B of the text for the
 design rationale and the property-data provenance.
