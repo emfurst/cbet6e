@@ -22,7 +22,7 @@ it. That split, and everything still to be built, is [`ROADMAP.md`](ROADMAP.md).
 
 > **The complete, always-current module reference is generated from this source at
 > [cbethermo.org/thermo](https://cbethermo.org/thermo)** — every public class and function in all
-> 24 modules, parsed with `ast` when the site builds. ⛔ **Prefer it to the table below.** This
+> 24 modules, parsed with `ast` when the site builds. **Prefer it to the table below.** This
 > file's table used to list 13 of 24 modules and claimed the ionization half of Chapter 13 was
 > unbuilt while `ionization.py` sat beside it at 1,066 lines; a hand-kept list of a growing
 > package goes stale silently, which is precisely why the site page is generated.
