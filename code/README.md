@@ -128,6 +128,10 @@ four is the anchor for one printed problem (1.9–1.12) and ends with a *Your tu
 |---|---|
 | `PR_eos_reference.ipynb` | the generalized PR EOS and its compressibility/molar-volume roots (from-scratch reference; refactored into the `thermo` package) |
 | `PR_isotherms_N2_example.ipynb` | PR isotherms for nitrogen |
+| `vdW_isotherms_example.ipynb` | Figure 6.6-1: the pressure-volume behavior of the van der Waals equation |
+| `PR_properties_table_O2_example.ipynb` | Table 6.4-4: thermodynamic properties of oxygen |
+| `PR_discharge_N2_example.ipynb` | Illustration 6.7-1: nitrogen discharged from a cylinder |
+| `Helmholtz_fundamental_eos_O2_example.ipynb` | A fundamental equation of state: every property of oxygen from one function |
 | `PR_isotherms_O2_example.ipynb` | **Fig. 6.4-3** (Illustration 6.4-1): oxygen $P$–$\underline V$ diagram with the vapor–liquid saturation envelope |
 | `PR_enthalpy_O2_example.ipynb` | **Fig. 6.4-4** (Illustration 6.4-1): oxygen $P$–$\underline H$ diagram (ideal-gas $C_P$ integral + PR enthalpy departure) |
 | `PR_entropy_O2_example.ipynb` | **Fig. 6.4-5** (Illustration 6.4-1): oxygen $T$–$\underline S$ diagram (ideal-gas $C_P/T$ integral + PR entropy departure) |
@@ -142,11 +146,16 @@ EOS — the self-contained version shows the method, the twin shows the reuse.
 **`ch7/` — equilibrium and stability in one-component systems**
 | Notebook | What it teaches |
 |---|---|
-| `van_der_waals_EOS.ipynb` | van der Waals EOS solve |
-| `Peng_Robinson_EOS_isotherms_CO2.ipynb` | PR isotherms for carbon dioxide |
-| `CO2_phases.ipynb` | pressure–temperature phase diagram of CO₂ |
-| `N2_phases.ipynb` | pressure–temperature phase diagram of nitrogen |
-| `VLE from fugacity.ipynb` | pure-component vapor–liquid equilibrium from equal fugacities (PR EOS) |
+| `van_der_waals_EOS.ipynb` | Solving the van der Waals equation of state |
+| `mechanical_stability_CO2.ipynb` | Mechanical stability and the coexistence region, for carbon dioxide |
+| `CO2_phases.ipynb` | The pressure–temperature phase diagram of CO₂ |
+| `N2_phases.ipynb` | The pressure–temperature phase diagram of nitrogen |
+| `vapor_pressure_water.ipynb` | Illustration 7.5-3: vapor pressure of water from the Peng–Robinson equation |
+| `vapor_pressure_n_butane.ipynb` | Figure 7.5-2: the vapor pressure of *n*-butane |
+| `vapor_pressure_oxygen.ipynb` | Figure 7.5-3 and Table 7.5-1: the vapor pressure of oxygen |
+| `properties_chart_oxygen.ipynb` | Illustration 7.5-2 and Table 7.5-2: completing the oxygen properties chart |
+| `clausius_clapeyron_isooctane.ipynb` | Illustration 7.7-1 and Figure 7.7-1: the Clausius–Clapeyron equation |
+| `surface_effects_droplets.ipynb` | Figure 7.8-1: why subcooling and superheating occur |
 
 `ch7/README.md` documents exporting a notebook to PDF via `nbconvert`.
 
