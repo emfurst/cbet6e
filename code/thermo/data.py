@@ -54,7 +54,7 @@ def get_compound(key):
 # 298.15 K. Illustrations 6.4-1, 7.5-1 and 7.5-2 are computed with **Appendix
 # A.II**, so a notebook that means to reproduce the printed tables must use these.
 #
-# Author decision 2026-08-03 (see revision_notes/c07.md): ch6 and ch7 both use
+# Author decision 2026-08-03 (see revision_notes/pre-submission/chapters/c07.md): ch6 and ch7 both use
 # Appendix A.II, so the book's tables reproduce and the two chapters agree.
 #
 # Form: Cp* = a + b T + c T^2 + d T^3, J/(mol K), T in K.
@@ -345,7 +345,7 @@ def load_unifac_subgroups(kind="modified"):
     """Subgroup volume and surface-area parameters.
 
     `modified` is Table 9.5-2 in full: subgroup_no, main_group_no, subgroup_name,
-    main_group_name, R, Q, example. This is the book's model (revision_notes/c09.md D1).
+    main_group_name, R, Q, example. This is the book's model (revision_notes/pre-submission/chapters/c09.md D1).
 
     `original` is Table 7.5-2 of **this book's 2nd edition** in full: 85 subgroups over
     44 main groups, which is exactly the main-group set

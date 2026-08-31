@@ -821,7 +821,7 @@ def eos_vlle_binary(eos, T, P_guess=None, guess=None, tol=1e-10, min_gap=1e-4):
     given an LLE composition and a seed above the three-phase pressure it returns
     the liquid-liquid state as a bubble point. Its default seed is far below, so
     the ordinary path is unaffected, and that is why this function does not lean on
-    it. See `revision_notes/c11.md` Section 13.
+    it. See `revision_notes/pre-submission/chapters/c11.md` Section 13.
     """
     if P_guess is None:
         P_guess = max(float(c.vapor_pressure(T)) for c in eos.components)

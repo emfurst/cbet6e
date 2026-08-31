@@ -63,7 +63,7 @@ class PengRobinson(CubicEOS):
             # PRSV: Stryjek and Vera, Can. J. Chem. Eng. 64, 323 (1986).
             # NOTE THE MINUS on the omega^2 term. The 5e prints a plus in
             # Eq. 7.5-2, which is an erratum -- it does not reproduce the book's
-            # own PRSV column (see revision_notes/c07_manuscript_edits_7.5-3.md).
+            # own PRSV column (see revision_notes/pre-submission/chapters/c07.md).
             self.kappa0 = (0.378893 + 1.4897153 * self.omega
                            - 0.17131848 * self.omega ** 2
                            + 0.0196554 * self.omega ** 3)

@@ -500,7 +500,7 @@ def total_reflux_steps(ax, x1, y1, x_start, x_target=None, *, direction="down",
     the mixture can reach, so the DISTILLATE is always driven toward the azeotropic
     composition and the BOTTOMS toward whichever pure component lies on the feed's
     side of it. Getting that backwards is erratum E17 in the 5e; see
-    `revision_notes/c10.md`.
+    `revision_notes/pre-submission/chapters/c10.md`.
     """
     if direction not in ("up", "down"):
         raise ValueError("direction must be 'up' (toward the condenser) or "
