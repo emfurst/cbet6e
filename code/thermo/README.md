@@ -268,7 +268,7 @@ Illustration 10.2-4. `fit_binary(model_cls, ...)` is the same fit as a free func
 `VanLaar` and `Wilson`, whose two constructor arguments *are* the two fitted parameters —
 useful for looping several models over one data set.
 
-**`check_gibbs_duhem(T)` is worth running.** Where the book prints both a G^ex
+**Run `check_gibbs_duhem(T)` on any model you fit.** Where the book prints both a G^ex
 expression *and* activity coefficient expressions, they must satisfy
 `G^ex/RT = Σ x_i ln γ_i` exactly — so coding both and comparing them is a real test rather
 than a tautology. Eight of the nine models have that independent expression to check
@@ -358,8 +358,8 @@ via `combining=`.
 
 **`b` is temperature dependent here**, unlike the van der Waals one-fluid `b`, and
 neither `a` nor `b` is a polynomial in mole fraction — both come out of $Q/(1-D)$, and
-$D$ carries the whole activity coefficient model. That is the point of the method, not
-a side effect.
+$D$ carries the whole activity coefficient model. The mixing rule is built that way; it
+is not a side effect.
 
 **$D > 1$ is normal, not an error.** $D$ is dominated by $\sum_i x_i a_i/(b_i RT)$,
 about 12 for liquid water at 25 °C and greater than 1 for any fluid below its Boyle
@@ -399,7 +399,7 @@ product of two pure second virial coefficients, and below the Boyle temperature 
 negative — so the principal root is *positive* where both diagonals are negative, and
 $Q$ collapses through zero mid-composition. `cross_matrix` carries the sign of the pures
 through the root, which is the only reading consistent with the rule reducing to
-$b_i - a_i/RT$ on the diagonal. Worth a footnote in print.
+$b_i - a_i/RT$ on the diagonal. A footnote in print should say so.
 
 ## Phase equilibrium — `vle` (Ch. 10) and `lle` (Ch. 11)
 
@@ -507,7 +507,7 @@ then the *slope* of that curve rather than a tangent line drawn by hand.
 `tangent_intercepts` is the graphical route (Eqs. 8.6-4a,b) as arithmetic — a point and a
 slope — and the ch8 notebooks run both to show they agree.
 
-**Unit-agnostic**: it never mentions volume or enthalpy, which is the point of Eq. 8.6-10.
+**Unit-agnostic**: it never mentions volume or enthalpy, which is what Eq. 8.6-10 requires.
 The caller keeps SI.
 
 > **The derivative is far more sensitive to the fit order than the fit is.** Adding a
@@ -517,7 +517,7 @@ The caller keeps SI.
 > hiding it behind a default.
 >
 > **The summation identity is exact by construction**, so agreement there is not
-> evidence the fit is good — `residuals` is. It is still worth checking, because a
+> evidence the fit is good — `residuals` is. Check it anyway, because a
 > *graphical* construction does not satisfy it: the 5e's Table 8.6-4 misses it by up to
 > 16 J/mol.
 
@@ -668,8 +668,8 @@ two figures rather than invented.
 reads color and font family and cannot see two labels sitting on top of each other —
 and a triangular diagram crowds three scales, three corner names and three edge symbols
 around one small perimeter. It caught `x_C = 0.25` running through the `0.2` tick at a
-0.4 px overlap, which looked deliberate at thumbnail size. Worth copying into the other
-figure notebooks.
+0.4 px overlap, which looked deliberate at thumbnail size. Copy it into the other figure
+notebooks.
 
 **Not `mpltern`.** The author's practice files use it, and it is a good library. It
 would be a new student-facing dependency in a `pyproject.toml` that is deliberately a

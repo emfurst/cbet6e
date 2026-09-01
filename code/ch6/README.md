@@ -133,7 +133,7 @@ the tell. The cell therefore prints a boxed **RESTART NOW: Runtime > Restart ses
 then Run all** whenever it upgrades. One click, once per session.
 
 The version is read through `importlib.metadata`, which inspects the installed metadata
-*without* importing matplotlib — worth keeping even though Colab has already imported it,
+*without* importing matplotlib — kept even though Colab has already imported it,
 so the guard stays a true no-op everywhere else. And the whole thing self-retires: once
 Colab's image moves to 3.11 the check stops firing, nothing installs, and no restart is
 ever asked for again.

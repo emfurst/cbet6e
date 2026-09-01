@@ -121,7 +121,7 @@ Scatter under 1.5 % is what proves the columns are aligned.
 Those imply pure vapor pressures 1.6 % and 0.3 % from the **0.3843 / 0.7583** SIS
 prints. The Raoult lines are drawn from the book's values (what §10.1's prose and
 Fig. 10.1-3 use) and the points plotted as measured; the ~0.002 bar offset is why the
-points do not sit exactly on the lines at the ends, and the notebook says so.
+points do not sit exactly on the lines at the ends, and the notebook states it.
 
 The figures keep their "[Based on data of J. L. Humphrey and M. Van Winkle…]" credit —
 recomputing the lines does not change whose the points are.

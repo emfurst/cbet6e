@@ -2,13 +2,19 @@
 
 Python and Jupyter notebooks that accompany the 6th edition (Sandler & Furst). They
 modernize the legacy Visual Basic, MATLAB, and Mathcad companion programs of earlier
-editions into an open, license-free stack. This repository is one of the book's
-**companion-website deliverables**; each chapter's notebooks are also linked from that
-chapter's page on the companion site.
+editions into an open, license-free stack.
 
-- **Distribution:** primary copy in the Gitea repo `thermohub`
-  (`https://lem.che.udel.edu/git/furst/thermohub`), with a GitHub mirror. The Wiley
-  companion website hosts the notebooks for direct download.
+- **Where the code lives:** this repository. Every notebook is also reachable from its
+  chapter's page at [cbethermo.org](https://cbethermo.org), and each QR code printed in
+  the book's margin opens the notebook that produced the figure, illustration, or table
+  beside it. The code is MIT licensed.
+- **The name `thermo` is shared.** An unrelated and much larger package on PyPI is also
+  called `thermo` — [ChEDL's](https://thermo.readthedocs.io/), which is what
+  `pip install thermo` installs. Nothing here is pip-installed: every notebook puts this
+  directory first with `sys.path.insert(0, "..")`. If you use ChEDL's package as well,
+  keep it in a separate environment. It is a capable library, and the natural next tool
+  after this one; see
+  [*Where these skills go next*](https://cbethermo.org/thermo#next).
 
 ## Requirements
 
@@ -66,7 +72,7 @@ reusable tool:
   $T_c$, $P_c$, $\omega$, and $C_p$ and knows how to compute its molar volume, fugacity,
   and departure functions. It behaves like a small reusable library — the natural step from
   a one-off notebook to a tool you reuse across problems, and a concrete example of *when*
-  object orientation earns its extra abstraction. It stands as a more advanced computational
+  object orientation repays its extra abstraction. It stands as a more advanced computational
   tool than the straight-up notebooks.
 
 The `_thermo` twin notebooks in each chapter *apply* the package; their self-contained
@@ -112,7 +118,7 @@ four is the anchor for one printed problem (1.9–1.12) and ends with a *Your tu
 |---|---|
 | `Heat_capacity_range_of_validity.ipynb` | why a correlation's temperature range is part of its data: Appendix A.II's two O₂ rows against NIST-JANAF over 100–1800 K, and what each costs once you integrate it into $\underline{H}$ and $\underline{S}$. **Also derives** the cryogenic-range rows in `thermo.APPENDIX_A2_CP_CRYO` — run it to check those coefficients |
 | `LJ_interaction_energy_figure.ipynb` | Figure 3.3-5: the Lennard-Jones interaction energy between two molecules, for argon and methane |
-| `Steam_charts_from_appendix_A3.ipynb` | Figure 3.3-1: the Mollier and $T$–$S$ charts for steam, drawn from Appendix A.III (`data/steam_*.csv`) rather than from an equation of state, so chart and table agree by construction. Every line family is an argument — zoom in, redraw at your own scale, read values numerically. Ends by reading Illustration 3.4-1 off both charts |
+| `Steam_charts_from_appendix_A3.ipynb` | Figure 3.3-1: the Mollier and $T$–$S$ charts for steam, drawn from Appendix A.III (`data/steam_*.csv`) rather than from an equation of state, so chart and table agree by construction. Every line family is a choice you can change — zoom in, redraw at your own scale, read values numerically. Ends by reading Illustration 3.4-1 off both charts |
 | `Heat_capacity_from_molecular_structure.ipynb` | where $C_P^*$ comes from: equipartition, and an Einstein term per vibrational mode. Methane from four spectroscopic frequencies, matching NIST-JANAF to 0.03 J/(mol·K), with the $4R$ floor no nonlinear gas can go under. Then the derived curve becomes noisy "experimental" data and is fitted 400 times — what the coefficients do, what the curve does, and why the fitted *range* is part of the correlation. Needs no data file |
 | `PH_charts_methane_and_nitrogen.ipynb` | Figures 3.3-2 and 3.3-3: pressure–enthalpy charts for methane and nitrogen, drawn entirely from Peng–Robinson — three constants, four heat-capacity coefficients, one cubic. Derives methane's cryogenic $C_P^*$ from its vibrational spectrum (the printed Appendix A.II row is 25% low at 100 K), checks the equation against the book's own Wagner constants before drawing, and ends by working Illustration 6.5-1 on the nitrogen chart |
 | `refrigerant_comparison.ipynb` | can R-1234yf replace HFC-134a? Three constants per fluid and Peng–Robinson: why matching *volumetric* refrigeration capacity, not heat of vaporization, is the test a drop-in has to pass |
@@ -195,7 +201,7 @@ package implements.
 | `excess_properties_benzene_TMP_figure.ipynb` | Excess enthalpy and entropy from the temperature dependence of $G^{ex}$ (benzene / 2,2,4-trimethyl pentane) |
 | `azeotrope_to_vanlaar_benzene_cyclohexane_example.ipynb` | A phase diagram from one azeotropic point (benzene / cyclohexane) |
 | `pressure_swing_methyl_acetate_methanol_example.ipynb` | Nonideal phase diagrams, an azeotrope, and how to separate it (methyl acetate / methanol) |
-| `pr_vle_co2_isopentane_figure.ipynb` | One binary parameter, and what it is worth (carbon dioxide / isopentane) |
+| `pr_vle_co2_isopentane_figure.ipynb` | One binary parameter, and how much it changes the prediction (carbon dioxide / isopentane) |
 | `acetone_water_mixing_rules_figure.ipynb` | Four ways to model a very nonideal mixture (acetone / water) |
 | `azeotrope_test_ethyl_acetate_benzene_homework.ipynb` | Does this system have an azeotrope? Two models that disagree (ethyl acetate / benzene) |
 | `unifac_pentane_propionaldehyde_example.ipynb` | Three ways to get a phase diagram, and how little data each needs (n-pentane / propionaldehyde) |
@@ -229,7 +235,7 @@ package implements.
 **`ch12/` — phase equilibria involving solids**
 | Notebook | What it teaches |
 |---|---|
-| `solid_solubility_naphthalene_hexane_example.ipynb` | How much solid dissolves, and what the activity coefficient is worth (naphthalene / n-hexane) |
+| `solid_solubility_naphthalene_hexane_example.ipynb` | How much solid dissolves, and how much the activity coefficient changes the answer (naphthalene / n-hexane) |
 | `supercritical_solubility_naphthalene_co2_figure.ipynb` | Naphthalene in supercritical carbon dioxide, three ways (Figure 12.1-1) |
 | `heat_of_fusion_from_solubility_insulin_example.ipynb` | A heat of fusion you cannot measure in a calorimeter (insulin hexamer) |
 | `freezing_point_and_eutectic_figure.ipynb` | Freezing points, and the eutectic as a crossing (Figure 12.3-1, ethyl benzene / toluene) |
@@ -270,7 +276,7 @@ package implements.
 | `protein_denaturation_examples.ipynb` | Proteins unfold when they are cold, too: six figures from one stability curve |
 | `protein_solubility_salt_and_temperature_examples.ipynb` | Salting in, salting out, and a precipitation temperature |
 | `solubility_vs_pH_examples.ipynb` | Four ionizable solids, one equation, and where each curve breaks |
-| `ligand_binding_cooperative_vs_single_site_example.ipynb` | One binding site or four, and what cooperativity buys an animal |
+| `ligand_binding_cooperative_vs_single_site_example.ipynb` | One binding site or four, and what cooperativity does for an animal |
 | `gibbs_donnan_and_ultracentrifuge_examples.ipynb` | A protein that cannot cross a membrane rearranges everything that can |
 | `bioreactor_yield_factors_examples.ipynb` | Balancing a reactor whose products have no molecular formula |
 | `bioreactor_energy_and_second_law_examples.ipynb` | The second law decides how much a fermenter can make |

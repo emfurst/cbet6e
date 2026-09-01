@@ -48,7 +48,7 @@ the two notebooks, which is exactly the generalization Eq. 8.6-10 is making.
 slope give the two intercepts $A$ and $B$ of Fig. 8.6-1. The volume notebook runs both and
 shows they agree.
 
-## The thing worth teaching here
+## What this teaches
 
 **A property change on mixing is easy to correlate; its derivative at the endpoints is
 not.** Adding a term to the fit barely moves the curve and can move the infinite-dilution

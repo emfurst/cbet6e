@@ -115,7 +115,7 @@ Tables*, Vol. 5, McGraw-Hill, New York, 1929, p. 159, as reprinted there.
 `species_i, species_j, formula_i, formula_j, kij`. Stored as an upper-triangular **edge
 list, not a matrix**, because the table is about 65% blank and *a blank is not a zero*.
 
-**The blanks are the point.** Table 9.4-1's own footnote reads: *"Blanks indicate no
+**The blanks carry information.** Table 9.4-1's own footnote reads: *"Blanks indicate no
 data are available from which the k12 could be evaluated. In such case use estimates from
 mixtures of similar compounds."* `thermo.data.pr_kij_matrix` therefore returns the pairs
 it could not find alongside the matrix, and `PRMixture.from_database(..., kij="table")`
@@ -168,7 +168,7 @@ $r$ = 5.0600 and $q$ = 6.3675. `thermo.data.unifac_groups(name)` derives group
 assignments from the table's own *Example Assignments* column, so a notebook never
 hand-transcribes a subgroup number.
 
-> **That is true of the 6e, and it is worth knowing why it has to be said.** The **5e's**
+> **That is true of the 6e, and the reason it has to be said is the 5e.** The **5e's**
 > version of the same illustration printed 3.1878 / 2.4000 and 5.8463 / 5.0080 — **original**
 > UNIFAC sums — while citing Table 9.5-2, which by then held the Dortmund set. The 6e
 > recomputed it. Those 5e values are not a defect to fix; they are the **source** of
@@ -206,7 +206,7 @@ Four checks, chosen because they fail differently. All are in the build script.
 **The increment law fails on the chlorinated series, and that is the source's doing.** The 2e
 prints CH₂Cl 1.4654, CHCl 1.2380, CCl 1.0060 — steps of 0.2274 then **0.2320** — and CH₂Cl₂
 2.2564, CHCl₂ 2.0606, CCl₂ 1.8016 — **0.1958** then **0.2590**. Both were re-read off the
-600-dpi render and are as printed. Recorded rather than quietly excluded, because the next
+600-dpi render and are as printed. Recorded rather than dropped without comment, because the next
 reader will notice them too.
 
 **One printed example was moved.** The 2e prints *"Chloroform"* against **CCl₄**, one row
@@ -296,7 +296,7 @@ the CSVs and the printed page disagree in these five cells and nowhere else.
 **EMF:** These five corrections made on 2026-08-09 11:41
 
 **A.III is not IAPWS.** The appendix is an older generation of steam tables and
-differs from current IAPWS-95/IF97 values in the last digit or two. That is the point —
+differs from current IAPWS-95/IF97 values in the last digit or two. That is deliberate —
 consistency with the printed table — but nothing built from these files may be labeled
 IAPWS.
 
