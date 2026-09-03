@@ -1,0 +1,276 @@
+MM "25.0" FLAVOR "NO" VERSION "25.0" DATETIME "Sun Sep 30 16:45:36 2012" 
+MACHINE "WIN-NT/VC"  ; 
+startlibrary
+version1
+NumLibs = 3
+Built-In
+ACM Built-In
+Conceptual Design
+NumCats = 10
+Mixers/Splitters
+active
+Separators
+active
+Heat Exchangers
+active
+Columns
+active
+Reactors
+active
+Pressure Changers
+active
+Manipulators
+active
+Solids
+active
+User Models
+active
+Conceptual Design
+active
+endlibrary
+; 
+0
+? SETUP MAIN ? \ TITLE TITLE = "Pentane-Hexane VLE" \ \ "RUN-CLASS" RUN-CLASS
+ = TGS \ \ SIMULATE INTERACTIVE = NO MOLEFLOW = MOLEFLOW TFFFILE = "GEN_M" 
+VISITED = 1 \ ? SETUP GLOBAL ? \ "IN-UNITS" INSET = METCBAR \ \ "STREAM-CLASS" 
+SCLASS = CONVEN \ ? SETUP DIAGNOSTICS ? ? SETUP "SIM-OPTIONS" ? ; 
+"METCBAR_MOLE" ; ? SETUP "UNITS-SET" METCBAR ? \ DESCRIPTION DESCRIPTION = 
+"Metric Units with C, BAR, GCAL/HR, and CUM" \ \ MMLOCAL \ \ UNITSET 
+BASESET = MET ( 3 3 3 3 3 3 3 3 3 3 3 7 18 3 3 5 3 3 3 5 3 4 3 3 3 3 1 3 3 3 
+4 3 7 3 3 3 1 1 4 4 3 3 3 3 3 3 3 3 3 3 3 3 14 3 3 3 3 3 3 3 3 3 3 4 3 3 3 3 
+3 3 3 3 3 3 5 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 
+3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 ) \ ? SETUP "UNITS-SET" METCKGCM 
+? \ DESCRIPTION DESCRIPTION = "Metric Units with C, KG/SQCM, GCAL/HR, and CUM" 
+\ \ MMLOCAL \ \ UNITSET BASESET = MET ( 3 3 3 3 3 3 3 3 3 3 3 7 18 3 3 5 3 3 
+3 8 3 4 3 3 3 3 1 3 3 3 4 3 7 3 3 3 3 3 4 4 3 3 3 3 3 3 3 3 3 3 3 3 14 3 3 3 
+3 3 3 3 3 3 3 4 3 3 3 3 3 3 3 3 3 3 8 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 
+3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 ) \ ? 
+SETUP "UNITS-SET" "SI-CBAR" ? \ DESCRIPTION DESCRIPTION = 
+"International System Units with C, BAR, and /HR" \ \ MMLOCAL \ \ UNITSET 
+BASESET = SI ( 1 1 1 1 1 1 1 1 1 3 3 7 1 1 1 1 1 1 1 5 1 4 1 1 1 1 1 1 1 1 4 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 4 5 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ) \ ? SETUP "SYS-OPTIONS" ? ? SETUP 
+"ACCOUNT-INFO" ? ? SETUP "RUN-CONTROL" ? ? SETUP DESCRIPTION ? \ DESCRIP 
+DESCRIP = ( "General Simulation with Metric Units :" 
+"C, bar, kg/hr, kmol/hr, Gcal/hr, cum/hr." " " "Property Method: None" " " 
+"Flow basis for input: Mole" " " "Stream report composition: Mole flow" ) \ ? 
+ODATABANKS ? \ ODATABANKS AUTO-PARAM = YES \ ? DATABANKS ? \ DATABANKS \ ? 
+COMPONENTS MAIN ? \ COMPONENTS CID = "N-PEN-01" ANAME = C5H12-1 OUTNAME = 
+"N-PEN-01" TYPE = CONV DBNAME1 = "N-PENTANE" ANAME1 = "C5H12-1" /  CID = 
+"N-HEP-01" ANAME = C7H16-1 OUTNAME = "N-HEP-01" TYPE = CONV DBNAME1 = 
+"N-HEPTANE" ANAME1 = "C7H16-1" \ ? COMPONENTS "COMP-LIST" GLOBAL ? ? SOLVE ? 
+? "DYN-OPTIONS" ? ? FLOWSHEET GLOBAL ? \ "DEF-STREAM" SCLASS = CONVEN \ ? 
+PROPERTIES MAIN ? \ GPROPERTIES GBASEOPSET = IDEAL GOPSETNAME = IDEAL PARCON
+ = -1 \ ? PROPERTIES "OPTION-SETS" IDEAL ? \ PARAM BASE = IDEAL \ ? 
+PROPERTIES "MOLEC-STRUCT" "N-HEP-01" ? ? PROPERTIES "MOLEC-STRUCT" "N-PEN-01" 
+? ? PROPERTIES PARAMETERS BINARY SCALAR "RKTKIJ-1" ? ; "ENG_MOLE" ; \ 
+PROP-LIST PARAMNAME = RKTKIJ SETNO = 1 UNITROW = 0 \ ? PROPERTIES PARAMETERS 
+BINARY "T-DEPENDENT" "ANDKIJ-1" ? ; "ENG_MOLE" ; \ PROP-LIST PARAMNAME = 
+ANDKIJ SETNO = 1 UNITROW = 0 TUNITROW = 22 TUNITLABEL = F NEL = 2 \ ? 
+PROPERTIES PARAMETERS BINARY "T-DEPENDENT" "ANDMIJ-1" ? ; "ENG_MOLE" ; \ 
+PROP-LIST PARAMNAME = ANDMIJ SETNO = 1 UNITROW = 0 TUNITROW = 22 TUNITLABEL
+ = F NEL = 2 \ ? PROPERTIES PARAMETERS BINARY "T-DEPENDENT" "HENRY-1" ? ; 
+"METCBAR_MOLE" ; \ PROP-LIST PARAMNAME = HENRY SETNO = 1 UNITROW = 20 
+UNITLABEL = bar TUNITROW = 22 TUNITLABEL = C BDBANK = ( "APV73 BINARY" 
+"APV73 HENRY-AP" ) NEL = 7 \ ? "PROP-SET" MAIN HXDESIGN ? ; "SI_MOLE" ; \ P1 
+ID = MASSVFRA \ \ P1 ID = MASSFLMX UNITS = ( "kg/sec" ) \ \ P1 ID = HMX UNITS
+ = ( "J/kg" ) \ \ P1 ID = RHOMX UNITS = ( "kg/cum" ) \ \ P1 ID = CPMX UNITS
+ = ( "J/kg-K" ) \ \ P1 ID = PCMX UNITS = ( "N/sqm" ) \ \ P1 ID = MUMX UNITS
+ = ( "N-sec/sqm" ) \ \ P1 ID = KMX UNITS = ( "Watt/m-K" ) \ \ P1 ID = SIGMAMX 
+UNITS = ( "N/m" ) \ \ P1 ID = MWMX \ \ P2 PHASE = ( T V L ) SYSPRES = YES \ \ 
+DESCRIPTION DESCRIPTION = "Thermal and transport, for heat exchanger design" 
+\ ? "PROP-SET" MAIN HXDSGN2 ? ; "SI_MOLE" ; \ P1 ID = MASSVFRA \ \ P1 ID = 
+MASSFLMX UNITS = ( "kg/sec" ) \ \ P1 ID = HMX UNITS = ( "J/kg" ) \ \ P1 ID = 
+RHOMX UNITS = ( "kg/cum" ) \ \ P1 ID = CPMX UNITS = ( "J/kg-K" ) \ \ P1 ID = 
+PCMX UNITS = ( "N/sqm" ) \ \ P1 ID = MUMX UNITS = ( "N-sec/sqm" ) \ \ P1 ID
+ = KMX UNITS = ( "Watt/m-K" ) \ \ P1 ID = SIGMAMX UNITS = ( "N/m" ) \ \ P1 ID
+ = MWMX \ \ P2 PHASE = ( T V L1 L2 ) SYSPRES = YES \ \ DESCRIPTION 
+DESCRIPTION = "Thermal and transport, for heat exchanger design" \ ? "PROP-SET" 
+MAIN THERMAL ? ; "METCBAR_MOLE" ; \ P1 ID = HMX UNITS = ( "cal/gm" ) \ \ P1 
+ID = CPMX UNITS = ( "cal/gm-K" ) \ \ P1 ID = KMX \ \ P2 SUBSTREAM = MIXED 
+PHASE = ( V L ) SYSPRES = YES \ \ DESCRIPTION DESCRIPTION = 
+"Enthalpy, heat capacity, and thermal conductivity" \ ? "PROP-SET" MAIN 
+THERMAL2 ? ; "METCBAR_MOLE" ; \ P1 ID = HMX UNITS = ( "cal/gm" ) \ \ P1 ID = 
+CPMX UNITS = ( "cal/gm-K" ) \ \ P1 ID = KMX \ \ P2 SUBSTREAM = MIXED PHASE = 
+( V L1 L2 ) SYSPRES = YES \ \ DESCRIPTION DESCRIPTION = 
+"Enthalpy, heat capacity, and thermal conductivity" \ ? "PROP-SET" MAIN 
+TXPORT ? ; "METCBAR_MOLE" ; \ P1 ID = RHOMX UNITS = ( "kg/cum" ) \ \ P1 ID = 
+MUMX \ \ P1 ID = SIGMAMX \ \ P2 SUBSTREAM = MIXED PHASE = ( V L ) SYSPRES = 
+YES \ \ DESCRIPTION DESCRIPTION = "Density, viscosity, and surface tension" \ 
+? "PROP-SET" MAIN TXPORT2 ? ; "METCBAR_MOLE" ; \ P1 ID = RHOMX UNITS = ( 
+"kg/cum" ) \ \ P1 ID = MUMX \ \ P1 ID = SIGMAMX \ \ P2 SUBSTREAM = MIXED 
+PHASE = ( V L1 L2 ) SYSPRES = YES \ \ DESCRIPTION DESCRIPTION = 
+"Density, viscosity, and surface tension" \ ? "PROP-SET" MAIN VLE ? ; 
+"METCBAR_MOLE" ; \ P1 ID = PHIMX \ \ P1 ID = GAMMA \ \ P1 ID = PL \ \ P2 
+SUBSTREAM = MIXED PHASE = ( V L ) SYSPRES = YES \ \ DESCRIPTION DESCRIPTION
+ = "Fugacity, activity, and vapor pressure" \ ? "PROP-SET" MAIN VLLE ? ; 
+"METCBAR_MOLE" ; \ P1 ID = PHIMX \ \ P1 ID = GAMMA \ \ P1 ID = PL \ \ P2 
+SUBSTREAM = MIXED PHASE = ( V L1 L2 ) SYSPRES = YES \ \ DESCRIPTION 
+DESCRIPTION = "Fugacity, activity, and vapor pressure" \ ? "EO-CONV-OPTI" ? \ 
+DMO-PARAMS MODE = DEFAULT \ \ DMO-PARAMS MODE = SIMULATION \ \ DMO-PARAMS 
+MODE = "PARAMETER-ESTIMATION" \ \ DMO-PARAMS MODE = RECONCILIATION \ \ 
+DMO-PARAMS MODE = OPTIMIZATION \ \ LSSQP-PARAMS MODE-L = DEFAULT \ \ 
+LSSQP-PARAMS MODE-L = SIMULATION \ \ LSSQP-PARAMS MODE-L = 
+"PARAMETER-ESTIMATION" \ \ LSSQP-PARAMS MODE-L = RECONCILIATION \ \ 
+LSSQP-PARAMS MODE-L = OPTIMIZATION \ \ NSOLVE-PARAM NSOLVE-MODE = DEFAULT \ \ 
+NSOLVE-PARAM NSOLVE-MODE = SIMULATION \ \ NSOLVE-PARAM NSOLVE-MODE = 
+"PARAMETER-ESTIMATION" \ \ XSLP-PARAMS XSLP-MODE = DEFAULT \ \ XSLP-PARAMS 
+XSLP-MODE = SIMULATION \ \ XSLP-PARAMS XSLP-MODE = "PARAMETER-ESTIMATION" \ \ 
+XSLP-PARAMS XSLP-MODE = RECONCILIATION \ \ XSLP-PARAMS XSLP-MODE = 
+OPTIMIZATION \ ? REPORT REPORT ? ? REPORT "STREAM-REPOR" ? \ OPTIONS MOLEFLOW
+ = MOLEFLOW \ ? REPORT "PROPERTY-REP" ? ? REPORT "ADA-REPORT" ? ? "PROP-TABLE" 
+PTENVELOPE "PT-1" ? ; "METCBAR_MOLE" ; \ BASIS-FLOW CID = "N-PEN-01" FLOW = 
+50. <-89> <3> /  CID = "N-HEP-01" FLOW = 50. <-89> <3> \ ? "PROP-TABLE" 
+BINARY "BINRY-1" ? ; "METCBAR_MOLE" ; \ "MASS-FLOW" COMP1 = "N-PEN-01" COMP2
+ = "N-HEP-01" \ \ STATE VFRAC = 0.0 <0> <0> PRES = 1.013250 <20> <5> 
+GUNITLABEL = "kcal/mol" \ \ ANALTYP ANALTYPE = TXY \ \ TVARY TVARNAME = TEMP 
+TUNITLABEL = C TVARVALUE = RANGE TLIST = ( 25.00000 <0> <0> ) \ \ PVARY 
+PVARNAME = PRES PUNITLABEL = bar PVARVALUE = LIST PLIST = ( 1.013250 <0> <0> 
+) \ \ CVARY CVARNAME = MOLEFRAC CCOMP = "N-PEN-01" CVARVALUE = RANGE CLOWER
+ = 0.0 <0> <0> CUPPER = 1.0 <0> <0> CNPOINT = 41 \ \ PROPTY PROPTYPE = 
+THERMODYNAMIC \ \ P1 ID = TEMP /  ID = KVL /  ID = GAMMA /  ID = MOLEFRAC \ \ 
+P2 PCOMPS1 = "N-PEN-01" PCOMPS2 = "N-HEP-01" VAPOR-PHASE = YES LIQUID-PHASE
+ = YES LIQ1-PHASE = NO LIQ2-PHASE = NO \ \ TABULATE PROPSET = "PROP-2" 
+PROPERTIES = ( VLE ) \ ? "PROP-TABLE" BINARY "BINRY-2" ? ; "METCBAR_MOLE" ; \ 
+"MASS-FLOW" COMP1 = "N-PEN-01" COMP2 = "N-HEP-01" \ \ STATE VFRAC = 0.0 <0> 
+<0> PRES = 1.013250 <20> <5> GUNITLABEL = "kcal/mol" \ \ ANALTYP ANALTYPE = 
+TXY \ \ TVARY TVARNAME = TEMP TUNITLABEL = C TVARVALUE = LIST TLIST = ( 50. 
+<0> <0> ) \ \ PVARY PVARNAME = PRES PUNITLABEL = bar PVARVALUE = LIST PLIST
+ = ( 1.013250 <0> <0> ) \ \ CVARY CVARNAME = MOLEFRAC CCOMP = "N-PEN-01" 
+CVARVALUE = RANGE CLOWER = 0.0 <0> <0> CUPPER = 1.0 <0> <0> CNPOINT = 41 \ \ 
+PROPTY PROPTYPE = THERMODYNAMIC \ \ P1 ID = TEMP /  ID = KVL /  ID = GAMMA /  
+ID = MOLEFRAC \ \ P2 PCOMPS1 = "N-PEN-01" PCOMPS2 = "N-HEP-01" VAPOR-PHASE = 
+YES LIQUID-PHASE = YES LIQ1-PHASE = NO LIQ2-PHASE = NO \ \ TABULATE PROPSET
+ = "PROP-3" \ 
+
+ GRAPHICS_BACKUP
+PFS V 5.00
+$CONFIG
+paramdata APV73 ENRTL-RK
+paramdata APV73 VLE-IG
+paramdata APV73 VLE-RK
+paramdata APV73 VLE-HOC
+paramdata APV73 LLE-LIT
+paramdata APV73 LLE-ASPEN
+paramdata APV73 VLE-LIT
+paramdata APV73 BINARY
+paramdata APV73 EOS-LIT
+paramdata APV73 HENRY-AP
+paramdata APV73 SRK-ASPEN
+paramdata APV73 PC-SAFT
+paramdata APV73 POLYPCSF
+paramdata APV73 HYSYS
+purebank APV73 PURE24
+purebank APV73 AQUEOUS
+purebank APV73 SOLIDS
+purebank APV73 INORGANIC
+regdbank 1
+ftn_check 1
+autoblockid 1
+autostreamid 1
+showblockid 1
+showstreamid 1
+autoplacement 1
+grid 2
+gridresolution 0.100000
+scale 0
+streamprefix 
+blockprefix B
+labelscale 1.000000
+qwformat %.0f
+tempformat %.0f
+presformat %.0f
+flowformat %.0f
+strmqwformat %.0f
+vflowformat %.0f
+mflowformat %.0f
+vfracformat %.2f
+pseudobatch 0
+partial 1
+animation 1
+runanyway 0
+tooldrawvisible 0
+browserheight 12150
+browserwidth 20520
+browsertreewidth 3690
+polyplusenabled 1
+dynaplusenabled 1
+bfracenabled 1
+rtfenabled 1
+rspenabled 1
+initializeicarus 0
+pinchenabled 0
+linklimit 5000
+material_color 0
+material_style 983041
+material_width 1
+heat_color 0
+heat_style 983042
+heat_width 1
+heat_termid Q
+work_color 0
+work_style 983043
+work_width 1
+work_termid W
+connections_color 9
+connections_style 983044
+connections_width 1
+measurements_color 4
+measurements_style 983044
+measurements_width 1
+displayeoconn 0
+displayeomeas 1
+displayeomeastype 2
+displayothermanipconn 0
+showeoviews 0
+eoautosave 1
+allow_system_userprops 0
+copy_estimation 1
+copy_retrieved 1
+purge_incomp_params 0
+set_default_biparams 0
+set_default_dataset1 0
+set_default_dataset0 1
+bestinput 0
+autosmrun 0
+genallpropset 0
+strmresformdefault 0
+roottype 0
+exchangerfile 1
+streamformat 1
+runsettingfile 1
+usermodelfile 1
+fortranfile 0
+allow_system_autoparam 1
+timeout 1000
+sumcount 6
+#
+#
+PFSVData {A0DFFFE6-908E-11CE-A964-0000C08C668E}
+# of PFS Objects = 1
+SIZE -3 3 -3 3
+LEGEND
+Version: 2
+Unfixed
+# of PFS Objects = 0
+VIEWPORT -7.873684 7.873684 3.300000 -3.300000
+LAYOUT
+TableFormat 1
+Pages 1 1 1 1
+PAGESETUP
+PAPERSIZE 1
+PAPERSOURCE 1
+ORIENTATION 1
+PRINTPAGENO 1 1
+LEFTMARGIN 0.5"
+RIGHTMARGIN 0.5"
+TOPMARGIN 0.5"
+BOTTOMMARGIN 0.5"
+VISIBILITY 0.030000
+PFDFLAG 255 255
+PFDMODE 0
+SCALE 0.012865
+
+$_SUMMARY_FILE
+ MMSUMMARY

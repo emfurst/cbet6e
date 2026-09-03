@@ -1,0 +1,617 @@
+MM "25.0" FLAVOR "NO" VERSION "25.0" DATETIME "Wed Sep 12 15:35:14 2012" 
+MACHINE "WIN-NT/VC"  ; 
+startlibrary
+version1
+NumLibs = 2
+Built-In
+ACM Built-In
+NumCats = 9
+Mixers/Splitters
+active
+Separators
+active
+Heat Exchangers
+active
+Columns
+active
+Reactors
+active
+Pressure Changers
+active
+Manipulators
+active
+Solids
+active
+User Models
+active
+endlibrary
+; 
+1
+>VERSION 0
+B1
+REquil
+Built-In
+REQUIL
+? SETUP MAIN ? \ "RUN-CLASS" RUN-CLASS = FLOWSHEET \ \ SIMULATE INTERACTIVE
+ = NO MOLEFLOW = MOLEFLOW MOLEFRAC = MOLEFRAC TFFFILE = FULL VISITED = 1 \ ? 
+SETUP GLOBAL ? \ "IN-UNITS" INSET = METCBAR \ \ "STREAM-CLASS" SCLASS = 
+CONVEN \ ? SETUP DIAGNOSTICS ? ? SETUP "SIM-OPTIONS" ? ; "METCBAR_MOLE" ; ? 
+SETUP "UNITS-SET" METCBAR ? \ DESCRIPTION DESCRIPTION = 
+"Metric Units with C, BAR, GCAL/HR, and CUM" \ \ MMLOCAL \ \ UNITSET 
+BASESET = MET ( 3 3 3 3 3 3 3 3 3 3 3 7 18 3 3 5 3 3 3 5 3 4 3 3 3 3 1 3 3 3 
+4 3 7 3 3 3 1 1 4 4 3 3 3 3 3 3 3 3 3 3 3 3 14 3 3 3 3 3 3 3 3 3 3 4 3 3 3 3 
+3 3 3 3 3 3 5 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 
+3 3 3 3 3 1001 1001 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 ) \ ? SETUP "UNITS-SET" 
+METCKGCM ? \ DESCRIPTION DESCRIPTION = 
+"Metric Units with C, KG/SQCM, GCAL/HR, and CUM" \ \ MMLOCAL \ \ UNITSET 
+BASESET = MET ( 3 3 3 3 3 3 3 3 3 3 3 7 18 3 3 5 3 3 3 8 3 4 3 3 3 3 1 3 3 3 
+4 3 7 3 3 3 3 3 4 4 3 3 3 3 3 3 3 3 3 3 3 3 14 3 3 3 3 3 3 3 3 3 3 4 3 3 3 3 
+3 3 3 3 3 3 8 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 
+3 3 3 3 3 1001 1001 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 ) \ ? SETUP "UNITS-SET" 
+"SI-CBAR" ? \ DESCRIPTION DESCRIPTION = 
+"International System Units with C, BAR, and /HR" \ \ MMLOCAL \ \ UNITSET 
+BASESET = SI ( 1 1 1 1 1 1 1 1 1 3 3 7 1 1 1 1 1 1 1 5 1 4 1 1 1 1 1 1 1 1 4 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 4 5 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ) \ ? SETUP "ACCOUNT-INFO" ? ? SETUP 
+"RUN-CONTROL" ? ? SETUP DESCRIPTION ? \ DESCRIP DESCRIP = ( 
+"General Simulation with Metric Units :" 
+"C, bar, kg/hr, kmol/hr, Gcal/hr, cum/hr." " " "Property Method: None" " " 
+"Flow basis for input: Mole" " " "Stream report composition: Mole flow" ) \ ? 
+ODATABANKS ? \ ODATABANKS AUTO-PARAM = YES \ ? DATABANKS ? \ DATABANKS 
+FILE-SYM-NAM = ( "APV73 PURE25" "APV73 AQUEOUS" "APV73 SOLIDS" 
+"APV73 INORGANIC" ) \ ? COMPONENTS MAIN ? \ COMPONENTS CID = C6H6 ANAME = 
+C6H6 OUTNAME = C6H6 DBNAME1 = "BENZENE" ANAME1 = "C6H6" /  CID = C2H4 ANAME
+ = C2H4 OUTNAME = C2H4 DBNAME1 = "ETHYLENE" ANAME1 = "C2H4" /  CID = "C8H10-01" 
+ANAME = C8H10-4 OUTNAME = "C8H10-01" DBNAME1 = "ETHYLBENZENE" ANAME1 = 
+"C8H10-4" \ ? COMPONENTS "COMP-LIST" GLOBAL ? ? SOLVE ? ? "DYN-OPTIONS" ? ? 
+FLOWSHEET GLOBAL ? \ BLOCK BLKID = B1 BLKTYPE = REQUIL MDLTYPE = "REquil" 
+IN = ( 1FEED M0-1 ) OUT = ( 2GAS M0-1 3FLUID M1-2 ) \ \ "DEF-STREAM" SCLASS
+ = CONVEN \ ? PROPERTIES MAIN ? \ GPROPERTIES GBASEOPSET = IDEAL GOPSETNAME
+ = IDEAL PARCON = -1 \ ? PROPERTIES "OPTION-SETS" IDEAL ? \ PARAM BASE = 
+IDEAL \ ? PROPERTIES "MOLEC-STRUCT" C2H4 ? ? PROPERTIES "MOLEC-STRUCT" C6H6 ? 
+? PROPERTIES "MOLEC-STRUCT" "C8H10-01" ? ? PROPERTIES PARAMETERS BINARY 
+SCALAR "RKTKIJ-1" ? ; "ENG_MOLE" ; \ PROP-LIST PARAMNAME = RKTKIJ SETNO = 1 
+UNITROW = 0 \ ? PROPERTIES PARAMETERS BINARY "T-DEPENDENT" "ANDKIJ-1" ? ; 
+"ENG_MOLE" ; \ PROP-LIST PARAMNAME = ANDKIJ SETNO = 1 UNITROW = 0 TUNITROW = 
+22 TUNITLABEL = F NEL = 2 \ ? PROPERTIES PARAMETERS BINARY "T-DEPENDENT" 
+"ANDMIJ-1" ? ; "ENG_MOLE" ; \ PROP-LIST PARAMNAME = ANDMIJ SETNO = 1 UNITROW
+ = 0 TUNITROW = 22 TUNITLABEL = F NEL = 2 \ ? PROPERTIES PARAMETERS BINARY 
+"T-DEPENDENT" "HENRY-1" ? ; "METCBAR_MOLE" ; \ PROP-LIST PARAMNAME = HENRY 
+SETNO = 1 UNITROW = 20 UNITLABEL = bar TUNITROW = 22 TUNITLABEL = C BDBANK = 
+( "APV73 BINARY" "APV73 HENRY-AP" ) NEL = 7 \ ? "PROP-SET" MAIN HXDESIGN ? ; 
+"SI_MOLE" ; \ P1 ID = MASSVFRA \ \ P1 ID = MASSFLMX UNITS = ( "kg/sec" ) \ \ 
+P1 ID = HMX UNITS = ( "J/kg" ) \ \ P1 ID = RHOMX UNITS = ( "kg/cum" ) \ \ P1 
+ID = CPMX UNITS = ( "J/kg-K" ) \ \ P1 ID = PCMX UNITS = ( "N/sqm" ) \ \ P1 ID
+ = MUMX UNITS = ( "N-sec/sqm" ) \ \ P1 ID = KMX UNITS = ( "Watt/m-K" ) \ \ P1 
+ID = SIGMAMX UNITS = ( "N/m" ) \ \ P1 ID = MWMX \ \ P2 PHASE = ( T V L ) 
+SYSPRES = YES \ \ DESCRIPTION DESCRIPTION = 
+"Thermal and transport, for heat exchanger design" \ ? "PROP-SET" MAIN 
+HXDSGN2 ? ; "SI_MOLE" ; \ P1 ID = MASSVFRA \ \ P1 ID = MASSFLMX UNITS = ( 
+"kg/sec" ) \ \ P1 ID = HMX UNITS = ( "J/kg" ) \ \ P1 ID = RHOMX UNITS = ( 
+"kg/cum" ) \ \ P1 ID = CPMX UNITS = ( "J/kg-K" ) \ \ P1 ID = PCMX UNITS = ( 
+"N/sqm" ) \ \ P1 ID = MUMX UNITS = ( "N-sec/sqm" ) \ \ P1 ID = KMX UNITS = ( 
+"Watt/m-K" ) \ \ P1 ID = SIGMAMX UNITS = ( "N/m" ) \ \ P1 ID = MWMX \ \ P2 
+PHASE = ( T V L1 L2 ) SYSPRES = YES \ \ DESCRIPTION DESCRIPTION = 
+"Thermal and transport, for heat exchanger design" \ ? "PROP-SET" MAIN 
+THERMAL ? ; "METCBAR_MOLE" ; \ P1 ID = HMX UNITS = ( "cal/gm" ) \ \ P1 ID = 
+CPMX UNITS = ( "cal/gm-K" ) \ \ P1 ID = KMX \ \ P2 SUBSTREAM = MIXED PHASE = 
+( V L ) SYSPRES = YES \ \ DESCRIPTION DESCRIPTION = 
+"Enthalpy, heat capacity, and thermal conductivity" \ ? "PROP-SET" MAIN 
+THERMAL2 ? ; "METCBAR_MOLE" ; \ P1 ID = HMX UNITS = ( "cal/gm" ) \ \ P1 ID = 
+CPMX UNITS = ( "cal/gm-K" ) \ \ P1 ID = KMX \ \ P2 SUBSTREAM = MIXED PHASE = 
+( V L1 L2 ) SYSPRES = YES \ \ DESCRIPTION DESCRIPTION = 
+"Enthalpy, heat capacity, and thermal conductivity" \ ? "PROP-SET" MAIN 
+TXPORT ? ; "METCBAR_MOLE" ; \ P1 ID = RHOMX UNITS = ( "kg/cum" ) \ \ P1 ID = 
+MUMX \ \ P1 ID = SIGMAMX \ \ P2 SUBSTREAM = MIXED PHASE = ( V L ) SYSPRES = 
+YES \ \ DESCRIPTION DESCRIPTION = "Density, viscosity, and surface tension" \ 
+? "PROP-SET" MAIN TXPORT2 ? ; "METCBAR_MOLE" ; \ P1 ID = RHOMX UNITS = ( 
+"kg/cum" ) \ \ P1 ID = MUMX \ \ P1 ID = SIGMAMX \ \ P2 SUBSTREAM = MIXED 
+PHASE = ( V L1 L2 ) SYSPRES = YES \ \ DESCRIPTION DESCRIPTION = 
+"Density, viscosity, and surface tension" \ ? "PROP-SET" MAIN VLE ? ; 
+"METCBAR_MOLE" ; \ P1 ID = PHIMX \ \ P1 ID = GAMMA \ \ P1 ID = PL \ \ P2 
+SUBSTREAM = MIXED PHASE = ( V L ) SYSPRES = YES \ \ DESCRIPTION DESCRIPTION
+ = "Fugacity, activity, and vapor pressure" \ ? "PROP-SET" MAIN VLLE ? ; 
+"METCBAR_MOLE" ; \ P1 ID = PHIMX \ \ P1 ID = GAMMA \ \ P1 ID = PL \ \ P2 
+SUBSTREAM = MIXED PHASE = ( V L1 L2 ) SYSPRES = YES \ \ DESCRIPTION 
+DESCRIPTION = "Fugacity, activity, and vapor pressure" \ ? "STREAM-NAMES" ? ? 
+STREAM MATERIAL 1FEED ? ; "METCBAR_MOLE" ; \ SUBSTREAM SSID = MIXED TEMP = 
+700. <22> <1> PRES = 1. <20> <5> TOTFLOW = 2. <-89> <3> TOTAL = 2. <-89> <0> 
+JUNK = 2 \ \ MOLE-FLOW SSID1 = MIXED CID = C6H6 FLOW = 1. <-89> <3> /  SSID1
+ = MIXED CID = C2H4 FLOW = 1. <-89> <3> \ ? BLOCK REQUIL B1 ? ; "METCBAR_MOLE" 
+; ; ICON2 ; \ PARAM NREAC = 1 PRES = 1. <20> <5> DUTY = 0. <13> <18> \ \ 
+STOIC REACNO = 1 STOIC-CID = C6H6 COEF = -1. <0> <0> STOIC-PHASE = "*" \ \ 
+STOIC REACNO = 1 STOIC-CID = C2H4 COEF = -1. <0> <0> \ \ STOIC1 REACNO1 = 1 
+STOIC-CID1 = "C8H10-01" COEF1 = 1. <0> <0> STOIC1-PHASE = "*" \ \ EXTENT-SPEC 
+EXT-SPREACNO = 1 \ ? "EO-CONV-OPTI" ? \ DMO-PARAMS MODE = DEFAULT \ \ 
+DMO-PARAMS MODE = SIMULATION \ \ DMO-PARAMS MODE = "PARAMETER-ESTIMATION" \ \ 
+DMO-PARAMS MODE = RECONCILIATION \ \ DMO-PARAMS MODE = OPTIMIZATION \ \ 
+LSSQP-PARAMS MODE-L = DEFAULT \ \ LSSQP-PARAMS MODE-L = SIMULATION \ \ 
+LSSQP-PARAMS MODE-L = "PARAMETER-ESTIMATION" \ \ LSSQP-PARAMS MODE-L = 
+RECONCILIATION \ \ LSSQP-PARAMS MODE-L = OPTIMIZATION \ \ NSOLVE-PARAM 
+NSOLVE-MODE = DEFAULT \ \ NSOLVE-PARAM NSOLVE-MODE = SIMULATION \ \ 
+NSOLVE-PARAM NSOLVE-MODE = "PARAMETER-ESTIMATION" \ \ XSLP-PARAMS XSLP-MODE
+ = DEFAULT \ \ XSLP-PARAMS XSLP-MODE = SIMULATION \ \ XSLP-PARAMS XSLP-MODE
+ = "PARAMETER-ESTIMATION" \ \ XSLP-PARAMS XSLP-MODE = RECONCILIATION \ \ 
+XSLP-PARAMS XSLP-MODE = OPTIMIZATION \ ? REPORT REPORT ? ? REPORT 
+"BLOCK-REPORT" ? ? REPORT "STREAM-REPOR" ? \ OPTIONS MOLEFLOW = MOLEFLOW 
+MOLEFRAC = MOLEFRAC \ ? REPORT "FLOWSHEET-RE" ? ? REPORT "PROPERTY-REP" ? ? 
+REPORT "ADA-REPORT" ? ? REPORT "BATCH-OPERAT" ? ; "METCBAR_MOLE" ; 
+
+ GRAPHICS_BACKUP
+PFS V 5.00
+$CONFIG
+paramdata APV73 ENRTL-RK
+paramdata APV73 VLE-IG
+paramdata APV73 VLE-RK
+paramdata APV73 VLE-HOC
+paramdata APV73 LLE-LIT
+paramdata APV73 LLE-ASPEN
+paramdata APV73 VLE-LIT
+paramdata APV73 BINARY
+paramdata APV73 EOS-LIT
+paramdata APV73 HENRY-AP
+paramdata APV73 SRK-ASPEN
+paramdata APV73 PC-SAFT
+paramdata APV73 POLYPCSF
+paramdata APV73 HYSYS
+purebank APV73 PURE25
+purebank APV73 AQUEOUS
+purebank APV73 SOLIDS
+purebank APV73 INORGANIC
+regdbank 1
+ftn_check 1
+autoblockid 1
+autostreamid 1
+showblockid 1
+showstreamid 1
+autoplacement 1
+grid 2
+gridresolution 0.100000
+scale 0
+streamprefix 
+blockprefix B
+labelscale 1.000000
+qwformat %.0f
+tempformat %.0f
+presformat %.0f
+flowformat %.0f
+strmqwformat %.0f
+vflowformat %.0f
+mflowformat %.0f
+vfracformat %.2f
+pseudobatch 0
+partial 1
+animation 1
+runanyway 0
+tooldrawvisible 0
+browserheight 7650
+browserwidth 12345
+browsertreewidth 3630
+polyplusenabled 1
+dynaplusenabled 1
+bfracenabled 1
+rtfenabled 1
+rspenabled 1
+initializeicarus 0
+pinchenabled 0
+linklimit 5000
+material_color 0
+material_style 983041
+material_width 1
+heat_color 0
+heat_style 983042
+heat_width 1
+heat_termid Q
+work_color 0
+work_style 983043
+work_width 1
+work_termid W
+connections_color 9
+connections_style 983044
+connections_width 1
+measurements_color 4
+measurements_style 983044
+measurements_width 1
+displayeoconn 0
+displayeomeas 1
+displayeomeastype 2
+displayothermanipconn 0
+showeoviews 0
+eoautosave 1
+allow_system_userprops 0
+copy_estimation 1
+copy_retrieved 1
+purge_incomp_params 0
+set_default_biparams 0
+set_default_dataset1 0
+set_default_dataset0 1
+bestinput 0
+autosmrun 0
+genallpropset 0
+strmresformdefault 0
+roottype 0
+exchangerfile 1
+streamformat 1
+runsettingfile 1
+usermodelfile 1
+fortranfile 0
+allow_system_autoparam 1
+timeout 1000
+#
+#
+PFSVData {A0DFFFE6-908E-11CE-A964-0000C08C668E}
+# of PFS Objects = 5
+SIZE -2.97744 0.37218 0.8 2.8782
+BLOCK
+ID: B1
+Version: 1
+ICON: "ICON2"
+Flag 0
+Section GLOBAL
+At -1.300000 1.400000
+Label At -0.609000 0.625000
+Annotation At -0.300000 -0.700000
+Scale 1.000000 Modifier 0
+STREAM
+ID: 1FEED
+Version: 2
+Flag 0
+GLOBAL 117
+TYPE 0 TERMINAL 1
+At -2.903008 1.712030
+Label At 0.322117 0.000000
+ROUTE 0 0
+$ $ 0.0 0.0
+ROUTE 1 0
+r r -2.903008 1.712030 0
+x x -1.800376 1.712030 0
+t l -1.600376 1.712030 0
+$ D 0.001660 0.013309
+$ C 0.000000 0.0
+$ $ 0.0 0.0
+At 0.000000 0.000000
+Label At 0.000000 0.000000
+ROUTE 0 1
+$ $ 0.0 0.0
+ROUTE 1 1
+$ $ 0.0 0.0
+At 0.000000 0.000000
+Label At 0.000000 0.000000
+ROUTE 0 2
+$ $ 0.0 0.0
+ROUTE 1 2
+$ $ 0.0 0.0
+STREAM
+ID: 2GAS
+Version: 2
+Flag 0
+GLOBAL 114
+TYPE 0 TERMINAL 2
+At -1.315038 2.803759
+Label At 0.000000 -0.210391
+ROUTE 0 0
+r d -1.315038 2.803759 0
+y 0 -1.315038 2.184962 0
+t u -1.315038 1.984962 0
+$ D -0.013976 -0.014733
+$ C 0.000000 0.0
+$ $ 0.0 0.0
+ROUTE 1 0
+$ $ 0.0 0.0
+At 0.000000 0.000000
+Label At 0.000000 0.000000
+ROUTE 0 1
+$ $ 0.0 0.0
+ROUTE 1 1
+$ $ 0.0 0.0
+At 0.000000 0.000000
+Label At 0.000000 0.000000
+ROUTE 0 2
+$ $ 0.0 0.0
+ROUTE 1 2
+$ $ 0.0 0.0
+STREAM
+ID: 3FLUID
+Version: 2
+Flag 0
+GLOBAL 117
+TYPE 0 TERMINAL 2
+At 0.297744 0.868421
+Label At -0.371747 0.000000
+ROUTE 0 0
+r l 0.297744 0.868421 0
+x 0 -0.990978 0.868421 0
+t r -1.190978 0.868421 0
+$ D -0.105319 -0.030652
+$ C 0.000000 0.0
+$ $ 0.0 0.0
+ROUTE 1 0
+$ $ 0.0 0.0
+At 0.000000 0.000000
+Label At 0.000000 0.000000
+ROUTE 0 1
+$ $ 0.0 0.0
+ROUTE 1 1
+$ $ 0.0 0.0
+At 0.000000 0.000000
+Label At 0.000000 0.000000
+ROUTE 0 2
+$ $ 0.0 0.0
+ROUTE 1 2
+$ $ 0.0 0.0
+LEGEND
+Version: 2
+Dim: -3.83915 -9.4 -2.60526 -9.92481
+Size: 0.012406
+Font: 1 0 =Times New Roman
+# of PFS Objects = 0
+VIEWPORT -8.684211 8.684210 3.300000 -3.300000
+LAYOUT
+TableFormat 1
+Pages 1 1 1 1
+PAGESETUP
+PAPERSIZE 1
+PAPERSOURCE 1
+ORIENTATION 1
+PRINTPAGENO 1 1
+LEFTMARGIN 0.5"
+RIGHTMARGIN 0.5"
+TOPMARGIN 0.5"
+BOTTOMMARGIN 0.5"
+VISIBILITY 0.030000
+PFDFLAG 255 255
+PFDMODE 0
+SCALE 0.012406
+
+$_SUMMARY_FILE
+ MMSUMMARY25.0                                                                  
+ IDSET RUNID (PROPERTIES) (114 *5)                                              
+ IDSET IT (PROPERTIES) (117 *6 119 *6 115 *1)                                   
+ LSET RUNID (%RUNID)                                                            
+ LSET IT (%IT)                                                                  
+ IDSET VERS (PROPERTIES) (345 *6 346 *6 347 *6 348 *6 355 *6)                   
+ LSET VERS (%VERS)                                                              
+ DSET RUN-STATUS VERS @VERS ( "25.0" "WIN32" "" "Sandler" "SANDLER-LAPTOP" )    
+ IDSET STRNAM (PROPERTIES) (1233 *6)                                            
+ LSET STRNAM (%STRNAM)                                                          
+ IDSET ID_STRPR (PROPERTIES) ( 454 *2 <119> 1236 *2 <125> 1237 *2 <29> 1238 *2  
+ <55> 1239 *2 <55> 1083 *6 1084 *6 )                                            
+ LSET L_STRPR (%ID_STRPR)                                                       
+ DSET RUN-STATUS IT @IT ( "SEPTEMBER 12, 2012  3:31:47 P.M." "_2021juw.inm" 0)  
+ DSET RUN-STATUS CURRENCY @CURRENCY ( "$" )                                     
+ IDSET ID_NCC (COMPONENTS) (C6H6 C2H4 C8H10-01)                                 
+ IDSET ID_NCCNS (COMPONENTS) (C6H6 C2H4 C8H10-01)                               
+ IDSET ALIAS (COMPONENTS) (1 *6)                                                
+ LSET ALIAS ( %ID_NCC & %ALIAS)                                                 
+ DSET RUN-STATUS RUNID @RUNID ("_2021juw")                                      
+ DSET RUN-STATUS RUNID @RUNID ("_2021juw")                                      
+ IDSET STATUS (PROPERTIES) (125 *1 126 *1 127 *1 128 *1 129 *1 130 *1)          
+ LSET STATUS (%STATUS)                                                          
+ IDSET PPSTAT (PROPERTIES) (272 *1)                                             
+ LSET PPSTAT (%PPSTAT)                                                          
+ DSET RUN-STATUS PPSTAT @PPSTAT (2)                                             
+ IDSET IDRXBAL0 (PROPERTIES) ( 73 *2 <11> 74 *2 75 *2 <10> 76 *2 77 *2 <13> 78  
+ *2)                                                                            
+ IDSET ID_RXBAL (PROPERTIES) ( 73 *2 <11> 358 *2 <11> 359 *2 <11> 74 *2 75 *2   
+ <10> 360 *2 <10> 361 *2 <10> 76 *2 362 *2 <10> 363 *2 <10> 364 *2 <10> 365 *2  
+ 366 *2 <11> 367 *2 <11> 368 *2 <11> 369 *2 370 *2 <10> 371 *2 <10> 372 *2 <10> 
+ 373 *2 77 *2 <13> 374 *2 <13> 375 *2 <13> 78 *2 1266 *2 <10> 1267 *2 <10> 1262 
+ *2 <10> 1263 *2 <10> 1264 *2 <10> )                                            
+ IDSET ID_MOLE (PROPERTIES) ( 79 *2 <11> 80 *2)                                 
+ LSET FLWBAL ( %ID_NCCNS & %ID_MOLE %IDRXBAL0)                                  
+ IDSET ID_XY (PROPERTIES) (43 *2 36 *2 39 *2 40 *2)                             
+ IDSET ID_XX (PROPERTIES) (43 *2 37 *2 38 *2 40 *2)                             
+ IDSET ID_XXY (PROPERTIES) (43 *2 37 *2 38 *2 39 *2 41 *2 42 *2)                
+ LSET VLE ( %ID_XY & %ID_NCC)                                                   
+ LSET LLE ( %ID_XX & %ID_NCC)                                                   
+ LSET VLE3 ( %ID_XXY & %ID_NCC)                                                 
+ IDSET ID_KODE (PROPERTIES) (44 *1)                                             
+ IDSET BLKIN (BLKIN) (STREAMID ?)                                               
+ LSET BLKIN (%BLKIN)                                                            
+ IDSET BLKOUT (BLKOUT) (STREAMID ?)                                             
+ LSET BLKOUT (%BLKOUT)                                                          
+ IDSET TYPIN (TYPIN) (STREAMID ?)                                               
+ LSET TYPIN (%TYPIN)                                                            
+ IDSET TYPOUT (TYPOUT) (STREAMID ?)                                             
+ LSET TYPOUT (%TYPOUT)                                                          
+ IDSET PORT_NO (PROPERTIES) (236 *1 237 *1 238 *1)                              
+ IDSET IDS_0 (SUBSTREAM) ($TOTAL)                                               
+ IDSET IDS_1 (SUBSTREAM) (MIXED)                                                
+ IDSET BLKSTAT (PROPERTIES) (120 *1 121 *1)                                     
+ IDSET BLKMSG (PROPERTIES) (122 *6)                                             
+ LSET BLKSTAT (%BLKSTAT)                                                        
+ LSET BLKMSG (%BLKMSG)                                                          
+ IDSET DESC (PROPERTIES) (113 *6)                                               
+ LSET DESC (%DESC)                                                              
+ IDSET IDPH_V (PHASE) (VAPOR)                                                   
+ IDSET IDPH_L (PHASE) (LIQUID)                                                  
+ IDSET IDPH_S (PHASE) (SOLID)                                                   
+ IDSET IDPH_L1 (PHASE) (LIQUID_1)                                               
+ IDSET IDPH_T (PHASE) (TOTAL)                                                   
+ IDSET IDPH_L2 (PHASE) (LIQUID_2)                                               
+ IDSET IDWET (BASIS) (WET)                                                      
+ IDSET IDDRY (BASIS) (DRY)                                                      
+ IDSET SP (PROPERTIES) (118 *6)                                                 
+ LSET SP (%SP)                                                                  
+ IDSET SPSTAT (SPSTAT) (116 *1)                                                 
+ LSET SPSTAT ( %SPSTAT)                                                         
+ IDSET IDERR (PROPERTIES) (131 *1)                                              
+ DSET RUN-STATUS SP @SP ( "SEPTEMBER 12, 2012 3:31:47 P.M." )                   
+ IDSET FOR (PROPERTIES) (737 *1)                                                
+ LSET FOR (%FOR)                                                                
+ IDSET FORSTAT (PROPERTIES) (738 *1)                                            
+ LSET FORSTAT (%FORSTAT)                                                        
+ IDSET MW (PROPERTIES) (269 *2)                                                 
+ LSET MW (%MW & %ID_NCCNS)                                                      
+ DSET MW MW @MW (7.81136400D+01 2.80537600D+01 1.06167400D+02)                  
+ IDSET VST (PROPERTIES) (270 *2 <43> )                                          
+ LSET VST (%VST & %ID_NCC)                                                      
+ DSET VST VST @VST (8.85091000D+01 <3> 8.47116000D+01 <3> 1.22062000D+02 <3> )  
+ IDSET TB (PROPERTIES) (271 *2 <22> )                                           
+ LSET TB (%TB & %ID_NCC)                                                        
+ DSET TB TB @TB (8.00900000D+01 <4> -1.03740000D+02 <4> 1.36200000D+02 <4> )    
+ IDSET CASN (PROPERTIES) (37100 *6)                                             
+ LSET CASN (%ID_NCC & %CASN)                                                    
+ DSET CASN CASN @CASN ( "71-43-2" "74-85-1" "100-41-4" )                        
+ IDSET PAMB (PROPERTIES) (32 *2)                                                
+ LSET PAMB (%PAMB)                                                              
+ DSET PAMB PAMB @PAMB (1.01325000D+05)                                          
+ IDSET PAMB2 (PROPERTIES) (32 *2 <20> )                                         
+ LSET PAMB2 (%PAMB2)                                                            
+ DSET RUN-STATUS PAMB @PAMB2 (1.01325000D+00 <5> )                              
+ IDSET ISODES (PROPERTIES) (123 *5 124 *5 132 *5)                               
+ IDSET ISTRCV (PROPERTIES) (1251 *2)                                            
+ IDSET ID_WORK (PROPERTIES) (112 *2 <19> 195 *2 <28> )                          
+ LSET L_WORK (%ISODES %ID_WORK)                                                 
+ IDSET ID_HEAT (PROPERTIES) (1 *2 <13> 815 *2 <22> 816 *2 <22> )                
+ LSET L_HEAT (%ISODES %ID_HEAT)                                                 
+ IDSET ID_LTVC (PROPERTIES) (817 *2 <22> )                                      
+ IDSET ID_LQVC (PROPERTIES) (818 *2 <13> )                                      
+ IDSET ID_TPQV (PROPERTIES) (1 *2 <13> 31 *2 <22> 32 *2 <20> 2 *2 3 *2)         
+ IDSET ID_QTP (PROPERTIES) (1 *2 <13> 31 *2 <22> 32 *2 <20> 3 *2)               
+ IDSET TOTAL (PROPERTIES) (524 *2 <10> 525 *2 <10> 526 *2 <10> )                
+ IDSET ENERGY (PROPERTIES) (504 *2 <13> 505 *2 <13> 506 *2 <13> 1 *2 <13> )     
+ IDSET TOTAX (PROPERTIES) (524 *2 <18> 525 *2 <18> 526 *2 <18> )                
+ IDSET ENERGX (PROPERTIES) (504 *2 <5> 505 *2 <5> 506 *2 <5> 1 *2 <5> )         
+ LSET BPSBAL3 ( %TOTAL %ENERGY)                                                 
+ LSET BPBATCH ( %TOTAX %ENERGX)                                                 
+ DSET RUN-STATUS FORSTAT @FORSTAT (2)                                           
+ DSET FLWBAL @FLWBAL (3.24498958D-01 <3> 3.24498958D-01 <3> -3.24498959D-01 <3> 
+ 3.24498958D-01 3.24498958D-01 -1.00000000D+00 3.24498958D-01 <3> 0.D0          
+ -4.78130602D-08 <3> -4.50355384D-10 1.00820486D-06 <18> 1.96524761D-05)        
+ DSET ALIAS @ALIAS ( "C6H6" "C2H4" "C8H10-4" )                                  
+ IDSET ID_1 (NPOINT) (#3)                                                       
+ IDSET ID_2 (PROPERTIES) (339 *6 132 *5 1196 *6 1197 *6 1198 *6)                
+ LSET L_1 (%ID_2 & %ID_1)                                                       
+ DSET COMPONENTS MAIN COMPS @L_1 ("C6H6" C "C6H6" "C6H6" "C6H6" "C2H4" C "C2H4" 
+ "C2H4" "C2H4" "C8H10-01" C "C8H10-4" "C8H10-4" "C8H10-01" )                    
+ IDSET ID_3 (PROPERTIES) (1 *2 <13> 31 *2 <22> 32 *2 <20> 2 *2 1052 *2 <13> )   
+ LSET L_2 (%ID_RXBAL %ID_3 %ID_KODE)                                            
+ DSET BLOCK REQUIL B1 BLKSTAT @BLKSTAT (0 0)                                    
+ DSET BLOCK REQUIL B1 COMPSTAT @L1 (0)                                          
+ DSET BLOCK REQUIL B1 SYNCSTAT @L1 (0)                                          
+ DSET BLOCK REQUIL B1 BLKIN @BLKIN (1 1FEED)                                    
+ DSET BLOCK REQUIL B1 TYPIN @TYPIN (1 MATERIAL)                                 
+ DSET BLOCK REQUIL B1 BLKOUT @BLKOUT (2 2GAS 3FLUID)                            
+ DSET BLOCK REQUIL B1 TYPOUT @TYPOUT (2 MATERIAL MATERIAL)                      
+ DSET BLOCK REQUIL B1 RES_Q @L_2 (2.00000000D+00 <3> 1.67550104D+00 <3>         
+ -3.24498958D-01 <3> 0.D0 1.06167400D+02 <3> 1.06167400D+02 <3> * <3>           
+ -4.50355384D-10 * <3> * <3> * <3> * 2.00000000D+00 <3> 1.67550104D+00 <3>      
+ -3.24498958D-01 <3> 0.D0 1.06167400D+02 <3> 1.06167400D+02 <3> * <3>           
+ -4.50355384D-10 5.13016706D-02 <18> 5.13006624D-02 <18> * <18> 1.96524761D-05  
+ 0.D0 <3> 0.D0 <3> 0.D0 <3> 0.D0 <3> 0.D0 <3> 0.D0 <18> 5.51508764D+02 <4>      
+ 1.00000000D+00 <5> 1.00000000D+00 0.D0 <18> 10)                                
+ IDSET ID_4 (NPOINTS) ( #1)                                                     
+ IDSET ID_5 (PROPERTIES) (602 *5 )                                              
+ LSET L_3 ( %ID_5 & %ID_4)                                                      
+ DSET BLOCK REQUIL B1 REAC_IDS @L_3 ( 1  )                                      
+ IDSET ID_6 (PROPERTIES) (3002 *2 <0> 7001 *2 <22> )                            
+ LSET L_4 ( %ID_6 & %ID_4)                                                      
+ DSET BLOCK REQUIL B1 REAC_PRF @L_4 ( 1.20732050D+00 <0> 5.51508764D+02 <4> )   
+ IDSET ID_7 (PROPERTIES) (7001 *2 <22> 7002 *2 <20> 8103 *2 <10> 204 *2 <12>    
+ 8101 *2 <11> 7003 *2 )                                                         
+ LSET L_5 ( %ID_7 )                                                             
+ IDSET ID_8 (PROPERTIES) (253 *2)                                               
+ IDSET ID_9 (PROPERTIES) (253 *2 <11> )                                         
+ IDSET ID_10 (PROPERTIES) (253 *2 <12> )                                        
+ IDSET ID_11 (PROPERTIES) (253 *2 <17> )                                        
+ IDSET ID_12 (PROPERTIES) (253 *2 <27> )                                        
+ IDSET ID_13 (PROPERTIES) (253 *2 <59> )                                        
+ IDSET ID_14 (PROPERTIES) (253 *2 <10> )                                        
+ IDSET ID_15 (PROPERTIES) (8101 *2 <11> 8002 *2 )                               
+ IDSET ID_16 (PROPERTIES) (8001 *2 <11> 8003 *2 <10> 8010 *2 <12> 7001 *2 <22>  
+ 7002 *2 <20> 7003 *2 7004 *2 7006 *2 2002 *2 <39> 2002 *2 <40> 2002 *2 <13>    
+ 2003 *2 <41> 2003 *2 <42> 11006 *2 <37> 11006 *2 <38> 11007 *2 8005 *2 <12> )  
+ LSET L_6 ( %ISODES (( %ID_NCCNS & %ID_15 %ID_16) & %IDS_1) )                   
+ DSET STREAM MATERIAL 1FEED BLKSTAT @BLKSTAT (0 0)                              
+ DSET STREAM MATERIAL 1FEED COMPSTAT @L1 (0)                                    
+ DSET STREAM MATERIAL 1FEED STR_MAIN @L_6 (* B1 VAPOR 1.00000000D+00 <3>        
+ 1.00000000D+00 <3> 0.D0 <3> 5.00000000D-01 5.00000000D-01 0.D0 2.00000000D+00  
+ <3> 1.06167400D+02 <3> 1.16400620D+02 <7> 4.26850000D+02 <4> 1.00000000D+00 <5>
+ 1.00000000D+00 0.D0 0.D0 2.56508351D+01 <4> 4.83214906D+02 <4> 5.13016706D-02  
+ <18> -4.50300625D+00 <3> -8.48284172D-02 <3> 1.71820391D-02 <1> 9.12086207D-01 
+ <1> 5.30837000D+01 1.73220700D-01 <7> )                                        
+ DSET STREAM MATERIAL 1FEED RES_STR @L_5 (4.26850000D+02 <4> 1.00000000D+00 <5> 
+ 1.06167400D+02 <3> 1.16400620D+02 <7> 2.00000000D+00 <3> 1.00000000D+00 )      
+ DSET STREAM MATERIAL 2GAS BLKSTAT @BLKSTAT (0 0)                               
+ DSET STREAM MATERIAL 2GAS COMPSTAT @L1 (0)                                     
+ DSET STREAM MATERIAL 2GAS STR_MAIN @L_6 (B1 * VAPOR 6.75501042D-01 <3>         
+ 6.75501042D-01 <3> 3.24498959D-01 <3> 4.03163606D-01 4.03163606D-01            
+ 1.93672788D-01 1.67550104D+00 <3> 1.06167400D+02 <3> 1.14880479D+02 <7>        
+ 5.51508764D+02 <4> 1.00000000D+00 <5> 1.00000000D+00 0.D0 0.D0 3.06181021D+01  
+ <4> 4.83205409D+02 <4> 5.13006624D-02 <18> -4.38816664D+00 <3> -6.92526875D-02 
+ <3> 1.45847323D-02 <1> 9.24155267D-01 <1> 6.33645682D+01 1.56619755D-01 <7> )  
+ DSET STREAM MATERIAL 2GAS RES_STR @L_5 (5.51508764D+02 <4> 1.00000000D+00 <5>  
+ 1.06167400D+02 <3> 1.14880479D+02 <7> 1.67550104D+00 <3> 1.00000000D+00 )      
+ DSET STREAM MATERIAL 3FLUID BLKSTAT @BLKSTAT (0 0)                             
+ DSET STREAM MATERIAL 3FLUID COMPSTAT @L1 (0)                                   
+ DSET STREAM MATERIAL 3FLUID STR_MAIN @L_6 (B1 * MISSING 0.D0 <3> 0.D0 <3> 0.D0 
+ <3> 0.D0 0.D0 0.D0 0.D0 <3> 0.D0 <3> 0.D0 <7> * <4> 1.00000000D+00 <5> * * * * 
+ <4> * <4> * <18> * <3> * <3> * <1> * <1> * 0.D0 <7> )                          
+ DSET STREAM MATERIAL 3FLUID RES_STR @L_5 (* <4> 1.00000000D+00 <5> 0.D0 <3>    
+ 0.D0 <7> 0.D0 <3> * )                                                          
+ IDSET ID_17 (PROPERTIES) (757 *1)                                              
+ IDSET ID_18 (PROPERTIES) (36 *2 37 *2 38 *2 39 *2 8103 *2 <10> )               
+ LSET L_7 ( %ID_NCCNS & %ID_18 %ID_17)                                          
+ DSET STREAM MATERIAL 1FEED STRM_XY @L_7 ( 9.13899971D-01 8.61000290D-02 0.D0   
+ 9.13899971D-01 8.61000290D-02 0.D0 5.00000000D-01 5.00000000D-01 0.D0          
+ 5.00000000D-01 5.00000000D-01 0.D0 7.81136400D+01 <3> 2.80537600D+01 <3> 0.D0  
+ <3> 0 )                                                                        
+ DSET STREAM MATERIAL 2GAS STRM_XY @L_7 ( 4.84883375D-01 7.11803978D-02         
+ 4.43936227D-01 4.84883375D-01 7.11803978D-02 4.43936227D-01 4.03163606D-01     
+ 4.03163606D-01 1.93672788D-01 4.03163606D-01 4.03163606D-01 1.93672788D-01     
+ 5.27658452D+01 <3> 1.89503441D+01 <3> 3.44512107D+01 <3> * )                   
+ DSET STREAM MATERIAL 3FLUID STRM_XY @L_7 ( 0.D0 0.D0 0.D0 0.D0 0.D0 0.D0 0.D0  
+ 0.D0 0.D0 0.D0 0.D0 0.D0 0.D0 <3> 0.D0 <3> 0.D0 <3> * )                        
+ IDSET ID_19 (PROPERTIES) (64 *2 <11> 63 *2 <11> 94 *2 <11> 95 *2 <11> 88 *2    
+ <39> 61 *2 <39> 89 *2 <39> 90 *2 <39> 991 *2 <7> 992 *2 <7> 993 *2 <7> 994 *2  
+ <7> 926 *2 <37> 925 *2 <37> 995 *2 <37> 996 *2 <37> 928 *2 927 *2 997 *2 998   
+ *2 2 *2 3 *2 606 *2 <11> 103 *2 <12> 269 *2 1246 *2 <10> 1247 *2 <10> 1248 *2  
+ <12> 1249 *2 <12> 8010 *2 <12> 7007 *2 7008 *2 )                               
+ LSET L_8 ( %ID_19)                                                             
+ DSET STREAM MATERIAL 1FEED STR_PHAS @L_8 ( 2.00000000D+00 <3> 0.D0 <3> 0.D0 <3>
+ 0.D0 <3> 2.56508351D+01 <4> * <4> * <4> * <4> -4.50300625D+00 <3> * <3> * <3>  
+ * <3> 1.71820391D-02 <1> * <1> * <1> * <1> 5.30837000D+01 * * * 1.00000000D+00 
+ 1.00000000D+00 2.00000000D+00 <3> 1.73220700D-01 <7> 5.30837000D+01            
+ 1.06167400D+02 <3> 0.D0 <3> 1.16400620D+02 <7> * <7> 1.16400620D+02 <7>        
+ 1.00000000D+00 0.D0 )                                                          
+ DSET STREAM MATERIAL 2GAS STR_PHAS @L_8 ( 1.67550104D+00 <3> 0.D0 <3> 0.D0 <3> 
+ 0.D0 <3> 2.56508351D+01 <4> * <4> * <4> * <4> -4.50300625D+00 <3> * <3> * <3>  
+ * <3> 1.71820391D-02 <1> * <1> * <1> * <1> 5.30837000D+01 * * * 1.00000000D+00 
+ 1.00000000D+00 1.67550104D+00 <3> 1.56619755D-01 <7> 6.33645682D+01            
+ 8.89417947D+01 <3> 0.D0 <3> 9.75146801D+01 <7> * <7> 1.14880479D+02 <7>        
+ 8.37750521D-01 0.D0 )                                                          
+ DSET STREAM MATERIAL 3FLUID STR_PHAS @L_8 ( 0.D0 <3> 0.D0 <3> 0.D0 <3> 0.D0 <3>
+ 0.D0 <4> 0.D0 <4> 0.D0 <4> 0.D0 <4> 0.D0 <3> 0.D0 <3> 0.D0 <3> 0.D0 <3> 0.D0   
+ <1> 0.D0 <1> 0.D0 <1> 0.D0 <1> 0.D0 0.D0 0.D0 0.D0 0.D0 0.D0 0.D0 <3> 0.D0 <7> 
+ 0.D0 0.D0 <3> 0.D0 <3> 0.D0 <7> 0.D0 <7> 0.D0 <7> 0.D0 0.D0 )                  
+ IDSET ID_20 (PROPERTIES) (8103 *2 <10> 1265 *2 <10> )                          
+ IDSET ID_21 (HIER-ID) ( PLANT )                                                
+ IDSET ID_22 (STREAM-ID) ( 1FEED )                                              
+ LSET L_9 ( %ID_21 & %ID_20 & %ID_22)                                           
+ DSET UTIL-SUMMARY FEEDSUM @L_9 ( 1.06167400D+02 <3> 0.D0 <3> )                 
+ IDSET ID_23 (HIER-ID) ( PLANT )                                                
+ IDSET ID_24 (STREAM-ID) ( 2GAS 3FLUID )                                        
+ LSET L_10 ( %ID_23 & %ID_20 & %ID_24)                                          
+ DSET UTIL-SUMMARY PRODSUM @L_10 ( 1.06167400D+02 <3> 0.D0 <3> 0.D0 <3> 0.D0 <3>
+ )                                                                              
+ IDSET ID_25 (PROPERTIES) ( 1266 *2 <10> 1267 *2 <10> 1262 *2 <10> 1263 *2 <10> 
+ 1264 *2 <10> 1268 *2 <119> )                                                   
+ LSET L_11 ( %ID_25)                                                            
+ DSET UTIL-SUMMARY PLANTSUM @L_11 ( 0.D0 <3> 0.D0 <3> 0.D0 <3> 0.D0 <3> 0.D0 <3>
+ 0.D0 <3> )                                                                     
+ IDSET ID_26 (HIER-ID) ( PLANT )                                                
+ LSET L_12 ( %ID_26 & %ID_25)                                                   
+ DSET UTIL-SUMMARY HIERSUM @L_12 ( 0.D0 <3> 0.D0 <3> 0.D0 <3> 0.D0 <3> 0.D0 <3> 
+ 0.D0 <3> )                                                                     
+ IDSET RSTAT (PROPERTIES) (739 *1)                                              
+ LSET RSTAT ( %RSTAT)                                                           
+ DSET RUN-STATUS RPTSTAT @RSTAT (0)                                             
+ DSET RUN-STATUS OLDSTAT @STATUS ( 0 2 2 2 0 0 )                                
+ DSET RUN-STATUS STATUS @STATUS ( 8 * * * * * )                                 
+ DSET RUN-STATUS COMPSTAT @L_1 (0)                                              
+ IDSET TSTAT (PROPERTIES) (741 *1)                                              
+ LSET TSTAT ( %TSTAT)                                                           
+ DSET RUN-STATUS TOTSTAT @TSTAT (0)                                             
+ DSET SPSTAT @SPSTAT (0)                                                        

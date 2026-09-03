@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Getting started with Python and Jupyter</title>
+<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]}};</script>
+<script async src="vendor/mathjax/tex-mml-svg.js"></script>
+<style>
+ body{font:16px/1.55 -apple-system,Segoe UI,Roboto,sans-serif;max-width:60rem;margin:2rem auto;padding:0 1rem;color:#1a1a1a}
+ h1{margin-bottom:.2rem} .sub{color:#666;margin-top:0}
+ nav a{margin-right:1rem} .pill{background:#eef;border-radius:1rem;padding:.1rem .6rem;font-size:.8rem}
+ /* `priority: high` items — the conventions an assistant most often gets wrong.
+    A faint tint plus an amber marker/rule, not a highlighter-pen fill: the flag
+    has to read as an annotation, not as broken row striping. */
+ .hi{background:#fff8ea}
+ li.hi::marker{color:#c07f0a}
+ ul.conv{padding-left:1.6rem} ul.conv li{padding:.2rem .5rem;margin:.35rem 0}
+ /* reserve the rule's width on every row so flagged rows don't shift 3px right */
+ tr td:first-child{border-left:3px solid transparent}
+ tr.hi td:first-child{border-left-color:#dda63f}
+ .legend{font-size:.85rem;color:#666;margin:.2rem 0 .7rem}
+ /* each legend swatch mimics its own section's cue: an amber bullet for the
+    conventions list, an amber left rule for the symbols table */
+ .swatch{display:inline-block;background:#fff8ea;padding:0 .25rem;color:#c07f0a}
+ .swatch-rule{border-left:3px solid #dda63f;padding:0 .3rem 0 .15rem}
+ table{border-collapse:collapse;width:100%}
+ td{border-bottom:1px solid #eee;padding:.35rem .5rem;vertical-align:top}
+ td.sym{width:9rem;white-space:nowrap} .eq{margin:.6rem 0;padding:.4rem .8rem;border-left:3px solid #ccd}
+ .eq .note{color:#555;font-size:.9rem} code{background:#f5f5f7;padding:.05rem .3rem;border-radius:.2rem}
+ .copy{display:inline-block;background:#2456d6;color:#fff;border:0;border-radius:.4rem;padding:.4rem .8rem;cursor:pointer;font-size:.9rem;text-decoration:none}
+ .copy:hover{background:#1840a8}
+ .ghost{display:inline-block;background:#fff;color:#2456d6;border:1px solid #2456d6;border-radius:.4rem;padding:.4rem .8rem;cursor:pointer;font-size:.9rem;text-decoration:none}
+ .ghost:hover{background:#eef2ff}
+ .actions{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.3rem 0}
+ /* Notebook-page action stack. Full-width tap targets because the commonest way
+    into these pages is a phone scanning a margin QR off the printed page. */
+ .btnstack{max-width:32rem;margin:1rem 0}
+ .btnstack a{display:block;padding:.85rem 1rem;margin:.5rem 0;border:1px solid #c9c9d0;
+      border-radius:.6rem;text-decoration:none;color:inherit;font-weight:600;background:#fff}
+ .btnstack a:hover{background:#f2f2f6;border-color:#2456d6}
+ .btnstack a .k{display:block;font-weight:400;font-size:.85rem;color:#666;margin-top:.1rem}
+ pre.raw{display:none} .prompt{border:1px solid #e3e3e8;border-radius:.5rem;padding:.8rem 1rem;margin:.7rem 0}
+ .prompt h4{margin:.1rem 0} .prompt pre{white-space:pre-wrap;background:#f7f7fa;padding:.6rem;border-radius:.4rem;font-size:.85rem}
+ .hint{background:#f0f4ff;border:1px solid #dde4ff;border-radius:.4rem;padding:.5rem .8rem;margin:.6rem 0;color:#334}
+ /* when .hint is itself a list, give the markers room INSIDE the tinted box —
+    otherwise list-style-position:outside puts 1./2./3. beyond the left border */
+ ol.hint,ul.hint{padding-left:2.1rem} ol.hint li,ul.hint li{margin:.3rem 0}
+ .warn{background:#fff4e5;border:1px solid #ffd9a8;border-radius:.4rem;padding:.5rem .8rem;margin:.6rem 0;color:#5c4300}
+ .toc{font-size:.9rem;margin:.2rem 0 1.2rem;color:#555} .toc a{margin-right:.35rem}
+ .check{color:#1a6} .fail{color:#b44} footer{color:#888;font-size:.85rem;margin-top:3rem;border-top:1px solid #eee;padding-top:1rem}
+</style></head><body>
+<nav><a href="index.html">&larr; Index</a></nav>
+<h1>Getting started with Python and Jupyter</h1>
+<p>The codes for this book are <b>Jupyter notebooks</b> written in <b>Python</b>. There are two ways to run them: in your browser with Google Colab (nothing to install) or with a Python install on your own machine. Either is fine &mdash; start with Colab if you just want to run a notebook today.</p>
+<h2>Option A &mdash; Google Colab (no install)</h2>
+<p><a href="https://colab.research.google.com">Google Colab</a> runs Jupyter notebooks in your browser for free; you only need a Google account. Every chapter page carries an <b>Open in Colab</b> link beside each notebook &mdash; one click opens it, with nothing to download, upload, or install. Run a cell with <b>Shift+Enter</b>; run the notebook top to bottom the first time, since later cells use results from earlier ones.</p>
+<p class="hint"><b>Both versions work in Colab.</b> The <code>_thermo</code> notebooks need the <code>thermo</code> package and the property data, which a Colab session does not have &mdash; so each one starts with a short setup cell that fetches them from the code repository. Just run it first. (The same cell does nothing when you are working from a local clone, so it is not something to delete.) The libraries themselves &mdash; NumPy, SciPy, pandas, Matplotlib &mdash; are already installed in Colab.</p>
+<p class="hint"><b>Colab does not save your edits back to the repository.</b> If you change a notebook and want to keep the changes, use <b>File &rarr; Save a copy in Drive</b> first &mdash; otherwise your work is lost when the session ends. This is the one real drawback of Option A, and a reason to move to Option B once you are working on problem sets rather than reading.</p>
+<h2>Option B &mdash; Install Python and Jupyter locally</h2>
+<p>Use <a href="https://docs.astral.sh/uv/"><b>uv</b></a>. It is a single tool that installs Python itself, creates the project&rsquo;s virtual environment, and installs the libraries &mdash; the job that used to take Anaconda plus <code>pip</code> plus a few conventions you had to learn first. It is also fast enough that rebuilding an environment is not something you avoid.</p>
+<ol><li><b>Install uv</b> (once, then forget about it):<br><code>curl -LsSf https://astral.sh/uv/install.sh | sh</code> &mdash; macOS/Linux<br><code>powershell -c "irm https://astral.sh/uv/install.ps1 | iex"</code> &mdash; Windows</li><li><b>Get the code.</b> Clone the <a href="https://github.com/emfurst/cbet6e">code repository</a> so you have the notebooks, the <code>thermo</code> package, and the reference data together:<br><code>git clone https://github.com/emfurst/cbet6e.git</code></li><li><b>Launch:</b> <code>cd cbet6e/code</code> then <code>uv run jupyter lab</code>. The first run creates the environment from <code>pyproject.toml</code> and installs everything; later runs start straight up. Open a chapter notebook and run cells with <b>Shift+Enter</b>.</li></ol>
+<p class="hint">You never &ldquo;activate&rdquo; anything: <code>uv run &lt;command&gt;</code> uses the project&rsquo;s environment automatically, and <code>uv add &lt;package&gt;</code> adds a library to it. If you would rather use the older route, <code>python3 -m venv .venv</code> followed by <code>pip install numpy scipy pandas matplotlib jupyterlab openpyxl</code> gives the same result &mdash; the notebooks do not care which tool built the environment.</p>
+<p class="hint">Optional but recommended: work in an editor with an AI coding assistant (VS Code with Claude Code or Copilot, or Cursor) that can run cells and help debug. The chapter notation files that make the assistant follow the book&rsquo;s conventions ship with the repository, in <code>code/grounding/</code> &mdash; see <a href="using-ai.html">How to use AI with this book</a>.</p>
+<h2>Once it runs &mdash; the first notebook</h2>
+<p>This page is about <b>installing and running</b>. The notebook that comes next, <a href="nb/ch01-getting_started.html"><b>Getting started with Python and Jupyter</b></a> in Chapter 1, is about <b>writing</b> &mdash; it assumes you have written Python before (loops, functions, lists) and have never used the scientific libraries this book runs on. It is the shortest path from &ldquo;Python works on my machine&rdquo; to reading any other notebook in the book: NumPy arrays instead of lists, a first plot, and what a Jupyter cell actually does.</p>
+<p class="hint">Same title, two different jobs &mdash; this page is the setup, that notebook is the on-ramp. Do this page once; do the notebook once.</p>
+<h2>Which should I use?</h2>
+<p><b>Colab</b> is best for zero setup, a Chromebook, or trying one notebook. A <b>local install</b> is better for working offline, faster runs, and the everyday engineering workflow you will keep using after this course.</p>
+<p class="hint">More depth (shell, version control, environments) is in the <a href="https://lem.che.udel.edu/git/furst/computing-setup">computing-setup</a> and <a href="https://lem.che.udel.edu/git/furst/cli-walkthrough">cli-walkthrough</a> guides.</p>
+<nav><a href="index.html">&larr; Index</a></nav>
+<!-- Generated from 6e_companion_site/source by build.py. Do not edit generated HTML by hand; edit the source and rebuild. -->
+<footer>Thermodynamics companion site · <a href="https://www.wiley.com/en-us/-p-9781119321286">Sandler and Furst, &quot;Chemical, Biochemical, and Engineering Thermodynamics,&quot; 6e</a></footer>
+</body></html>

@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The thermo package</title>
+<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]}};</script>
+<script async src="vendor/mathjax/tex-mml-svg.js"></script>
+<style>
+ body{font:16px/1.55 -apple-system,Segoe UI,Roboto,sans-serif;max-width:60rem;margin:2rem auto;padding:0 1rem;color:#1a1a1a}
+ h1{margin-bottom:.2rem} .sub{color:#666;margin-top:0}
+ nav a{margin-right:1rem} .pill{background:#eef;border-radius:1rem;padding:.1rem .6rem;font-size:.8rem}
+ /* `priority: high` items — the conventions an assistant most often gets wrong.
+    A faint tint plus an amber marker/rule, not a highlighter-pen fill: the flag
+    has to read as an annotation, not as broken row striping. */
+ .hi{background:#fff8ea}
+ li.hi::marker{color:#c07f0a}
+ ul.conv{padding-left:1.6rem} ul.conv li{padding:.2rem .5rem;margin:.35rem 0}
+ /* reserve the rule's width on every row so flagged rows don't shift 3px right */
+ tr td:first-child{border-left:3px solid transparent}
+ tr.hi td:first-child{border-left-color:#dda63f}
+ .legend{font-size:.85rem;color:#666;margin:.2rem 0 .7rem}
+ /* each legend swatch mimics its own section's cue: an amber bullet for the
+    conventions list, an amber left rule for the symbols table */
+ .swatch{display:inline-block;background:#fff8ea;padding:0 .25rem;color:#c07f0a}
+ .swatch-rule{border-left:3px solid #dda63f;padding:0 .3rem 0 .15rem}
+ table{border-collapse:collapse;width:100%}
+ td{border-bottom:1px solid #eee;padding:.35rem .5rem;vertical-align:top}
+ td.sym{width:9rem;white-space:nowrap} .eq{margin:.6rem 0;padding:.4rem .8rem;border-left:3px solid #ccd}
+ .eq .note{color:#555;font-size:.9rem} code{background:#f5f5f7;padding:.05rem .3rem;border-radius:.2rem}
+ .copy{display:inline-block;background:#2456d6;color:#fff;border:0;border-radius:.4rem;padding:.4rem .8rem;cursor:pointer;font-size:.9rem;text-decoration:none}
+ .copy:hover{background:#1840a8}
+ .ghost{display:inline-block;background:#fff;color:#2456d6;border:1px solid #2456d6;border-radius:.4rem;padding:.4rem .8rem;cursor:pointer;font-size:.9rem;text-decoration:none}
+ .ghost:hover{background:#eef2ff}
+ .actions{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.3rem 0}
+ /* Notebook-page action stack. Full-width tap targets because the commonest way
+    into these pages is a phone scanning a margin QR off the printed page. */
+ .btnstack{max-width:32rem;margin:1rem 0}
+ .btnstack a{display:block;padding:.85rem 1rem;margin:.5rem 0;border:1px solid #c9c9d0;
+      border-radius:.6rem;text-decoration:none;color:inherit;font-weight:600;background:#fff}
+ .btnstack a:hover{background:#f2f2f6;border-color:#2456d6}
+ .btnstack a .k{display:block;font-weight:400;font-size:.85rem;color:#666;margin-top:.1rem}
+ pre.raw{display:none} .prompt{border:1px solid #e3e3e8;border-radius:.5rem;padding:.8rem 1rem;margin:.7rem 0}
+ .prompt h4{margin:.1rem 0} .prompt pre{white-space:pre-wrap;background:#f7f7fa;padding:.6rem;border-radius:.4rem;font-size:.85rem}
+ .hint{background:#f0f4ff;border:1px solid #dde4ff;border-radius:.4rem;padding:.5rem .8rem;margin:.6rem 0;color:#334}
+ /* when .hint is itself a list, give the markers room INSIDE the tinted box —
+    otherwise list-style-position:outside puts 1./2./3. beyond the left border */
+ ol.hint,ul.hint{padding-left:2.1rem} ol.hint li,ul.hint li{margin:.3rem 0}
+ .warn{background:#fff4e5;border:1px solid #ffd9a8;border-radius:.4rem;padding:.5rem .8rem;margin:.6rem 0;color:#5c4300}
+ .toc{font-size:.9rem;margin:.2rem 0 1.2rem;color:#555} .toc a{margin-right:.35rem}
+ .check{color:#1a6} .fail{color:#b44} footer{color:#888;font-size:.85rem;margin-top:3rem;border-top:1px solid #eee;padding-top:1rem}
+</style></head><body>
+<nav><a href="index.html">&larr; Index</a></nav>
+<h1>The <code>thermo</code> package</h1>
+<p class="sub">The models of this book in Python: 24 modules, one import.</p>
+<p><code>thermo</code> is a library of reusable methods: the cubic equations of state, the activity coefficient models, UNIFAC, the phase-equilibrium solvers, chemical reaction and ionization equilibrium, and the routines that draw the property charts. Each is validated against known limits and against the illustrations worked in the book.</p>
+<p>Seven of Chapter 6&rsquo;s examples appear in two forms: a self-contained notebook that builds the method procedurally from the governing equations, and a second that imports <code>thermo</code>. The package version of each is shorter by 23 to 60 percent, and the lines it drops are the ones that rebuild the equation of state. Chapter 6 develops the Peng&ndash;Robinson equation, which is why the pairs are there and not elsewhere; later chapters import the package and leave the derivation to the text.</p>
+<p class="hint">Python and Aspen Plus&reg; are complementary parts of a practicing engineer&rsquo;s toolbox, not a learning tool and a real one. Scientific computing in Python supports data analysis, custom calculations, and prototyping, and runs with nothing but a Python install. A process simulator is the specialized tool for flowsheets, unit operations, and plant-scale design, and it offers many thermodynamic property methods, so a calculation that would take a long time to assemble by hand is available directly. The same flash calculation returns different answers under Peng&ndash;Robinson, NRTL, UNIQUAC, or UNIFAC. The engineer selects among them: which model suits the mixture and the range of conditions, what data its parameters were fitted to, and how far it can be trusted outside that range. Chapters 6, 7, and 9 derive those models; Chapters 10 and 11 apply them to phase equilibrium.</p>
+<h2>Getting it</h2>
+<p>The package travels with the notebooks, so anyone who can run a chapter notebook already has it. Its dependencies are NumPy, SciPy and pandas, and nothing else. To set up either Colab or a local install, see <a href="getting-started.html">Getting started</a>.</p>
+<pre><code>import sys; sys.path.insert(0, "..")   # from a chapter folder
+from thermo import PengRobinson, UNIFAC</code></pre>
+<p class="note"><code>insert(0, ...)</code> rather than <code>append</code>: another package on PyPI is also called <code>thermo</code>, and an installed one would otherwise be found first. See <a href="#next">Where these skills go next</a>.</p>
+<p>Units are <b>SI throughout</b>: temperature in K, pressure in Pa, molar volume in m&sup3;/mol, energies in J/mol. Critical pressures in <code>pure_property.csv</code> are stored in bar and converted to Pa when the table is loaded.</p>
+<h2>What is in it</h2>
+<table><tr><td class="sym"><b>module</b></td><td><b>what it holds</b></td><td class="sym"><b>chapters</b></td></tr>
+<tr><td colspan="3" style="padding-top:.9rem"><b>Equations of state</b></td></tr>
+<tr><td class="sym"><a href="#m-cubic"><code>cubic</code></a></td><td><code>CubicEOS</code> &mdash; the shared machinery: roots, fugacity, spinodals, the vapor-pressure solver</td><td class="sym">6, 7</td></tr>
+<tr><td class="sym"><a href="#m-peng_robinson"><code>peng_robinson</code></a></td><td>Pure-fluid Peng&ndash;Robinson, with the PRSV option</td><td class="sym">6, 7</td></tr>
+<tr><td class="sym"><a href="#m-van_der_waals"><code>van_der_waals</code></a></td><td>Pure-fluid van der Waals</td><td class="sym">6, 7</td></tr>
+<tr><td class="sym"><a href="#m-pr_mixture"><code>pr_mixture</code></a></td><td>van der Waals one-fluid mixing rules, and species fugacity in a mixture</td><td class="sym">9, 10</td></tr>
+<tr><td class="sym"><a href="#m-phi_phi"><code>phi_phi</code></a></td><td>The &phi;&ndash;&phi; drivers: bubble point, dew point, isothermal flash</td><td class="sym">10</td></tr>
+<tr><td class="sym"><a href="#m-wong_sandler"><code>wong_sandler</code></a></td><td>An activity coefficient model inside a cubic equation of state</td><td class="sym">9, 10</td></tr>
+<tr><td colspan="3" style="padding-top:.9rem"><b>Liquid mixtures</b></td></tr>
+<tr><td class="sym"><a href="#m-activity_models"><code>activity_models</code></a></td><td>Nine correlative and predictive activity coefficient models on one interface</td><td class="sym">9</td></tr>
+<tr><td class="sym"><a href="#m-unifac"><code>unifac</code></a></td><td>UNIFAC by group contribution</td><td class="sym">9</td></tr>
+<tr><td class="sym"><a href="#m-fitting"><code>fitting</code></a></td><td>Redlich&ndash;Kister correlation of mixing data, and the partial molar properties</td><td class="sym">8</td></tr>
+<tr><td class="sym"><a href="#m-electrolytes"><code>electrolytes</code></a></td><td>Debye&ndash;H&uuml;ckel and its extensions; ionic strength and the mean ionic activity coefficient</td><td class="sym">9, 15</td></tr>
+<tr><td colspan="3" style="padding-top:.9rem"><b>Phase equilibrium</b></td></tr>
+<tr><td class="sym"><a href="#m-vle"><code>vle</code></a></td><td>Low-pressure vapor&ndash;liquid equilibrium by the &gamma;&ndash;&phi; method</td><td class="sym">10</td></tr>
+<tr><td class="sym"><a href="#m-lle"><code>lle</code></a></td><td>Liquid&ndash;liquid and vapor&ndash;liquid&ndash;liquid equilibrium</td><td class="sym">11</td></tr>
+<tr><td class="sym"><a href="#m-sle"><code>sle</code></a></td><td>Solid&ndash;liquid and solid&ndash;fluid equilibrium</td><td class="sym">12</td></tr>
+<tr><td class="sym"><a href="#m-osmotic"><code>osmotic</code></a></td><td>Osmotic equilibrium and osmotic pressure</td><td class="sym">11</td></tr>
+<tr><td class="sym"><a href="#m-partition"><code>partition</code></a></td><td>Distribution of a solute between two liquid phases</td><td class="sym">11</td></tr>
+<tr><td colspan="3" style="padding-top:.9rem"><b>Reaction, ionization, and biological systems</b></td></tr>
+<tr><td class="sym"><a href="#m-reaction"><code>reaction</code></a></td><td>The equilibrium constant and its temperature dependence, extent of reaction, Ellingham diagrams, Gibbs energy minimization &mdash; <b>this replaces CHEMEQ</b></td><td class="sym">13</td></tr>
+<tr><td class="sym"><a href="#m-ionization"><code>ionization</code></a></td><td>Ionization, acidity, and the charge on biomolecules</td><td class="sym">13, 15</td></tr>
+<tr><td class="sym"><a href="#m-bioreactor"><code>bioreactor</code></a></td><td>Fermenter atom balances, energy balance, and second-law analysis</td><td class="sym">15</td></tr>
+<tr><td colspan="3" style="padding-top:.9rem"><b>Property charts and diagrams</b></td></tr>
+<tr><td class="sym"><a href="#m-charts"><code>charts</code></a></td><td>The drawing craft shared by every property chart in the book</td><td class="sym">3, 5, 6</td></tr>
+<tr><td class="sym"><a href="#m-ph_chart"><code>ph_chart</code></a></td><td>Pressure&ndash;enthalpy charts from a cubic equation of state</td><td class="sym">3, 6</td></tr>
+<tr><td class="sym"><a href="#m-steam_chart"><code>steam_chart</code></a></td><td>The Mollier and temperature&ndash;entropy charts, from Appendix A.III</td><td class="sym">3, 5</td></tr>
+<tr><td class="sym"><a href="#m-vle_chart"><code>vle_chart</code></a></td><td>The drawing layer for Chapter 10&rsquo;s phase diagrams</td><td class="sym">10</td></tr>
+<tr><td class="sym"><a href="#m-ternary"><code>ternary</code></a></td><td>Triangular composition diagrams</td><td class="sym">11</td></tr>
+<tr><td colspan="3" style="padding-top:.9rem"><b>Data</b></td></tr>
+<tr><td class="sym"><a href="#m-data"><code>data</code></a></td><td>Loaders for every table above, plus the property and reaction databases</td><td class="sym">all</td></tr>
+</table>
+<h2>The data behind it</h2>
+<p>Parameters and constants are plain CSV in <code>code/data/</code> rather than compiled into the code, so a value can be inspected, checked against the NIST WebBook, or added to. <code>thermo.data</code> loads all of them: the 618-compound pure-fluid property table, the reaction property table, the UNIFAC group tables, and the binary interaction parameters.</p>
+<p class="hint">The pure-component constants are adapted, with corrections, from Reid, Prausnitz and Poling, <i>The Properties of Gases and Liquids</i>, 4th ed. (McGraw-Hill, 1986), Appendix A. The same table has been distributed with this book&rsquo;s software since the fourth edition. One caution: the ideal-gas heat capacities in that file are the Reid&ndash;Prausnitz&ndash;Poling set, <b>not</b> the set printed in Appendix A.II. The two sets differ, so a notebook that reproduces a printed table states which of them it loads.</p>
+<h2>Reading the source</h2>
+<p>The package is at <a href="https://github.com/emfurst/cbet6e/blob/main/code/thermo"><code>code/thermo/</code></a> in the code repository, under the MIT license. Every module opens with a docstring naming the sections of the book it implements, and equation numbers appear in comments beside the lines that evaluate them, so a printed equation can be traced to the code that computes it.</p>
+<p class="hint">Found an error, or need a model that is not here? The <a href="https://github.com/emfurst/cbet6e/issues">issue tracker</a> is open. The package is maintained through the life of the edition, so a correction reaches readers without waiting for a reprint.</p>
+<h2 id="next">Where these skills go next</h2>
+<p>This package is deliberately small. It implements the models this book derives, in the book&rsquo;s own notation, with the iteration visible so that you can read what a flash calculation actually does. That is a teaching goal, and it has a natural end: once you can write a bubble-point calculation, the next question is what practicing engineers and researchers use to do it at scale. Three open-source projects cover most of what they use, and everything you have learned here transfers to them.</p>
+<table>
+<tr><td class="sym"><b>project</b></td><td><b>what it is for</b></td></tr>
+<tr><td class="sym"><a href="https://coolprop.org/">CoolProp</a></td><td>High-accuracy pure-fluid properties from multiparameter Helmholtz equations of state &mdash; the reference-quality formulations, for about 120 fluids. Where this book uses a cubic and accepts a few percent, CoolProp gives you the measured surface. It is the tool for cycle calculations and for checking a cubic&rsquo;s error. A C++ core with a Python interface.</td></tr>
+<tr><td class="sym"><a href="https://thermo.readthedocs.io/">ChEDL <code>thermo</code></a></td><td>Chemical-engineering property estimation and phase equilibrium across a large compound database, with automated flash routines and group-contribution methods that estimate what you have no data for. The closest relative of this package, at production scale. See the naming caution below.</td></tr>
+<tr><td class="sym"><a href="https://cantera.org/">Cantera</a></td><td>Chemical kinetics, reacting flows, and combustion &mdash; multiphase equilibrium by Gibbs energy minimization, and the reaction mechanisms Chapters 13 and 14 stop short of. Widely used in combustion and reactor research.</td></tr>
+</table>
+<p>A reasonable exercise once you have finished a chapter: work an illustration here, then reproduce it with one of these. Where the answers differ, the difference is the model, and you now know enough to say which one you trust and over what range.</p>
+<p class="hint"><b>One caution about the name.</b> ChEDL&rsquo;s package is also called <code>thermo</code>, and it is the one <code>pip install thermo</code> installs. If both are present, the installed package shadows this one and every notebook here imports the wrong library. Install ChEDL&rsquo;s in a separate environment, or import it under another name. The line at the top of every notebook, <code>sys.path.insert(0, &quot;..&quot;)</code>, puts this book&rsquo;s package first for exactly this reason &mdash; it must be <code>insert</code>, not <code>append</code>.</p>
+<h2>Reference</h2>
+<p class="hint">Generated from the package source when the site is built, so it cannot drift from the code. Names beginning with an underscore are internal and are not listed. The module source carries the full docstrings.</p>
+<h3>Equations of state</h3>
+<div class="eq" id="m-cubic">
+<p><b><code>thermo.cubic</code></b> &mdash; Shared machinery for the pure-fluid cubic equations of state.</p>
+<table>
+<tr><td><code>real_roots(roots)</code></td><td>The real roots of a cubic, ascending.</td></tr>
+<tr><td><b>class</b> <code>CubicEOS</code></td><td>Base class: what every pure-fluid cubic equation of state has in common.<div class="note"><code>.physical_Z()</code>, <code>.Z()</code>, <code>.molar_volume()</code>, <code>.fugacity()</code>, <code>.spinodal_bounds()</code>, <code>.ln_fugacity_ratio()</code>, <code>.vapor_pressure()</code>, <code>.saturation_volumes()</code></div></td></tr>
+</table>
+</div>
+<div class="eq" id="m-peng_robinson">
+<p><b><code>thermo.peng_robinson</code></b> &mdash; Pure-fluid Peng-Robinson equation of state, with the PRSV option.</p>
+<table>
+<tr><td><b>class</b> <code>PengRobinson</code></td><td>Pure-component Peng-Robinson EOS, optionally in its PRSV form.<div class="note"><code>.is_prsv()</code>, <code>.from_database()</code>, <code>.kappa_T()</code>, <code>.a()</code>, <code>.dadT()</code>, <code>.pressure()</code>, <code>.compressibility()</code>, <code>.ln_phi()</code> &hellip; and 2 more</div></td></tr>
+</table>
+</div>
+<div class="eq" id="m-van_der_waals">
+<p><b><code>thermo.van_der_waals</code></b> &mdash; Pure-fluid van der Waals equation of state.</p>
+<table>
+<tr><td><b>class</b> <code>VanDerWaals</code></td><td>Pure-component van der Waals EOS.<div class="note"><code>.from_database()</code>, <code>.a()</code>, <code>.dadT()</code>, <code>.pressure()</code>, <code>.compressibility()</code>, <code>.ln_phi()</code>, <code>.departure_H()</code>, <code>.departure_S()</code></div></td></tr>
+</table>
+</div>
+<div class="eq" id="m-pr_mixture">
+<p><b><code>thermo.pr_mixture</code></b> &mdash; Peng-Robinson equation of state for mixtures.</p>
+<table>
+<tr><td><b>class</b> <code>PRMixture</code></td><td>Peng-Robinson EOS for a mixture with van der Waals one-fluid mixing.<div class="note"><code>.from_database()</code>, <code>.n()</code>, <code>.a_pure()</code>, <code>.a_matrix()</code>, <code>.a_mix()</code>, <code>.b_mix()</code>, <code>.compressibility()</code>, <code>.Z()</code> &hellip; and 4 more</div></td></tr>
+</table>
+</div>
+<div class="eq" id="m-phi_phi">
+<p><b><code>thermo.phi_phi</code></b> &mdash; The phi-phi VLE drivers: bubble point, dew point and isothermal flash.</p>
+<table>
+<tr><td><b>class</b> <code>PhiPhiVLE</code></td><td>Bubble/dew/flash for any mixture model providing <code>components</code> and <code>phi</code>.<div class="note"><code>.bubble_pressure()</code>, <code>.dew_pressure()</code>, <code>.bubble_temperature()</code>, <code>.dew_temperature()</code>, <code>.flash()</code></div></td></tr>
+</table>
+</div>
+<div class="eq" id="m-wong_sandler">
+<p><b><code>thermo.wong_sandler</code></b> &mdash; Combined equation-of-state + excess Gibbs energy model -- Section 9.9.</p>
+<table>
+<tr><td><b>class</b> <code>GexFromUNIFAC</code></td><td>Adapter: make a <code>UNIFAC</code> instance look like an <code>activity_models</code> model.<div class="note"><code>.gamma()</code>, <code>.gex()</code></div></td></tr>
+<tr><td><b>class</b> <code>WongSandler</code></td><td>Peng-Robinson with the Wong-Sandler mixing rules of SIS Eq. 9.9-9.<div class="note"><code>.from_database()</code>, <code>.n()</code>, <code>.a_pure()</code>, <code>.cross_matrix()</code>, <code>.Q()</code>, <code>.D()</code>, <code>.b_mix()</code>, <code>.a_mix()</code> &hellip; and 13 more</div></td></tr>
+</table>
+</div>
+<h3>Liquid mixtures</h3>
+<div class="eq" id="m-activity_models">
+<p><b><code>thermo.activity_models</code></b> &mdash; Liquid-phase activity coefficient models -- Sections 9.5 and 9.6.</p>
+<table>
+<tr><td><b>class</b> <code>FrozenParameterWarning</code></td><td>One model instance was evaluated at two temperatures.</td></tr>
+<tr><td><b>class</b> <code>ActivityModel</code></td><td>Base class: a model supplies <code>lngamma(x, T)</code> and inherits the rest.<div class="note"><code>.at_T()</code>, <code>.rescaled_to()</code>, <code>.gamma()</code>, <code>.gex()</code>, <code>.lngamma()</code>, <code>.gex_over_RT()</code>, <code>.check_gibbs_duhem()</code></div></td></tr>
+<tr><td><b>class</b> <code>OneConstantMargules</code></td><td>One-constant Margules, SIS Eqs. 9.5-1 and 9.5-5.<div class="note"><code>.lngamma()</code>, <code>.gex_over_RT()</code>, <code>.fit()</code></div></td></tr>
+<tr><td><b>class</b> <code>TwoConstantMargules</code></td><td>Two-constant Margules, SIS Eqs. 9.5-6 (truncated) and 9.5-7.<div class="note"><code>.lngamma()</code>, <code>.gex_over_RT()</code>, <code>.fit()</code></div></td></tr>
+<tr><td><b>class</b> <code>RedlichKisterGex</code></td><td>The Redlich-Kister expansion of G^ex, SIS Eq. 9.5-6, to any order.<div class="note"><code>.lngamma()</code>, <code>.gex_over_RT()</code>, <code>.fit_gex()</code></div></td></tr>
+<tr><td><b>class</b> <code>VanLaar</code></td><td>van Laar, SIS Eq. 9.5-9.<div class="note"><code>.lngamma()</code>, <code>.gex_over_RT()</code>, <code>.from_single_point()</code>, <code>.fit()</code></div></td></tr>
+<tr><td><b>class</b> <code>FloryHuggins</code></td><td>Flory-Huggins, SIS Eqs. 9.5-17 and 9.5-18 -- for molecules of very different size, including polymer solutions.<div class="note"><code>.lngamma()</code>, <code>.gex_over_RT()</code></div></td></tr>
+<tr><td><b>class</b> <code>Wilson</code></td><td>Wilson, SIS Eqs. 9.5-11 and 9.5-12a; multicomponent form from Appendix A9.2.<div class="note"><code>.lngamma()</code>, <code>.gex_over_RT()</code>, <code>.infinite_dilution()</code>, <code>.fit()</code></div></td></tr>
+<tr><td><b>class</b> <code>NRTL</code></td><td>NRTL, SIS Eqs. 9.5-13 and 9.5-14a; multicomponent form from Appendix A9.2.<div class="note"><code>.lngamma()</code>, <code>.gex_over_RT()</code>, <code>.infinite_dilution()</code>, <code>.rescaled_to()</code>, <code>.fit()</code></div></td></tr>
+<tr><td><b>class</b> <code>UNIQUAC</code></td><td>UNIQUAC, SIS Eqs. 9.5-19 to 9.5-23b (Abrams and Prausnitz, 1975).<div class="note"><code>.from_groups()</code>, <code>.theta()</code>, <code>.phi()</code>, <code>.lngamma()</code>, <code>.gex_over_RT()</code>, <code>.rescaled_to()</code>, <code>.fit()</code></div></td></tr>
+<tr><td><b>class</b> <code>RegularSolution</code></td><td>Regular solution theory, SIS Eqs. 9.6-8 to 9.6-11 (Scatchard-Hildebrand).<div class="note"><code>.from_table_9_6_1()</code>, <code>.from_book_names()</code>, <code>.volume_fraction()</code>, <code>.delta_bar()</code>, <code>.lngamma()</code>, <code>.delta_from_vaporization()</code></div></td></tr>
+<tr><td><code>fit_binary(model_cls, x1, gamma1, gamma2, T, p0)</code></td><td>Fit a two-parameter binary model to activity coefficient data.</td></tr>
+</table>
+</div>
+<div class="eq" id="m-unifac">
+<p><b><code>thermo.unifac</code></b> &mdash; UNIFAC activity-coefficient model (group contribution).</p>
+<table>
+<tr><td><b>class</b> <code>UNIFAC</code></td><td>&mdash;<div class="note"><code>.gamma()</code></div></td></tr>
+</table>
+</div>
+<div class="eq" id="m-fitting">
+<p><b><code>thermo.fitting</code></b> &mdash; Redlich-Kister correlation of mixing data, and the partial molar properties that follow from it.</p>
+<table>
+<tr><td><b>class</b> <code>RedlichKister</code></td><td>A Redlich-Kister expansion of a property change on mixing (SIS Eq. 8.6-5a).<div class="note"><code>.fit()</code>, <code>.order()</code>, <code>.derivative()</code>, <code>.partial_molar_excess()</code>, <code>.partial_molar()</code>, <code>.infinite_dilution()</code>, <code>.residuals()</code>, <code>.rms()</code> &hellip; and 2 more</div></td></tr>
+<tr><td><code>tangent_intercepts(x1_star, dmix_star, slope)</code></td><td>The graphical construction of Sec. 8.6, as arithmetic.</td></tr>
+<tr><td><b>class</b> <code>LogPolynomialActivity</code></td><td>ln gamma = A c + B c^2 + ... , the correlation of SIS Eq. 9.7-21.<div class="note"><code>.order()</code>, <code>.ln_gamma()</code>, <code>.gamma()</code>, <code>.residuals()</code>, <code>.rms()</code>, <code>.max_error()</code>, <code>.fit()</code>, <code>.report()</code></div></td></tr>
+</table>
+</div>
+<div class="eq" id="m-electrolytes">
+<p><b><code>thermo.electrolytes</code></b> &mdash; Electrolyte solutions -- Section 9.10, Debye-Huckel and its extensions.</p>
+<table>
+<tr><td><code>water_parameters(T)</code></td><td>(alpha, beta) for water at temperature <code>T</code> in **kelvin**, from Table 9.10-1.</td></tr>
+<tr><td><b>class</b> <code>Electrolyte</code></td><td>An electrically neutral electrolyte that dissociates as SIS Eq. 9.10-1.<div class="note"><code>.nu()</code>, <code>.z_product()</code>, <code>.ionic_strength()</code>, <code>.mean_ionic_molality()</code></div></td></tr>
+<tr><td><code>ionic_strength(molalities, charges)</code></td><td>Ionic strength of a **mixed** electrolyte solution, Eq. 9.10-16.</td></tr>
+<tr><td><b>class</b> <code>DebyeHuckel</code></td><td>Mean ionic activity coefficient from Eq. 9.10-15, 9.10-17 or 9.10-18.<div class="note"><code>.equation()</code>, <code>.slope()</code>, <code>.ln_gamma_pm()</code>, <code>.gamma_pm()</code>, <code>.ln_gamma_pm_from_I()</code>, <code>.fit_delta()</code>, <code>.rms()</code>, <code>.ln_solvent_activity()</code> &hellip; and 2 more</div></td></tr>
+</table>
+</div>
+<h3>Phase equilibrium</h3>
+<div class="eq" id="m-vle">
+<p><b><code>thermo.vle</code></b> &mdash; Low-pressure vapor-liquid equilibrium by the gamma-phi method, Chapter 10.</p>
+<table>
+<tr><td><b>class</b> <code>VaporPressure</code></td><td>Base class: a correlation supplies <code>P(T)</code> in Pa and inherits <code>T_sat</code>.<div class="note"><code>.P()</code>, <code>.T_sat()</code></div></td></tr>
+<tr><td><b>class</b> <code>Antoine</code></td><td>ln(Pvap/unit) = A - B/(T + C), with T in K.<div class="note"><code>.log10()</code>, <code>.P()</code></div></td></tr>
+<tr><td><b>class</b> <code>ClausiusClapeyron</code></td><td>ln(Pvap/unit) = A - dHvap/(R T) -- the two-constant integrated form.<div class="note"><code>.P()</code></div></td></tr>
+<tr><td><b>class</b> <code>Wagner</code></td><td>ln(Pvap/Pc) = (A t + B t^1.5 + C t^3 + D t^6)/(1 - t), with t = 1 - T/Tc.<div class="note"><code>.P()</code></div></td></tr>
+<tr><td><b>class</b> <code>Riedel</code></td><td>ln Pvap = A - B/T + C ln T + D Pvap/T^2 -- <code>Eq=2</code>, and implicit in Pvap.<div class="note"><code>.P()</code></div></td></tr>
+<tr><td><code>psat_from_database(name)</code></td><td>The vapor-pressure correlation for <code>name</code> from <code>code/data/pure_property.csv</code>.</td></tr>
+<tr><td><b>class</b> <code>TabulatedPsat</code></td><td>A single measured vapor pressure held constant -- for the illustrations that give one number at one temperature and nothing else.<div class="note"><code>.P()</code>, <code>.T_sat()</code></div></td></tr>
+<tr><td><b>class</b> <code>Ideal</code></td><td>gamma_i = 1 for every species -- Raoult&#x27;s law, SIS Eq. 10.1-3.<div class="note"><code>.lngamma()</code>, <code>.gex_over_RT()</code></div></td></tr>
+<tr><td><b>class</b> <code>GammaPhi</code></td><td>Low-pressure VLE: activity coefficients in the liquid, ideal gas in the vapor.<div class="note"><code>.n()</code>, <code>.Psat()</code>, <code>.gamma()</code>, <code>.K()</code>, <code>.bubble_pressure()</code>, <code>.dew_pressure()</code>, <code>.bubble_temperature()</code>, <code>.dew_temperature()</code> &hellip; and 1 more</div></td></tr>
+<tr><td><code>pxy(model, T, n, x1)</code></td><td>The P-x-y curve of a **binary** at fixed T.</td></tr>
+<tr><td><code>txy(model, P, n, x1)</code></td><td>The T-x-y curve of a **binary** at fixed P.</td></tr>
+<tr><td><code>azeotrope(model, T, P, bracket)</code></td><td>Find a binary azeotrope -- the composition where y1 = x1.</td></tr>
+</table>
+</div>
+<div class="eq" id="m-lle">
+<p><b><code>thermo.lle</code></b> &mdash; Liquid-liquid and vapor-liquid-liquid equilibrium, Sections 11.2 and 11.3.</p>
+<table>
+<tr><td><code>as_model_of_T(model)</code></td><td>Normalize <code>model</code> to a callable <code>T -&gt; ActivityModel</code>.</td></tr>
+<tr><td><code>gmix_over_RT(model, x1, T)</code></td><td>Delta_mix G / RT for a binary at mole fraction <code>x1</code>, SIS Eq. 11.2-16.</td></tr>
+<tr><td><code>d2gmix_over_RT(model, x1, T, h)</code></td><td>Second composition derivative of <code>gmix_over_RT</code>, SIS Eq. 11.2-11&#x27;s left side.</td></tr>
+<tr><td><code>is_stable(model, x1, T)</code></td><td>True where a single liquid phase is intrinsically stable, SIS Eq. 11.2-9.</td></tr>
+<tr><td><code>spinodal(model, T, n)</code></td><td>The limits of stability at T: the two roots of d2(Delta_mix G)/dx1^2 = 0.</td></tr>
+<tr><td><code>common_tangent(model, T, n)</code></td><td>Bracketing compositions of every two-phase region at T, from the hull.</td></tr>
+<tr><td><code>binary_lle(model, T, guess, n, tol, min_gap, check_tangent)</code></td><td>Coexisting liquid compositions of a binary at T, SIS Eq. 11.2-2.</td></tr>
+<tr><td><code>binary_lle_envelope(model, T)</code></td><td>The liquid-liquid coexistence (binodal) curve over an array of temperatures.</td></tr>
+<tr><td><code>consolute_temperature(model, T_bounds, upper, xtol)</code></td><td>The consolute (critical solution) temperature, SIS Eqs. 11.2-10a and 11.2-10b.</td></tr>
+<tr><td><code>lle_flash(model, z, T, K0, max_iter, tol, min_gap)</code></td><td>Two-liquid-phase flash of a feed <code>z</code> at T: SIS Eqs. 11.2-2 and 11.2-24 together.</td></tr>
+<tr><td><code>tie_line_split(z, xI, xII, total)</code></td><td>Amounts of two phases of known composition that make up a feed <code>z</code>.</td></tr>
+<tr><td><code>mix_streams(amounts, compositions)</code></td><td>Combine streams: returns <code>(total, composition)</code> of the mixture.</td></tr>
+<tr><td><code>gamma_from_solubility(x_saturated)</code></td><td>Activity coefficient of a sparingly soluble species from its solubility.</td></tr>
+<tr><td><code>solubility_at_T(x1, T1, T2, hex_)</code></td><td>Shift a solubility from T1 to T2 at constant excess enthalpy, Eq. 11.2-22.</td></tr>
+<tr><td><code>vlle_binary(model, T, gp, rtol)</code></td><td>Three-phase equilibrium of a binary at T: SIS Eqs. 11.3-2 and 11.3-3.</td></tr>
+<tr><td><code>vlle_temperature(model, P, T_bounds, gp, xtol)</code></td><td>The three-phase *temperature* at fixed pressure, for T-x diagrams.</td></tr>
+<tr><td><code>immiscible_pressure(psats, T)</code></td><td>Equilibrium pressure and vapor composition over two *immiscible* liquids.</td></tr>
+<tr><td><code>steam_distillation(psat_organic, psat_water, T, mw_organic, mw_water)</code></td><td>Kilograms of organic recovered per kilogram of steam condensed.</td></tr>
+<tr><td><code>eos_binary_lle(eos, T, P, guess, n, tol, min_gap, check_tangent)</code></td><td>Coexisting liquid compositions of a binary from an equation of state.</td></tr>
+<tr><td><code>eos_vlle_binary(eos, T, P_guess, guess, tol, min_gap)</code></td><td>Three-phase equilibrium of a binary from an equation of state, at fixed T.</td></tr>
+<tr><td><code>pxy_lle(gp, T, n)</code></td><td>P-x-y for a binary at fixed T, **with** the liquid-liquid region resolved.</td></tr>
+<tr><td><code>txy_lle(gp, P, T_bounds, n, n_lle)</code></td><td>T-x-y for a binary at fixed P, with the LLE envelope and the three-phase line.</td></tr>
+</table>
+</div>
+<div class="eq" id="m-sle">
+<p><b><code>thermo.sle</code></b> &mdash; Solid-liquid and solid-fluid equilibrium, Secs. 12.1 and 12.3.</p>
+<table>
+<tr><td><b>class</b> <code>Iteration</code></td><td>The result of a fixed-point solve: the answer, and how it got there.<div class="note"><code>.iterations()</code></div></td></tr>
+<tr><td><code>ln_x_gamma(T, T_m, dH_fus, dCp)</code></td><td>ln(x_1 gamma_1) at equilibrium with the pure solid -- SIS Eq. 12.1-6 / 12.3-2.</td></tr>
+<tr><td><code>ideal_solubility(T, T_m, dH_fus, dCp)</code></td><td>Saturation mole fraction of a solid in a liquid for gamma_1 = 1 -- Eq. 12.1-8.</td></tr>
+<tr><td><code>solubility(T, T_m, dH_fus, gamma, dCp, x0, tol, max_iter)</code></td><td>Saturation mole fraction with a composition-dependent activity coefficient.</td></tr>
+<tr><td><code>activity_coefficient(x_sat, T, T_m, dH_fus, dCp)</code></td><td>gamma_1 of a dissolved solid from its *measured* saturation solubility.</td></tr>
+<tr><td><code>heat_of_sublimation(slope_log10, T)</code></td><td>dH_sub from the slope of log10 P^sub against 1/T -- Clausius-Clapeyron, Eq. 7.7-5a.</td></tr>
+<tr><td><code>solubility_parameter(dH_sub, dH_fus, V_liquid, T)</code></td><td>delta_1 of the *subcooled liquid* solute -- Eqs. 12.1-11 to 12.1-13.</td></tr>
+<tr><td><code>heat_of_fusion(x1, T1, x2, T2)</code></td><td>Apparent dH_fus from two solubilities at two temperatures -- Eq. 12.1-19b.</td></tr>
+<tr><td><code>ideal_solubility_in_gas(P_sub, P)</code></td><td>y_i^ID = P_i^sub(T) / P -- Eq. 12.1-16.</td></tr>
+<tr><td><code>poynting(V_solid, P, P_sat, T, R)</code></td><td>exp[V^S (P - P^sat) / RT], the Poynting factor of Eqs. 12.1-15 and 12.1-17.</td></tr>
+<tr><td><code>enhancement_factor(phi_bar, poynting_factor, f_over_P)</code></td><td>E = (f/P)_sat,T * Poynting / phi-bar_i^V -- Eq. 12.1-18a.</td></tr>
+<tr><td><code>solubility_in_gas(P_sat, P, phi_bar, V_solid, T, f_over_P, y0, R_gas, tol, max_iter, method, y_max, n_scan, all_roots)</code></td><td>y_i of a solid in a gas or supercritical fluid -- Eq. 12.1-17.</td></tr>
+<tr><td><code>freezing_point(x1, T_m, dH_fus, dCp, gamma, T_min, n_scan)</code></td><td>The temperature at which pure solid 1 first appears from a liquid -- Eq. 12.3-2.</td></tr>
+<tr><td><code>freezing_point_depression(x2, T_m, dH_fus)</code></td><td>dT = T_m - T_f = R T_m^2 x_2 / dH_fus -- Eq. 12.3-5.</td></tr>
+<tr><td><code>eutectic(x_grid, T_a, T_b)</code></td><td>The eutectic, as the crossing of two freezing curves.</td></tr>
+</table>
+</div>
+<div class="eq" id="m-osmotic">
+<p><b><code>thermo.osmotic</code></b> &mdash; Osmotic equilibrium and osmotic pressure, Sec. 11.5.</p>
+<table>
+<tr><td><code>osmotic_pressure(x_solvent, V_solvent, T, gamma_solvent)</code></td><td>SIS Eq. 11.5-4, the osmotic pressure with no approximation beyond Poynting.</td></tr>
+<tr><td><code>osmotic_pressure_dilute(C_S, m_S, T)</code></td><td>SIS Eq. 11.5-6, Pi = RT C_S / m_S -- the van&#x27;t Hoff limit.</td></tr>
+<tr><td><code>pressure_from_height(rho, h, g)</code></td><td>Pi = rho g h, the osmometer of SIS Fig. 11.5-1.</td></tr>
+<tr><td><code>molecular_weight(C_S, Pi, T)</code></td><td>SIS Eq. 11.5-7, m_S = RT C_S / Pi, in g/mol for <code>C_S</code> in g/L and <code>Pi</code> in Pa.</td></tr>
+<tr><td><b>class</b> <code>VirialFit</code></td><td>The result of <code>virial_fit</code>: a molecular weight, virial coefficients, and errors.<div class="note"><code>.pi_over_C()</code>, <code>.pressure()</code>, <code>.rms()</code></div></td></tr>
+<tr><td><code>virial_fit(C_S, Pi, T, order)</code></td><td>Fit the osmotic virial expansion, SIS Eq. 11.5-8, to (C_S, Pi) data.</td></tr>
+<tr><td><code>multicomponent_dilute(C_S, m_S, T)</code></td><td>Osmotic pressure of a dilute multi-solute solution, Pi = RT SUM_i C_i/m_i.</td></tr>
+<tr><td><code>electrolyte_mole_fraction(molality, nu, moles_solvent_per_kg)</code></td><td>Solvent mole fraction in a completely dissociated electrolyte solution.</td></tr>
+</table>
+</div>
+<div class="eq" id="m-partition">
+<p><b><code>thermo.partition</code></b> &mdash; The distribution of a solute between two liquid phases, Sec. 11.4.</p>
+<table>
+<tr><td><code>gamma_ratio_from_Kx(Kx)</code></td><td>gamma_1^II / gamma_1^I from the mole-fraction distribution coefficient.</td></tr>
+<tr><td><code>x_from_concentration(C, mw_solvent, rho_solvent, mw_solute, rho_solute)</code></td><td>Mole fraction of a solute from its molar concentration, no volume change on mixing.</td></tr>
+<tr><td><code>Kx_from_Kc(C_I, Kc, solvent_I, solvent_II, solute)</code></td><td>Convert a concentration distribution coefficient to a mole-fraction one.</td></tr>
+<tr><td><code>kow_from_gamma(gamma_water_inf, equation)</code></td><td>Octanol-water partition coefficient from the aqueous infinite-dilution gamma.</td></tr>
+<tr><td><code>gamma_from_kow(Kow, equation)</code></td><td>Invert <code>kow_from_gamma</code>: gamma_i^(W,inf) from a measured K_OW.</td></tr>
+<tr><td><code>solute_split(n_solute, V_I, V_II, K)</code></td><td>Distribute a fixed amount of solute between two liquid phases of known volume.</td></tr>
+<tr><td><code>x_from_molarity(molarity, moles_solvent_per_kg)</code></td><td>Mole fraction of a dilute solute from its molarity.</td></tr>
+<tr><td><code>gamma_ratio_from_solubility(x_sat_1, x_sat_2)</code></td><td>gamma^inf in solvent 2 over gamma^inf in solvent 1 from saturation solubilities.</td></tr>
+<tr><td><code>gibbs_energy_of_transfer(gamma_inf_ratio, T)</code></td><td>Gibbs energy of transfer of one mole of solute between solvents, J/mol.</td></tr>
+<tr><td><code>air_water_partition(gamma_inf, p_vap, T, constant)</code></td><td>K_AW from an infinite-dilution activity coefficient -- SIS Eq. 12.5-8.</td></tr>
+<tr><td><code>compartment_partition(Kow, compartment)</code></td><td>K_BW, K_SW or K_DW from K_OW -- SIS Eqs. 12.5-9, 12.5-10 and 12.5-11.</td></tr>
+<tr><td><code>compartment_concentrations(C_water, Kow, K_aw, compartments)</code></td><td>Concentration of a pollutant in every compartment, given its concentration in water.</td></tr>
+</table>
+</div>
+<h3>Reaction, ionization, and biological systems</h3>
+<div class="eq" id="m-reaction">
+<p><b><code>thermo.reaction</code></b> &mdash; Chemical reaction equilibrium, Chapter 13.</p>
+<table>
+<tr><td><code>elements(name)</code></td><td>The atom counts of a species, as a dict -- &#x27;C2H5OH&#x27; -&gt; {&#x27;C&#x27;: 2, &#x27;H&#x27;: 6, &#x27;O&#x27;: 1}.</td></tr>
+<tr><td><code>molecular_weight(name)</code></td><td>Molecular weight from the parsed formula -- the check on <code>elements</code>, not a datum.</td></tr>
+<tr><td><b>class</b> <code>Reaction</code></td><td>A single reaction, its standard-state properties, and its equilibrium constant.<div class="note"><code>.parse()</code>, <code>.equation()</code>, <code>.reversed()</code>, <code>.scaled()</code>, <code>.delta_nu()</code>, <code>.element_balance()</code>, <code>.check_balance()</code>, <code>.moles()</code> &hellip; and 15 more</div></td></tr>
+<tr><td><code>activity(y, P, phase, phi, gamma, molality)</code></td><td>The activity of one species -- Table 13.1-2, the low-to-moderate-pressure column.</td></tr>
+<tr><td><code>K_nu_from_eos(reaction, T, P, y, eos, order, phase)</code></td><td>Knu = prod phi_i^nu_i from an equation of state -- Eq. 13.1-23d.</td></tr>
+<tr><td><code>K_gamma_from_model(reaction, x, model, order)</code></td><td>Kgamma = prod gamma_i^nu_i from an activity coefficient model -- Eq. 13.1-23d.</td></tr>
+<tr><td><b>class</b> <code>Extent</code></td><td>The result of an equilibrium-extent solve: the answer, and how it was reached.<div class="note"><code>.iterations()</code>, <code>.direction()</code></div></td></tr>
+<tr><td><code>equilibrium_extent(reaction, T, initial, P, basis, Ka, K_nu, K_gamma, phases, mode, tol, max_iter)</code></td><td>Solve Ka = prod a_i^nu_i for the extent of reaction -- SIS Eq. 13.1-19.</td></tr>
+<tr><td><code>multireaction_extents(reactions, T, initial, P, basis, Ka, phases, mode, guess, tol)</code></td><td>Sec. 13.3: R reactions in one phase, solved as R coupled extents.</td></tr>
+<tr><td><code>formation_gibbs_T(species, T, mode)</code></td><td>dG_f(T) for one species, in J/mol -- its formation reaction from the elements.</td></tr>
+<tr><td><code>gibbs_curve(reaction, T, initial, P, X, mode, phases)</code></td><td>G of the reacting mixture against the extent of reaction -- SIS Fig. 13.1-1.</td></tr>
+<tr><td><code>gibbs_minimization(species, T, initial, P, mode, phases)</code></td><td>The equilibrium state as the minimum of G, subject to element conservation.</td></tr>
+<tr><td><code>ellingham(reactions, T, mode, per_mole_O2)</code></td><td>dG_rxn(T) against temperature for a set of reactions -- SIS Sec. 13.2, Fig. 13.2-3.</td></tr>
+<tr><td><code>adiabatic_reaction_temperature(reaction, initial, T_in, P, Ka, T_bracket, n_curve, mode)</code></td><td>Adiabatic reaction temperature: where the energy balance meets equilibrium.</td></tr>
+<tr><td><code>energy_balance_forms_agree(reaction, initial, T_in, T, mode, rtol)</code></td><td>Assert that Sec. 14.3&#x27;s two energy-balance forms are the same equation.</td></tr>
+</table>
+</div>
+<div class="eq" id="m-ionization">
+<p><b><code>thermo.ionization</code></b> &mdash; Ionization, acidity and the charge on biomolecules, Secs. 13.5-13.6.</p>
+<table>
+<tr><td><code>Ka_water(T_C)</code></td><td>Ka,W at <code>T_C</code> degrees Celsius, Table 13.5-1.</td></tr>
+<tr><td><code>pKw(T_C)</code></td><td>pKw = -log10 Ka,W, Eq. 13.5-3 applied to Table 13.5-1.</td></tr>
+<tr><td><code>pK(K)</code></td><td>pK = -log10 K, Eq. 13.5-3.</td></tr>
+<tr><td><code>pH_from_activity(M_H, gamma_pm_)</code></td><td>pH = -log10 a_H+ = -log10(M_H+ gamma_pm), Eq. 13.5-4.</td></tr>
+<tr><td><code>gamma_pm(I, z_product, extended, A, k_s)</code></td><td>Mean ionic activity coefficient at ionic strength <code>I</code> (mol/kg).</td></tr>
+<tr><td><code>ionic_strength_1_1()</code></td><td>I = 1/2 sum z_i^2 M_i for singly charged ions only, which is what Sec. 13.5&#x27;s illustrations need: pass the molality of each 1:1 salt or of each ion pair.</td></tr>
+<tr><td><code>strong_acid(M_HA, gamma, Kw)</code></td><td>The hydrogen ion molality of a strong, completely ionized acid, Eq. 13.5-7b.</td></tr>
+<tr><td><code>strong_base(M_BOH, gamma, Kw)</code></td><td>Hydroxyl and hydrogen ion molalities for a strong base, Eqs. 13.5-8a and 8b.</td></tr>
+<tr><td><b>class</b> <code>WeakAcid</code></td><td>A weak acid HA &lt;-&gt; H+ + A-, held by its **apparent** pK.<div class="note"><code>.K()</code>, <code>.M_H()</code>, <code>.pH()</code>, <code>.dissociation()</code>, <code>.alpha()</code>, <code>.M_H_with_base()</code>, <code>.pH_with_base()</code>, <code>.pH_buffer()</code> &hellip; and 1 more</div></td></tr>
+<tr><td><code>titration_strong_acid(X, V_acid, M_acid, M_base, Kw)</code></td><td>pH of <code>V_acid</code> mL of a strong acid titrated with <code>X</code> mL of a strong base.</td></tr>
+<tr><td><code>titration_weak_acid(X, acid, V_acid, M_acid, M_base, Kw, printed)</code></td><td>pH of <code>V_acid</code> mL of a weak acid titrated with <code>X</code> mL of a strong base.</td></tr>
+<tr><td><code>fraction_deprotonated(pH, pKa, I, convention)</code></td><td>Fraction of a carboxylic acid RCOOH that is deprotonated, at <code>pH</code> and ionic strength <code>I</code>.</td></tr>
+<tr><td><code>fraction_protonated_amine(pH, pKa)</code></td><td>Fraction of an ammonium residue R-NH3+ that is still protonated (charged), 10^(pK-pH)/(1 + 10^(pK-pH)).</td></tr>
+<tr><td><b>class</b> <code>PolyproticAcid</code></td><td>An acid with n ionizable protons, held by its n successive apparent pKs.<div class="note"><code>.n()</code>, <code>.fractions()</code>, <code>.charge()</code>, <code>.pH_of_max()</code></div></td></tr>
+<tr><td><b>class</b> <code>AminoAcid</code></td><td>An amino acid in the three-state description of Fig. 13.6-4: A (+1, both groups protonated), B (neutral), C (-1, both deprotonated).<div class="note"><code>.fractions()</code>, <code>.charge()</code>, <code>.pI()</code>, <code>.at_temperature()</code></div></td></tr>
+<tr><td><code>zwitterion_constants(K1, K2, K3, K4, rtol)</code></td><td>The two measurable constants of the four-state zwitterion square, Eq. 13.6-8.</td></tr>
+<tr><td><b>class</b> <code>IonizableGroup</code></td><td>One kind of ionizable group on a protein: how many, what pK, and whether it is charged when protonated (cationic) or when deprotonated (anionic).<div class="note"><code>.charge()</code></div></td></tr>
+<tr><td><code>protein_charge(pH, groups)</code></td><td>Average net charge on a protein at <code>pH</code>, summed over its ionizable groups.</td></tr>
+<tr><td><code>isoelectric_point(groups, bracket)</code></td><td>The pH at which <code>protein_charge</code> vanishes, by bisection on the bracket.</td></tr>
+<tr><td><code>amino_acid_titration(X, amino, V0, M0, M_base, Kw, printed, water)</code></td><td>Illustration 13.6-3: <code>V0</code> mL of <code>M0</code> molal amino acid titrated with <code>X</code> mL of a <code>M_base</code> molal strong base.</td></tr>
+<tr><td><code>water_titration_pH(X, V0, M_base, Kw, water)</code></td><td>pH of <code>V0</code> mL of pure water on adding <code>X</code> mL of <code>M_base</code> strong base -- the dashed &quot;without glycine&quot; curve of Fig. 13.6-8,</td></tr>
+<tr><td><code>apparent_K(pH, K, pK_acid, pK_base, convention)</code></td><td>kappa(pH), the apparent constant for A + B -&gt; AB when A is a weak acid and B a weak base, Sec. 13.6&#x27;s benzoyl tyrosine + glycinamide example.</td></tr>
+<tr><td><code>pK_at_temperature(pK_1, dH_rxn, T1_C, T2_C, R)</code></td><td>pK at <code>T2_C</code> from its value at <code>T1_C</code> and the heat of ionization, Sec. 13.6:</td></tr>
+</table>
+</div>
+<div class="eq" id="m-bioreactor">
+<p><b><code>thermo.bioreactor</code></b> &mdash; The fermenter atom balances, energy balance and second-law constraint of Sec. 15.7.</p>
+<table>
+<tr><td><code>parse_formula(formula)</code></td><td>{element: count} from a formula string.</td></tr>
+<tr><td><code>degree_of_reduction(C, H, O)</code></td><td>Eq. 15.7-9. xi = (4C + H - 2O)/C with carbon, xi = H - 2O without.</td></tr>
+<tr><td><code>regularity_G(xi)</code></td><td>Eq. 15.7-10, Gibbs energy of combustion: 112 xi kJ per C-mole.</td></tr>
+<tr><td><code>regularity_H(xi)</code></td><td>Eq. 15.7-10, heat of combustion: 110.9 xi kJ per C-mole.</td></tr>
+<tr><td><b>class</b> <code>CMole</code></td><td>One species of a fermentation, on the C-mole basis of Sec. 15.7.<div class="note"><code>.C()</code>, <code>.H()</code>, <code>.O()</code>, <code>.N()</code>, <code>.xi()</code>, <code>.combustion_G()</code>, <code>.combustion_H()</code></div></td></tr>
+<tr><td><code>c_mole_formula(formula)</code></td><td>Divide a molecular formula through by its carbon count.</td></tr>
+<tr><td><code>from_table(name)</code></td><td>A <code>CMole</code> on Table 15.7-2&#x27;s measured dcG and dcH, on the C-mole basis.</td></tr>
+<tr><td><b>class</b> <code>Constraint</code></td><td>One side of Eq. 15.7-19 against the other, with what each caller wants.<div class="note"><code>.satisfied()</code>, <code>.slack()</code>, <code>.efficiency()</code></div></td></tr>
+<tr><td><b>class</b> <code>Fermentation</code></td><td>Substrate + nitrogen source + O2 + water -&gt; biomass + product + CO2.<div class="note"><code>.residuals()</code>, <code>.solve()</code>, <code>.Y_O2_from_xi()</code>, <code>.heat_load()</code>, <code>.heat_load_regularity()</code>, <code>.second_law()</code>, <code>.second_law_regularity()</code>, <code>.max_product_yield()</code> &hellip; and 2 more</div></td></tr>
+<tr><td><code>metabolic_rate(oxygen_m3_per_day)</code></td><td>Sec. 15.7&#x27;s mammalian correlation: 21 800 kJ per m3 of oxygen per day.</td></tr>
+</table>
+</div>
+<h3>Property charts and diagrams</h3>
+<div class="eq" id="m-charts">
+<p><b><code>thermo.charts</code></b> &mdash; The drawing craft shared by every property chart in the book.</p>
+<table>
+<tr><td><code>use_book_style()</code></td><td>Typography for a figure that will be printed in the book.</td></tr>
+<tr><td><code>chart_grid(ax, x_major, y_major, minors, label_size)</code></td><td>Rule a linear-linear pair of axes like chart paper.</td></tr>
+<tr><td><code>log_pressure_grid(ax, x_major, x_minors, label_size)</code></td><td>Rule a chart whose y axis is pressure on a log scale (the P-H charts).</td></tr>
+<tr><td><code>angle_at(ax, x, y, i)</code></td><td>Local slope of a polyline at index <code>i</code>, in *display* degrees.</td></tr>
+<tr><td><code>label_at(ax, x, y, text)</code></td><td>Write <code>text</code> on the polyline where <code>along</code> (&#x27;x&#x27;|&#x27;y&#x27;) crosses <code>value</code>.</td></tr>
+<tr><td><code>label_end(ax, x, y, text)</code></td><td>Write <code>text</code> at the first or last point of the polyline inside the axes.</td></tr>
+<tr><td><code>fmt_P(P)</code></td><td>Format a pressure in MPa, dropping to kPa at the low end.</td></tr>
+</table>
+</div>
+<div class="eq" id="m-ph_chart">
+<p><b><code>thermo.ph_chart</code></b> &mdash; Pressure-enthalpy charts from a cubic equation of state.</p>
+<table>
+<tr><td><b>class</b> <code>ChartFluid</code></td><td>One fluid&#x27;s Peng-Robinson model, per kilogram, on the chart&#x27;s own datum.<div class="note"><code>.H()</code>, <code>.S()</code>, <code>.V()</code>, <code>.Psat()</code>, <code>.sat()</code>, <code>.crit()</code>, <code>.phase_at()</code></div></td></tr>
+<tr><td><code>sat_T(f, n)</code></td><td>Saturation temperatures, bunched toward Tc.</td></tr>
+<tr><td><code>dome(f, n)</code></td><td>Saturation dome, CLOSED on the critical point.</td></tr>
+<tr><td><code>isotherm(f, T, P_lim, n)</code></td><td>[(H, P_MPa), ...] segments along one isotherm; a sub-critical one is 3 pieces.</td></tr>
+<tr><td><code>isentrope(f, S0, P_lim, n)</code></td><td>Constant-entropy line: at each pressure, find the state with entropy S0.</td></tr>
+<tr><td><code>isochore_T(f, Vhat, n)</code></td><td>Temperatures for one constant-volume curve, PINNED TO THE DOME.</td></tr>
+<tr><td><code>isochore(f, Vhat, P_lim, n)</code></td><td>Constant specific volume, m^3/kg.</td></tr>
+<tr><td><code>quality(f, x, n)</code></td><td>The lever rule up the dome.</td></tr>
+<tr><td><code>ph_chart(ax, f)</code></td><td>Draw one P-H chart on <code>ax</code>.</td></tr>
+</table>
+</div>
+<div class="eq" id="m-steam_chart">
+<p><b><code>thermo.steam_chart</code></b> &mdash; The Mollier and temperature-entropy charts, from Appendix A.III.</p>
+<table>
+<tr><td><b>class</b> <code>SteamTables</code></td><td>Appendix A.III, digitized, with the curve families the charts are drawn from.<div class="note"><code>.quality_line()</code>, <code>.isobar()</code>, <code>.low_pressure_isobar()</code>, <code>.intermediate_isobar()</code>, <code>.liquid_branch()</code>, <code>.merged_isobar()</code>, <code>.wet_isobar()</code>, <code>.extend_to_low_P()</code> &hellip; and 2 more</div></td></tr>
+<tr><td><code>minor_isobars(st, major)</code></td><td>Every tabulated isobar the caller did not list as major.</td></tr>
+<tr><td><code>mollier(ax, st)</code></td><td>Draw the enthalpy-entropy (Mollier) chart, Figure 3.3-1(a), on <code>ax</code>.</td></tr>
+<tr><td><code>temperature_entropy(ax, st)</code></td><td>Draw the temperature-entropy chart (Figure 3.3-1b) on <code>ax</code>.</td></tr>
+</table>
+</div>
+<div class="eq" id="m-vle_chart">
+<p><b><code>thermo.vle_chart</code></b> &mdash; The drawing layer for Chapter 10&#x27;s phase diagrams.</p>
+<table>
+<tr><td><code>pxy_chart(ax, x1, y1, P)</code></td><td>A constant-temperature P-x-y diagram from a <code>pxy</code> sweep.</td></tr>
+<tr><td><code>txy_chart(ax, x1, y1, T)</code></td><td>A constant-pressure T-x-y diagram from a <code>txy</code> sweep.</td></tr>
+<tr><td><code>xy_chart(ax, x1, y1)</code></td><td>An x-y diagram, with the x = y diagonal the chapter always draws beside it.</td></tr>
+<tr><td><code>tie_lines(ax, x1, y1, v, values)</code></td><td>Draw horizontal tie lines across an envelope at the given ordinate values.</td></tr>
+<tr><td><code>mark_azeotrope(ax, x_az, v_az)</code></td><td>Mark an azeotrope on an envelope or x-y diagram.</td></tr>
+<tr><td><code>total_reflux_steps(ax, x1, y1, x_start, x_target)</code></td><td>Step off stages at TOTAL REFLUX, where the operating line is the diagonal.</td></tr>
+<tr><td><code>mccabe_thiele(ax, x1, y1)</code></td><td>The graphical stage-to-stage construction of Illustration 10.1-7.</td></tr>
+</table>
+</div>
+<div class="eq" id="m-ternary">
+<p><b><code>thermo.ternary</code></b> &mdash; Triangular composition diagrams, the drawing half of Sec. 11.2.</p>
+<table>
+<tr><td><code>to_xy(comp)</code></td><td>(top, left, right) -&gt; (x, y) on the unit triangle.</td></tr>
+<tr><td><code>from_xy(xy)</code></td><td>(x, y) -&gt; (top, left, right).</td></tr>
+<tr><td><code>ternary_axes(ax)</code></td><td>Draw the triangle, its scales, its labels and (optionally) its grid.</td></tr>
+<tr><td><code>plot(ax)</code></td><td>Plot a curve. <code>plot(ax, arr)</code> or <code>plot(ax, top, left, right)</code>.</td></tr>
+<tr><td><code>scatter(ax)</code></td><td>Measured points.</td></tr>
+<tr><td><code>tie_line(ax, cI, cII)</code></td><td>One tie line, between two coexisting phases.</td></tr>
+<tr><td><code>point(ax, comp, label)</code></td><td>A single labeled composition -- a feed point, a plait point, a mixture.</td></tr>
+<tr><td><code>text(ax, comp, s)</code></td><td>Free text placed at a composition rather than at an (x, y).</td></tr>
+<tr><td><code>region_label(ax, comps, s)</code></td><td>Label a region, placed at the centroid of the compositions bounding it.</td></tr>
+<tr><td><code>read_construction(ax, comp)</code></td><td>Show how a point is READ: one construction line per species, to its own edge.</td></tr>
+<tr><td><code>lever_arm(ax, z, cI, cII)</code></td><td>Draw the lever rule: the feed <code>z</code> on the tie line joining <code>cI</code> and <code>cII</code>.</td></tr>
+<tr><td><code>check_labels(ax)</code></td><td>Fail if any two text labels on <code>ax</code> overlap.</td></tr>
+</table>
+</div>
+<h3>Data</h3>
+<div class="eq" id="m-data">
+<p><b><code>thermo.data</code></b> &mdash; Data loaders for the <code>thermo</code> package — reads the CSV tables in <code>code/data/</code>.</p>
+<table>
+<tr><td><code>load_pure_properties()</code></td><td>The 618-compound pure-component property table (see code/data/README.md).</td></tr>
+<tr><td><code>get_compound(key)</code></td><td>Look up a compound by Formula or Name (case-insensitive).</td></tr>
+<tr><td><code>load_pr_kij()</code></td><td>Table 9.4-1 as a tidy edge list: species_i, species_j, formula_i, formula_j, kij.</td></tr>
+<tr><td><code>pr_kij_matrix(keys, strict)</code></td><td>Symmetric k_ij matrix for <code>keys</code>, plus the pairs Table 9.4-1 does not give.</td></tr>
+<tr><td><code>load_unifac_subgroups(kind)</code></td><td>Subgroup volume and surface-area parameters.</td></tr>
+<tr><td><code>unifac_groups(name, kind)</code></td><td>Look up the group assignment the parameter set&#x27;s Example Assignments column gives.</td></tr>
+<tr><td><code>load_unifac_interactions(kind)</code></td><td>Main-group interaction parameters. <code>modified</code>: a,b,c; <code>original</code>: a only.</td></tr>
+<tr><td><code>load_reaction_properties()</code></td><td>The 99-species reaction table: Name, DG, DH (kJ/mol), A..E, ID.</td></tr>
+<tr><td><code>get_reaction_species(name)</code></td><td>One row of <code>react_property.csv</code> by exact <code>Name</code> (e.g. &#x27;N2O4&#x27;, &#x27;H2O(g)&#x27;).</td></tr>
+<tr><td><code>reaction_cp(name)</code></td><td>Scaled ideal-gas Cp* coefficients (a, b, c, d, e) for one species, SI.</td></tr>
+<tr><td><code>formation_enthalpy(name)</code></td><td>Standard enthalpy of formation at 25 C, 1 bar, in **J/mol** (CSV is kJ/mol).</td></tr>
+<tr><td><code>formation_gibbs(name)</code></td><td>Standard Gibbs energy of formation at 25 C, 1 bar, in **J/mol**.</td></tr>
+<tr><td><code>load_mixing_data(key)</code></td><td>A property-change-on-mixing data set from Sec. 8.6, in SI units.</td></tr>
+</table>
+</div>
+<nav><a href="index.html">&larr; Index</a> <a href="getting-started.html">Getting started</a> <a href="using-ai.html">How to use AI</a></nav>
+<!-- Generated from 6e_companion_site/source by build.py. Do not edit generated HTML by hand; edit the source and rebuild. -->
+<footer>Thermodynamics companion site · <a href="https://www.wiley.com/en-us/-p-9781119321286">Sandler and Furst, &quot;Chemical, Biochemical, and Engineering Thermodynamics,&quot; 6e</a></footer>
+</body></html>

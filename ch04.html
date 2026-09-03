@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ch 4: Entropy: An Additional Balance Equation</title>
+<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]}};</script>
+<script async src="vendor/mathjax/tex-mml-svg.js"></script>
+<style>
+ body{font:16px/1.55 -apple-system,Segoe UI,Roboto,sans-serif;max-width:60rem;margin:2rem auto;padding:0 1rem;color:#1a1a1a}
+ h1{margin-bottom:.2rem} .sub{color:#666;margin-top:0}
+ nav a{margin-right:1rem} .pill{background:#eef;border-radius:1rem;padding:.1rem .6rem;font-size:.8rem}
+ /* `priority: high` items — the conventions an assistant most often gets wrong.
+    A faint tint plus an amber marker/rule, not a highlighter-pen fill: the flag
+    has to read as an annotation, not as broken row striping. */
+ .hi{background:#fff8ea}
+ li.hi::marker{color:#c07f0a}
+ ul.conv{padding-left:1.6rem} ul.conv li{padding:.2rem .5rem;margin:.35rem 0}
+ /* reserve the rule's width on every row so flagged rows don't shift 3px right */
+ tr td:first-child{border-left:3px solid transparent}
+ tr.hi td:first-child{border-left-color:#dda63f}
+ .legend{font-size:.85rem;color:#666;margin:.2rem 0 .7rem}
+ /* each legend swatch mimics its own section's cue: an amber bullet for the
+    conventions list, an amber left rule for the symbols table */
+ .swatch{display:inline-block;background:#fff8ea;padding:0 .25rem;color:#c07f0a}
+ .swatch-rule{border-left:3px solid #dda63f;padding:0 .3rem 0 .15rem}
+ table{border-collapse:collapse;width:100%}
+ td{border-bottom:1px solid #eee;padding:.35rem .5rem;vertical-align:top}
+ td.sym{width:9rem;white-space:nowrap} .eq{margin:.6rem 0;padding:.4rem .8rem;border-left:3px solid #ccd}
+ .eq .note{color:#555;font-size:.9rem} code{background:#f5f5f7;padding:.05rem .3rem;border-radius:.2rem}
+ .copy{display:inline-block;background:#2456d6;color:#fff;border:0;border-radius:.4rem;padding:.4rem .8rem;cursor:pointer;font-size:.9rem;text-decoration:none}
+ .copy:hover{background:#1840a8}
+ .ghost{display:inline-block;background:#fff;color:#2456d6;border:1px solid #2456d6;border-radius:.4rem;padding:.4rem .8rem;cursor:pointer;font-size:.9rem;text-decoration:none}
+ .ghost:hover{background:#eef2ff}
+ .actions{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.3rem 0}
+ /* Notebook-page action stack. Full-width tap targets because the commonest way
+    into these pages is a phone scanning a margin QR off the printed page. */
+ .btnstack{max-width:32rem;margin:1rem 0}
+ .btnstack a{display:block;padding:.85rem 1rem;margin:.5rem 0;border:1px solid #c9c9d0;
+      border-radius:.6rem;text-decoration:none;color:inherit;font-weight:600;background:#fff}
+ .btnstack a:hover{background:#f2f2f6;border-color:#2456d6}
+ .btnstack a .k{display:block;font-weight:400;font-size:.85rem;color:#666;margin-top:.1rem}
+ pre.raw{display:none} .prompt{border:1px solid #e3e3e8;border-radius:.5rem;padding:.8rem 1rem;margin:.7rem 0}
+ .prompt h4{margin:.1rem 0} .prompt pre{white-space:pre-wrap;background:#f7f7fa;padding:.6rem;border-radius:.4rem;font-size:.85rem}
+ .hint{background:#f0f4ff;border:1px solid #dde4ff;border-radius:.4rem;padding:.5rem .8rem;margin:.6rem 0;color:#334}
+ /* when .hint is itself a list, give the markers room INSIDE the tinted box —
+    otherwise list-style-position:outside puts 1./2./3. beyond the left border */
+ ol.hint,ul.hint{padding-left:2.1rem} ol.hint li,ul.hint li{margin:.3rem 0}
+ .warn{background:#fff4e5;border:1px solid #ffd9a8;border-radius:.4rem;padding:.5rem .8rem;margin:.6rem 0;color:#5c4300}
+ .toc{font-size:.9rem;margin:.2rem 0 1.2rem;color:#555} .toc a{margin-right:.35rem}
+ .check{color:#1a6} .fail{color:#b44} footer{color:#888;font-size:.85rem;margin-top:3rem;border-top:1px solid #eee;padding-top:1rem}
+</style></head><body>
+<nav><a href="index.html">&larr; Index</a></nav>
+<h1>Chapter 4: Entropy: An Additional Balance Equation</h1>
+<p class="sub">Notation primer — cumulative through Chapter 4.</p>
+<nav class="toc">On this page: <a href="#conventions">Conventions</a> &middot; <a href="#symbols">Symbols</a> &middot; <a href="#equations">Governing equations</a> &middot; <a href="#prompts">Study prompts</a> &middot; <a href="#codes">Codes</a></nav>
+<div class="actions">
+<button class="copy" onclick="copyEl('raw',this)">📋 Copy notation primer for AI</button>
+<a class="ghost" href="grounding/ch04-notation.md" target="_blank" rel="noopener">📄 Open notation file (.md)</a>
+<button class="ghost" onclick="saveEl('gmd','ch04-notation.md')">⬇ Save notation file (.md)</button>
+</div>
+<pre class="raw" id="raw">NOTATION &amp; CONVENTIONS — Sandler and Furst, &quot;Chemical, Biochemical, and Engineering Thermodynamics,&quot; 6e
+Scope: through Chapter 4 (Entropy: An Additional Balance Equation). Symbols are written in LaTeX.
+Use these and only these conventions unless I say otherwise. If I use a
+symbol not listed here, ask before assuming its meaning.
+This primer ends with a line reading &#x27;END OF NOTATION PRIMER&#x27;. If you do
+not see that line, my paste was cut off (some chat boxes silently truncate
+long pastes) -- tell me so and I will resend it in parts.
+
+CONVENTIONS (these override your defaults):
+- A molar (per-mole) quantity is written with an UNDERBAR, a specific (per-unit-mass) quantity with a CARET, and a total (extensive) quantity with a PLAIN symbol. Example: $\underline{U}$ is molar internal energy, $\hat{U}$ is specific internal energy, $U$ is total internal energy. An OVERBAR is reserved for a PARTIAL MOLAR property of a species in a mixture (introduced in Ch.8), e.g. $\bar{U}_i$ — never use an overbar for a plain molar quantity.
+- Intensive variables are independent of system size ($T$, $P$, and any specific or molar property); extensive variables scale with the amount of material ($M$, $V$, total $U$). A state variable is an intensive property. Dividing an extensive property by mass or moles gives the corresponding specific or molar (intensive) property.
+- A stable equilibrium state of a single-component, single-phase fluid (no external fields) is fixed by its mass plus two independent intensive state variables; all other intensive properties then follow (Eq. 1.6-1).
+- Temperature $T$ is absolute (kelvin) and pressure $P$ is absolute, not gauge.
+- Heat is energy transferred because of a temperature difference; work is energy transferred by mechanical motion of or across the boundary, and electrical-energy flow is treated as work. Thermal energy = internal energy and heat; mechanical energy = mechanical and electrical work. Only part of thermal energy can be recovered as work (irreversibility).
+- A closed system has no mass flow across its boundary (an open system does); an isolated system exchanges neither mass nor energy; an adiabatic system has no heat flow; a steady-state system may have flows but its properties do not change in time; a cyclic process returns the system to the same state each cycle.
+- SI units, per the 2019 redefinition (Table 1.2-1). Specific quantities are per kilogram (e.g. $\hat{H}$ in J/kg) or molar (e.g. $\underline{H}$ in J/mol); mass is in kg, temperature in K, energy in J, and pressure in kPa or bar. $R = 8.314\ \text{J/(mol·K)}$.
+- An overdot denotes a rate (per unit time): $\dot{M}$ is a mass flow rate, $\dot{N}$ a molar flow rate.
+- Subscript $k$ indexes a mass-flow port (stream/location); $\sum_{k=1}^{K}$ runs over all $K$ ports. A flow term is positive when mass flows INTO the system.
+- Work is positive when done ON the system. $W$, $\dot{W}$, $W_s$, $\dot{W}_s$ and the heat terms $Q$, $\dot{Q}$ are all positive when energy flows INTO the system. This matches the major chemical-engineering texts (Koretsky; Smith, Van Ness &amp; Abbott, 7th edition onward). It is OPPOSITE to the mechanical-engineering and physics convention, in which work is positive when done BY the system — a default a general-purpose model may fall back on. Do not flip the signs.
+- A superscript asterisk ($^{*}$) denotes an ideal-gas property, e.g. $C_P^{*}$, $C_V^{*}$.
+- The operators $\Delta_{\text{fus}}$, $\Delta_{\text{sub}}$, $\Delta_{\text{vap}}$ denote phase-change differences (fusion/melting, sublimation, vaporization).
+- Enthalpy combines internal energy and flow work; per unit mass $\hat{H} = \hat{U} + P\hat{V}$. The $P\hat{V}$ term is the work a flowing stream does on the fluid ahead of it.
+- The second law is stated in this book as $S_{\text{gen}} \ge 0$: the rate of entropy generation $\dot{S}_{\text{gen}} \ge 0$ in every real process, equal to zero only for a reversible process and at equilibrium. This entropy-generation form is the axiom the book uses — NOT &quot;the entropy of the universe increases&quot; and not a word-statement of Clausius or Kelvin–Planck. The Clausius and Kelvin–Planck statements are shown to FOLLOW from $S_{\text{gen}} \ge 0$ (Illustrations 4.1-1, 4.1-2), so do not treat them as the starting axiom.
+- In the entropy balance the entropy carried by heat is $\dot{Q}/T$, where $T$ is the absolute temperature of the system AT the boundary where the heat crosses (not the temperature of a distant reservoir). For several heat-flow ports, replace $\dot{Q}/T$ by $\sum_j \dot{Q}_j/T_j$. The sign of $\dot{Q}$ follows Chapter 3: positive when heat flows INTO the system.
+- A process is reversible when $\dot{S}_{\text{gen}} = 0$ (infinitesimal internal gradients; no viscous dissipation and no finite-temperature-difference heat flow). Reversible operation gives the MAXIMUM work obtainable from — or the MINIMUM work required for — a given change of state; it is the bound against which real devices are measured. &quot;Reversible&quot; is not a synonym for &quot;adiabatic&quot; ($\dot{Q}=0$) or &quot;isentropic&quot;: an adiabatic reversible process is isentropic, but an adiabatic irreversible one is not.
+- Helmholtz energy $A \equiv U - TS$ (Eq. 4.2-6) and Gibbs energy $G \equiv H - TS = U + PV - TS$ (Eq. 4.2-8); both are state functions. Use these definitions — $A$ is $U-TS$, not $U+PV$.
+- This book writes molar (per-mole) quantities with an UNDERBAR ($\underline{S}$, $\underline{G}$, $\underline{A}$). An OVERBAR is NOT a molar quantity here — it is reserved for the partial molar property of a species in a mixture (Ch.8). If another source writes a plain per-mole quantity with an overbar, map it to this book&#x27;s underbar; it means the same thing (per mole), just a different accent.
+- The symbol $T_R$ here denotes the absolute temperature of a radiation-EMITTING body (Eq. 4.1-10). In Chapter 3, $T_R$ meant a reference temperature for $U$ or $H$. Same symbol, different meaning — disambiguate by context. Radiative heat transfer is rarely used in this book.
+
+SYMBOLS:
+  M                                  mass (kg)
+  N                                  number of moles (mol)
+  P                                  absolute pressure (kPa or bar)
+  R                                  gas constant (J/(mol·K))
+  T                                  absolute temperature (K)
+  U                                  internal energy (total) (J)
+  \underline{U}                      molar internal energy (J/mol)
+  \hat{U}                            specific internal energy (J/kg)
+  V                                  volume (total) (m^3)
+  \underline{V}                      molar volume (m^3/mol)
+  \hat{V}                            specific volume (per unit mass) (m^3/kg)
+  \theta                             general extensive (balance) quantity (varies)
+  M_i                                mass of species $i$ (kg)
+  \dot{M}_k                          mass flow rate at port $k$ (kg/s)
+  (\dot{M}_i)_k                      mass flow rate of species $i$ at port $k$ (kg/s)
+  N_i                                moles of species $i$ (mol)
+  \dot{N}_k                          molar flow rate at port $k$ (mol/s)
+  (\dot{N}_i)_k                      molar flow rate of species $i$ at port $k$ (mol/s)
+  t                                  time (s)
+  x                                  set of mole fractions $\{x_1, x_2, \dots\}$ (-)
+  X                                  molar extent of reaction (NOTE: not mole fraction) (mol)
+  \nu_i                              stoichiometric coefficient of species $i$ (negative for reactants) (-)
+  C_P                                constant-pressure molar heat capacity (J/(mol·K))
+  C_P^{*}                            ideal-gas constant-pressure molar heat capacity (J/(mol·K))
+  C_V                                constant-volume molar heat capacity (J/(mol·K))
+  C_V^{*}                            ideal-gas constant-volume molar heat capacity (J/(mol·K))
+  H                                  enthalpy (total) (J)
+  \underline{H}                      molar enthalpy (J/mol)
+  \hat{H}                            specific enthalpy (per unit mass) (J/kg)
+  \Delta_{\text{fus}}\underline{H}   molar enthalpy of fusion (melting) (J/mol)
+  \Delta_{\text{sub}}\underline{H}   molar enthalpy of sublimation (J/mol)
+  \Delta_{\text{vap}}\underline{H}   molar enthalpy of vaporization (J/mol)
+  \Delta_{\text{vap}}\hat{H}         specific enthalpy of vaporization (J/kg)
+  \dot{Q}                            rate of heat flow into the system (J/s)
+  Q                                  heat that has flowed into the system (J)
+  T_R                                reference temperature for $U$ or $H$ (K)
+  v                                  center-of-mass velocity of a stream (m/s)
+  \dot{W}                            rate of work done ON the system (J/s)
+  W                                  work done ON the system (J)
+  W_s                                shaft work done ON the system (J)
+  \dot{W}_s                          rate of shaft work done ON the system (J/s)
+  \psi                               potential energy per unit mass (J/kg)
+  \omega^{\mathrm{I}}                mass fraction of phase I (quality, for steam) (-)
+  S                                  entropy (total) (J/K)
+  \underline{S}                      molar entropy (J/(mol·K))
+  \hat{S}                            specific entropy (per unit mass) (J/(kg·K))
+  \dot{S}_{\text{gen}}               rate of entropy generation within the system ($\ge 0$) (J/(K·s))
+  S_{\text{gen}}                     total entropy generated over the interval ($\ge 0$) (J/K)
+  A                                  Helmholtz energy (total), $A \equiv U - TS$ (J)
+  \underline{A}                      molar Helmholtz energy (J/mol)
+  G                                  Gibbs energy (total), $G \equiv H - TS = U + PV - TS$ (J)
+  \underline{G}                      molar Gibbs energy (J/mol)
+  \hat{G}                            specific Gibbs energy (per unit mass) (J/kg)
+  \mathcal{A},\ \mathcal{B}          availability (maximum useful shaft work for a change of state) (J)
+  W_s^{\text{rev}}                   shaft work in a reversible process (J)
+  W^{\text{rev}}                     work in a reversible process (J)
+  \gamma                             heat-capacity ratio $C_P/C_V$ (-)
+  \dot{Q}_R                          radiant heat flux (Stefan–Boltzmann radiation) (J/s)
+  T_R                                temperature of the body emitting radiation (reuses the Ch.3 symbol $T_R$) (K)
+
+GOVERNING EQUATIONS (cite by the book&#x27;s equation number):
+  (1.6-1) Equation-of-state / state-variable relation:
+        P = P(T, \hat{V}) \qquad \hat{U} = \hat{U}(T, \hat{V})
+  (2.1-4) General balance equation:
+        \dfrac{d\theta}{dt} = \dot{\theta}_{\text{in}} - \dot{\theta}_{\text{out}} + \dot{\theta}_{\text{gen}}
+  (2.2-1a) Rate-of-change mass balance (mass basis):
+        \dfrac{dM}{dt} = \sum_{k=1}^{K} \dot{M}_k
+  (2.2-2) Rate-of-change mass balance (molar basis):
+        \dfrac{dN}{dt} = \sum_{k=1}^{K} \dot{N}_k
+  (2.2-4) Difference (integral) mass balance:
+        M(t_2) - M(t_1) = \sum_{k=1}^{K} \Delta M_k
+  (2.2-5) Difference mass balance, steady flows:
+        M(t_2) - M(t_1) = \sum_{k=1}^{K} \dot{M}_k\,\Delta t
+  (2.3-1) Species mole balance with reaction:
+        \dfrac{dN_i}{dt} = \sum_{k=1}^{K} (\dot{N}_i)_k + \left(\dfrac{dN_i}{dt}\right)_{\text{rxn}}
+  (3.1-3) Work due to boundary movement:
+        \dot{W} = -P\,\dfrac{dV}{dt}
+  (3.1-4) General energy balance (open system):
+        \dfrac{d}{dt}\!\left[U + M\!\left(\tfrac{v^2}{2}+\psi\right)\right] = \sum_{k=1}^{K}\dot{M}_k\!\left(\hat{U}+\tfrac{v^2}{2}+\psi\right)_k + \dot{Q} + \dot{W}_s - P\dfrac{dV}{dt} + \sum_{k=1}^{K}\dot{M}_k (P\hat{V})_k
+  (3.1-6) Difference (integral) energy balance:
+        \left[U + M\!\left(\tfrac{v^2}{2}+\psi\right)\right]_{t_2} - \left[U + M\!\left(\tfrac{v^2}{2}+\psi\right)\right]_{t_1} = \sum_{k=1}^{K}\int_{t_1}^{t_2}\!\dot{M}_k\!\left(\hat{H}+\tfrac{v^2}{2}+\psi\right)_k dt + Q + W
+  (3.1-8) Simplified differential energy balance:
+        \dfrac{dU}{dt} = \hat{H}\,\dfrac{dM}{dt} + \dot{Q} - P\dfrac{dV}{dt}
+  (3.1-9a) Differential energy balance over $dt$:
+        dU = \hat{H}\,dM + Q - P\,dV
+  (4.1-5a) Entropy balance, open system (the second law):
+        \dfrac{dS}{dt} = \sum_{k=1}^{K}\dot{M}_k\hat{S}_k + \dfrac{\dot{Q}}{T} + \dot{S}_{\text{gen}}
+  (4.1-5b) Entropy balance, closed system:
+        \dfrac{dS}{dt} = \dfrac{\dot{Q}}{T} + \dot{S}_{\text{gen}}
+  (4.1-5c) Second-law axiom and equilibrium condition:
+        S_{\text{gen}} \ge 0, \qquad \dfrac{dS}{dt} = 0 \ \text{at equilibrium}
+  (4.1-9) Difference (integral) entropy balance:
+        S_2 - S_1 = \sum_{k}\int_{t_1}^{t_2}\dot{M}_k\hat{S}_k\,dt + \int_{t_1}^{t_2}\dfrac{\dot{Q}}{T}\,dt + S_{\text{gen}}
+  (4.2-6) Definition of the Helmholtz energy:
+        A \equiv U - TS
+  (4.2-8) Definition of the Gibbs energy:
+        G \equiv U + PV - TS = H - TS
+  (4.2-13b) Fundamental relation (closed system):
+        dU = T\,dS - P\,dV
+  (4.3-4) Maximum work from a heat engine (reversible):
+        -W = Q_1\left(\dfrac{T_1 - T_2}{T_1}\right)
+  (4.3-5) Carnot (maximum) engine efficiency:
+        \eta = \dfrac{-W}{Q_1} = \dfrac{T_1 - T_2}{T_1}
+  (4.4-3) Ideal-gas entropy change with $T$ and $P$ (constant $C_P^{*}$):
+        \underline{S}(T_2,P_2) - \underline{S}(T_1,P_1) = C_P^{*}\ln\!\left(\dfrac{T_2}{T_1}\right) - R\ln\!\left(\dfrac{P_2}{P_1}\right)
+  (4.4-2) Ideal-gas entropy change with $T$ and $V$ (constant $C_V^{*}$):
+        \underline{S}(T_2,\underline{V}_2) - \underline{S}(T_1,\underline{V}_1) = C_V^{*}\ln\!\left(\dfrac{T_2}{T_1}\right) + R\ln\!\left(\dfrac{\underline{V}_2}{\underline{V}_1}\right)
+  (4.4-6) Entropy change of a solid or liquid:
+        \underline{S}(T_2) - \underline{S}(T_1) = \int_{T_1}^{T_2} C_P\,\dfrac{dT}{T}
+
+BEFORE ANSWERING, confirm back to me (this also proves the primer arrived
+in full): (1) in this book, is work positive when done ON or BY the system,
+and (2) does an UNDERBAR denote a per-mole (molar) quantity? (An overbar
+is reserved for a partial molar quantity, introduced in Chapter 8.)
+
+END OF NOTATION PRIMER</pre>
+<pre class="raw" id="gmd"># Notation and conventions — Sandler and Furst, &quot;Chemical, Biochemical, and Engineering Thermodynamics,&quot; 6e
+
+*Scope: through Chapter 4 (Entropy: An Additional Balance Equation).* This file documents the symbols, units, and sign conventions
+used in this chapter&#x27;s problems and code. Keep it in your project so an AI coding
+assistant (Claude Code, Copilot, Cursor, and the like) follows the book&#x27;s conventions.
+If you cloned the code repository it is already here, in code/grounding/.
+Notation is written in LaTeX.
+
+## Conventions
+
+- A molar (per-mole) quantity is written with an UNDERBAR, a specific (per-unit-mass) quantity with a CARET, and a total (extensive) quantity with a PLAIN symbol. Example: $\underline{U}$ is molar internal energy, $\hat{U}$ is specific internal energy, $U$ is total internal energy. An OVERBAR is reserved for a PARTIAL MOLAR property of a species in a mixture (introduced in Ch.8), e.g. $\bar{U}_i$ — never use an overbar for a plain molar quantity.
+- Intensive variables are independent of system size ($T$, $P$, and any specific or molar property); extensive variables scale with the amount of material ($M$, $V$, total $U$). A state variable is an intensive property. Dividing an extensive property by mass or moles gives the corresponding specific or molar (intensive) property.
+- A stable equilibrium state of a single-component, single-phase fluid (no external fields) is fixed by its mass plus two independent intensive state variables; all other intensive properties then follow (Eq. 1.6-1).
+- Temperature $T$ is absolute (kelvin) and pressure $P$ is absolute, not gauge.
+- Heat is energy transferred because of a temperature difference; work is energy transferred by mechanical motion of or across the boundary, and electrical-energy flow is treated as work. Thermal energy = internal energy and heat; mechanical energy = mechanical and electrical work. Only part of thermal energy can be recovered as work (irreversibility).
+- A closed system has no mass flow across its boundary (an open system does); an isolated system exchanges neither mass nor energy; an adiabatic system has no heat flow; a steady-state system may have flows but its properties do not change in time; a cyclic process returns the system to the same state each cycle.
+- SI units, per the 2019 redefinition (Table 1.2-1). Specific quantities are per kilogram (e.g. $\hat{H}$ in J/kg) or molar (e.g. $\underline{H}$ in J/mol); mass is in kg, temperature in K, energy in J, and pressure in kPa or bar. $R = 8.314\ \text{J/(mol·K)}$.
+- An overdot denotes a rate (per unit time): $\dot{M}$ is a mass flow rate, $\dot{N}$ a molar flow rate.
+- Subscript $k$ indexes a mass-flow port (stream/location); $\sum_{k=1}^{K}$ runs over all $K$ ports. A flow term is positive when mass flows INTO the system.
+- Work is positive when done ON the system. $W$, $\dot{W}$, $W_s$, $\dot{W}_s$ and the heat terms $Q$, $\dot{Q}$ are all positive when energy flows INTO the system. This matches the major chemical-engineering texts (Koretsky; Smith, Van Ness &amp; Abbott, 7th edition onward). It is OPPOSITE to the mechanical-engineering and physics convention, in which work is positive when done BY the system — a default a general-purpose model may fall back on. Do not flip the signs.
+- A superscript asterisk ($^{*}$) denotes an ideal-gas property, e.g. $C_P^{*}$, $C_V^{*}$.
+- The operators $\Delta_{\text{fus}}$, $\Delta_{\text{sub}}$, $\Delta_{\text{vap}}$ denote phase-change differences (fusion/melting, sublimation, vaporization).
+- Enthalpy combines internal energy and flow work; per unit mass $\hat{H} = \hat{U} + P\hat{V}$. The $P\hat{V}$ term is the work a flowing stream does on the fluid ahead of it.
+- The second law is stated in this book as $S_{\text{gen}} \ge 0$: the rate of entropy generation $\dot{S}_{\text{gen}} \ge 0$ in every real process, equal to zero only for a reversible process and at equilibrium. This entropy-generation form is the axiom the book uses — NOT &quot;the entropy of the universe increases&quot; and not a word-statement of Clausius or Kelvin–Planck. The Clausius and Kelvin–Planck statements are shown to FOLLOW from $S_{\text{gen}} \ge 0$ (Illustrations 4.1-1, 4.1-2), so do not treat them as the starting axiom.
+- In the entropy balance the entropy carried by heat is $\dot{Q}/T$, where $T$ is the absolute temperature of the system AT the boundary where the heat crosses (not the temperature of a distant reservoir). For several heat-flow ports, replace $\dot{Q}/T$ by $\sum_j \dot{Q}_j/T_j$. The sign of $\dot{Q}$ follows Chapter 3: positive when heat flows INTO the system.
+- A process is reversible when $\dot{S}_{\text{gen}} = 0$ (infinitesimal internal gradients; no viscous dissipation and no finite-temperature-difference heat flow). Reversible operation gives the MAXIMUM work obtainable from — or the MINIMUM work required for — a given change of state; it is the bound against which real devices are measured. &quot;Reversible&quot; is not a synonym for &quot;adiabatic&quot; ($\dot{Q}=0$) or &quot;isentropic&quot;: an adiabatic reversible process is isentropic, but an adiabatic irreversible one is not.
+- Helmholtz energy $A \equiv U - TS$ (Eq. 4.2-6) and Gibbs energy $G \equiv H - TS = U + PV - TS$ (Eq. 4.2-8); both are state functions. Use these definitions — $A$ is $U-TS$, not $U+PV$.
+- This book writes molar (per-mole) quantities with an UNDERBAR ($\underline{S}$, $\underline{G}$, $\underline{A}$). An OVERBAR is NOT a molar quantity here — it is reserved for the partial molar property of a species in a mixture (Ch.8). If another source writes a plain per-mole quantity with an overbar, map it to this book&#x27;s underbar; it means the same thing (per mole), just a different accent.
+- The symbol $T_R$ here denotes the absolute temperature of a radiation-EMITTING body (Eq. 4.1-10). In Chapter 3, $T_R$ meant a reference temperature for $U$ or $H$. Same symbol, different meaning — disambiguate by context. Radiative heat transfer is rarely used in this book.
+
+## Symbols
+
+| Symbol | Meaning | Units |
+|---|---|---|
+| `M` | mass | kg |
+| `N` | number of moles | mol |
+| `P` | absolute pressure | kPa or bar |
+| `R` | gas constant | J/(mol·K) |
+| `T` | absolute temperature | K |
+| `U` | internal energy (total) | J |
+| `\underline{U}` | molar internal energy | J/mol |
+| `\hat{U}` | specific internal energy | J/kg |
+| `V` | volume (total) | m^3 |
+| `\underline{V}` | molar volume | m^3/mol |
+| `\hat{V}` | specific volume (per unit mass) | m^3/kg |
+| `\theta` | general extensive (balance) quantity | varies |
+| `M_i` | mass of species $i$ | kg |
+| `\dot{M}_k` | mass flow rate at port $k$ | kg/s |
+| `(\dot{M}_i)_k` | mass flow rate of species $i$ at port $k$ | kg/s |
+| `N_i` | moles of species $i$ | mol |
+| `\dot{N}_k` | molar flow rate at port $k$ | mol/s |
+| `(\dot{N}_i)_k` | molar flow rate of species $i$ at port $k$ | mol/s |
+| `t` | time | s |
+| `x` | set of mole fractions $\{x_1, x_2, \dots\}$ | - |
+| `X` | molar extent of reaction (NOTE: not mole fraction) | mol |
+| `\nu_i` | stoichiometric coefficient of species $i$ (negative for reactants) | - |
+| `C_P` | constant-pressure molar heat capacity | J/(mol·K) |
+| `C_P^{*}` | ideal-gas constant-pressure molar heat capacity | J/(mol·K) |
+| `C_V` | constant-volume molar heat capacity | J/(mol·K) |
+| `C_V^{*}` | ideal-gas constant-volume molar heat capacity | J/(mol·K) |
+| `H` | enthalpy (total) | J |
+| `\underline{H}` | molar enthalpy | J/mol |
+| `\hat{H}` | specific enthalpy (per unit mass) | J/kg |
+| `\Delta_{\text{fus}}\underline{H}` | molar enthalpy of fusion (melting) | J/mol |
+| `\Delta_{\text{sub}}\underline{H}` | molar enthalpy of sublimation | J/mol |
+| `\Delta_{\text{vap}}\underline{H}` | molar enthalpy of vaporization | J/mol |
+| `\Delta_{\text{vap}}\hat{H}` | specific enthalpy of vaporization | J/kg |
+| `\dot{Q}` | rate of heat flow into the system | J/s |
+| `Q` | heat that has flowed into the system | J |
+| `T_R` | reference temperature for $U$ or $H$ | K |
+| `v` | center-of-mass velocity of a stream | m/s |
+| `\dot{W}` | rate of work done ON the system | J/s |
+| `W` | work done ON the system | J |
+| `W_s` | shaft work done ON the system | J |
+| `\dot{W}_s` | rate of shaft work done ON the system | J/s |
+| `\psi` | potential energy per unit mass | J/kg |
+| `\omega^{\mathrm{I}}` | mass fraction of phase I (quality, for steam) | - |
+| `S` | entropy (total) | J/K |
+| `\underline{S}` | molar entropy | J/(mol·K) |
+| `\hat{S}` | specific entropy (per unit mass) | J/(kg·K) |
+| `\dot{S}_{\text{gen}}` | rate of entropy generation within the system ($\ge 0$) | J/(K·s) |
+| `S_{\text{gen}}` | total entropy generated over the interval ($\ge 0$) | J/K |
+| `A` | Helmholtz energy (total), $A \equiv U - TS$ | J |
+| `\underline{A}` | molar Helmholtz energy | J/mol |
+| `G` | Gibbs energy (total), $G \equiv H - TS = U + PV - TS$ | J |
+| `\underline{G}` | molar Gibbs energy | J/mol |
+| `\hat{G}` | specific Gibbs energy (per unit mass) | J/kg |
+| `\mathcal{A},\ \mathcal{B}` | availability (maximum useful shaft work for a change of state) | J |
+| `W_s^{\text{rev}}` | shaft work in a reversible process | J |
+| `W^{\text{rev}}` | work in a reversible process | J |
+| `\gamma` | heat-capacity ratio $C_P/C_V$ | - |
+| `\dot{Q}_R` | radiant heat flux (Stefan–Boltzmann radiation) | J/s |
+| `T_R` | temperature of the body emitting radiation (reuses the Ch.3 symbol $T_R$) | K |
+
+## Governing equations
+
+- **(1.6-1) Equation-of-state / state-variable relation** — `P = P(T, \hat{V}) \qquad \hat{U} = \hat{U}(T, \hat{V})`
+  For a single-phase pure fluid, fixing two intensive state variables (here $T$ and $\hat{V}$) fixes all the others; the explicit functional forms are the equations of state developed in later chapters.
+- **(2.1-4) General balance equation** — `\dfrac{d\theta}{dt} = \dot{\theta}_{\text{in}} - \dot{\theta}_{\text{out}} + \dot{\theta}_{\text{gen}}`
+  Master balance for any extensive $\theta$. Mass (this chapter), energy (Ch.3), and entropy (Ch.4) are special cases. The generation term is zero for conserved quantities.
+- **(2.2-1a) Rate-of-change mass balance (mass basis)** — `\dfrac{dM}{dt} = \sum_{k=1}^{K} \dot{M}_k`
+  Pure-fluid total mass balance; no generation (mass is conserved).
+- **(2.2-2) Rate-of-change mass balance (molar basis)** — `\dfrac{dN}{dt} = \sum_{k=1}^{K} \dot{N}_k`
+  Same balance on a molar basis, for a pure fluid with no reaction.
+- **(2.2-4) Difference (integral) mass balance** — `M(t_2) - M(t_1) = \sum_{k=1}^{K} \Delta M_k`
+  Obtained by integrating the rate balance over $[t_1, t_2]$.
+- **(2.2-5) Difference mass balance, steady flows** — `M(t_2) - M(t_1) = \sum_{k=1}^{K} \dot{M}_k\,\Delta t`
+  Special case of 2.2-4 when the mass flow rates are independent of time.
+- **(2.3-1) Species mole balance with reaction** — `\dfrac{dN_i}{dt} = \sum_{k=1}^{K} (\dot{N}_i)_k + \left(\dfrac{dN_i}{dt}\right)_{\text{rxn}}`
+  The reaction term is $\nu_i\,\dot{X}$, where $X$ is the molar extent of reaction; positive = produced, negative = consumed.
+- **(3.1-3) Work due to boundary movement** — `\dot{W} = -P\,\dfrac{dV}{dt}`
+  Sign follows the work convention: compression ($dV/dt&lt;0$) gives positive work done ON the system; expansion gives negative.
+- **(3.1-4) General energy balance (open system)** — `\dfrac{d}{dt}\!\left[U + M\!\left(\tfrac{v^2}{2}+\psi\right)\right] = \sum_{k=1}^{K}\dot{M}_k\!\left(\hat{U}+\tfrac{v^2}{2}+\psi\right)_k + \dot{Q} + \dot{W}_s - P\dfrac{dV}{dt} + \sum_{k=1}^{K}\dot{M}_k (P\hat{V})_k`
+  Combining the flow-energy term $\hat{U}$ with the flow-work term $P\hat{V}$ into $\hat{H}=\hat{U}+P\hat{V}$ gives the compact enthalpy form (Eq. 3.1-5) used in practice.
+- **(3.1-6) Difference (integral) energy balance** — `\left[U + M\!\left(\tfrac{v^2}{2}+\psi\right)\right]_{t_2} - \left[U + M\!\left(\tfrac{v^2}{2}+\psi\right)\right]_{t_1} = \sum_{k=1}^{K}\int_{t_1}^{t_2}\!\dot{M}_k\!\left(\hat{H}+\tfrac{v^2}{2}+\psi\right)_k dt + Q + W`
+  Integrated over $[t_1,t_2]$, with $Q=\int\dot{Q}\,dt$ and $W = W_s - \int P\,dV$.
+- **(3.1-8) Simplified differential energy balance** — `\dfrac{dU}{dt} = \hat{H}\,\dfrac{dM}{dt} + \dot{Q} - P\dfrac{dV}{dt}`
+  Single stream, negligible kinetic and potential energy, no shaft work. $\hat{H}$ is the specific enthalpy of the stream entering or leaving.
+- **(3.1-9a) Differential energy balance over $dt$** — `dU = \hat{H}\,dM + Q - P\,dV`
+  For a closed system $dM = 0$, so $dU = Q - P\,dV$.
+- **(4.1-5a) Entropy balance, open system (the second law)** — `\dfrac{dS}{dt} = \sum_{k=1}^{K}\dot{M}_k\hat{S}_k + \dfrac{\dot{Q}}{T} + \dot{S}_{\text{gen}}`
+  The third balance equation, specializing the general balance (Eq. 2.1-4) with a non-zero generation term. Terms: convected entropy of the mass flows, entropy flow $\dot{Q}/T$ accompanying heat, and internal generation $\dot{S}_{\text{gen}} \ge 0$. On a molar basis replace $\dot{M}_k\hat{S}_k$ by $\dot{N}_k\underline{S}_k$.
+- **(4.1-5b) Entropy balance, closed system** — `\dfrac{dS}{dt} = \dfrac{\dot{Q}}{T} + \dot{S}_{\text{gen}}`
+  Set all $\dot{M}_k = 0$ in Eq. 4.1-5a. For a closed system entropy changes only through heat flow and internal generation.
+- **(4.1-5c) Second-law axiom and equilibrium condition** — `S_{\text{gen}} \ge 0, \qquad \dfrac{dS}{dt} = 0 \ \text{at equilibrium}`
+  The defining statement of the second law used throughout the book. $\dot{S}_{\text{gen}} = 0$ only for a reversible process; entropy is a maximum at equilibrium in an isolated, constant-volume system.
+- **(4.1-9) Difference (integral) entropy balance** — `S_2 - S_1 = \sum_{k}\int_{t_1}^{t_2}\dot{M}_k\hat{S}_k\,dt + \int_{t_1}^{t_2}\dfrac{\dot{Q}}{T}\,dt + S_{\text{gen}}`
+  Integrated over $[t_1,t_2]$, with $S_{\text{gen}} = \int_{t_1}^{t_2}\dot{S}_{\text{gen}}\,dt \ge 0$. If each stream&#x27;s entropy is constant the flow term becomes $\sum_k \underline{S}_k\,\Delta N_k$; if $T$ is constant at the heat-flow port the heat term becomes $Q/T$.
+- **(4.2-6) Definition of the Helmholtz energy** — `A \equiv U - TS`
+  A state function. The reversible work at constant $N$, $V$, $T$ equals $\Delta A$ (Eq. 4.2-7); a real (irreversible) process needs $\Delta A + TS_{\text{gen}}$.
+- **(4.2-8) Definition of the Gibbs energy** — `G \equiv U + PV - TS = H - TS`
+  A state function. The reversible shaft work at constant $N$, $P$, $T$ equals $\Delta G$. $TS_{\text{gen}}$ is the mechanical energy dissipated to thermal energy by irreversibilities.
+- **(4.2-13b) Fundamental relation (closed system)** — `dU = T\,dS - P\,dV`
+  The differential internal-energy change for a closed system, valid for any process (reversible or not) since it relates state functions only. The open-system form is $dU = T\,dS - P\,dV + \hat{G}\,dM$ (Eq. 4.2-13a). Basis for computing entropy changes of real fluids in Ch.6.
+- **(4.3-4) Maximum work from a heat engine (reversible)** — `-W = Q_1\left(\dfrac{T_1 - T_2}{T_1}\right)`
+  Work done BY a cyclic/steady engine drawing heat $Q_1$ at $T_1$ and rejecting at $T_2$, in the reversible limit $S_{\text{gen}}=0$. Real engines produce less: $-W = Q_1(T_1-T_2)/T_1 - T_2 S_{\text{gen}}$ (Eq. 4.3-3).
+- **(4.3-5) Carnot (maximum) engine efficiency** — `\eta = \dfrac{-W}{Q_1} = \dfrac{T_1 - T_2}{T_1}`
+  Depends only on the absolute temperature levels, not the working fluid or design. An upper bound; real engines reach roughly half this. $T_2 = 0$ would be required to convert all heat to work — impossible.
+- **(4.4-3) Ideal-gas entropy change with $T$ and $P$ (constant $C_P^{*}$)** — `\underline{S}(T_2,P_2) - \underline{S}(T_1,P_1) = C_P^{*}\ln\!\left(\dfrac{T_2}{T_1}\right) - R\ln\!\left(\dfrac{P_2}{P_1}\right)`
+  The most-used entropy-change formula. Note the MINUS sign on the pressure term (entropy falls as pressure rises at fixed $T$). Uses the ideal-gas heat capacity $C_P^{*}$ from Ch.3; for temperature-dependent $C_P^{*}$ the term becomes $\int C_P^{*}\,dT/T$.
+- **(4.4-2) Ideal-gas entropy change with $T$ and $V$ (constant $C_V^{*}$)** — `\underline{S}(T_2,\underline{V}_2) - \underline{S}(T_1,\underline{V}_1) = C_V^{*}\ln\!\left(\dfrac{T_2}{T_1}\right) + R\ln\!\left(\dfrac{\underline{V}_2}{\underline{V}_1}\right)`
+  Companion of Eq. 4.4-3 in the $(T,\underline{V})$ variables; here the volume term is POSITIVE. Related by the ideal-gas law and $C_P^{*} = C_V^{*} + R$.
+- **(4.4-6) Entropy change of a solid or liquid** — `\underline{S}(T_2) - \underline{S}(T_1) = \int_{T_1}^{T_2} C_P\,\dfrac{dT}{T}`
+  For a solid or liquid the molar volume is nearly independent of $T$ and $P$ (so the $P\,d\underline{V}$ term drops) and $C_V \approx C_P$. For constant $C_P$ this is $C_P\ln(T_2/T_1)$.
+
+## Codes (Jupyter notebooks / Python scripts)
+
+Distributed from https://github.com/emfurst/cbet6e. When you open one in this editor, run and
+modify the cells directly rather than narrating code you cannot execute.
+
+- `ch1/Math_review.ipynb` — Mathematics you will use in this book
+- `ch1/Getting_started_Python_Jupyter.ipynb` — Getting started with Python and Jupyter
+- `ch1/vdW_molar_volume_CO2.ipynb` — When is carbon dioxide an ideal gas?
+- `ch1/Thermometer_water_mercury.ipynb` — A mercury thermometer, and why not a water one
+- `ch1/Heat_capacity_fitting_CO2.ipynb` — Curve fitting a heat-capacity polynomial
+- `ch1/Heat_capacity_integration_N2.ipynb` — Integrating a heat capacity: how many intervals is enough?
+- `ch3/Heat_capacity_range_of_validity.ipynb` — How far can a heat-capacity correlation be trusted?
+- `ch3/refrigerant_comparison.ipynb` — Can a new refrigerant replace an old one?
+- `ch3/Steam_charts_from_appendix_A3.ipynb` — Figure 3.3-1: the steam charts, drawn from Appendix A.III
+- `ch3/PH_charts_methane_and_nitrogen.ipynb` — Figures 3.3-2 and 3.3-3: methane and nitrogen from the Peng-Robinson equation
+- `ch3/Heat_capacity_from_molecular_structure.ipynb` — Where a heat capacity comes from, and why a wider fit is not a better one
+- `ch3/LJ_interaction_energy_figure.ipynb` — Figure 3.3-5: the interaction energy between two molecules
+</pre>
+<p class="hint"><b>Copy</b> the primer to paste into an AI <b>chat</b> (paste it first, before your questions, so answers match the book&rsquo;s symbols and conventions; paste it again in a new chat). Or <b>save the Markdown file</b> into a <b>code</b> project so an editor assistant reads the same conventions automatically. Same content, two uses.</p>
+<p class="warn"><b>Long-paste warning.</b> Some chat input boxes silently cut off very long pastes, and this primer is ~1,200 words. It ends with a line reading <code>END OF NOTATION PRIMER</code> and asks the assistant to confirm it received that line. If the assistant reports the paste was truncated (or can&rsquo;t echo the conventions), paste it in two halves, or attach it as a <code>.txt</code> file. Pasting into a plain text editor first is a quick way to see the whole thing copied.</p>
+<h2 id="conventions">Conventions</h2>
+<p class="legend">Items marked <span class="swatch">&bull;</span> are the ones an AI assistant is most likely to get wrong on its own &mdash; check these first in any reply. The same marking is used in <a href="#symbols">Symbols</a> below.</p>
+<ul class="conv">
+<li class="hi">A molar (per-mole) quantity is written with an UNDERBAR, a specific (per-unit-mass) quantity with a CARET, and a total (extensive) quantity with a PLAIN symbol. Example: $\underline{U}$ is molar internal energy, $\hat{U}$ is specific internal energy, $U$ is total internal energy. An OVERBAR is reserved for a PARTIAL MOLAR property of a species in a mixture (introduced in Ch.8), e.g. $\bar{U}_i$ — never use an overbar for a plain molar quantity.</li>
+<li class="hi">Intensive variables are independent of system size ($T$, $P$, and any specific or molar property); extensive variables scale with the amount of material ($M$, $V$, total $U$). A state variable is an intensive property. Dividing an extensive property by mass or moles gives the corresponding specific or molar (intensive) property.</li>
+<li>A stable equilibrium state of a single-component, single-phase fluid (no external fields) is fixed by its mass plus two independent intensive state variables; all other intensive properties then follow (Eq. 1.6-1).</li>
+<li>Temperature $T$ is absolute (kelvin) and pressure $P$ is absolute, not gauge.</li>
+<li>Heat is energy transferred because of a temperature difference; work is energy transferred by mechanical motion of or across the boundary, and electrical-energy flow is treated as work. Thermal energy = internal energy and heat; mechanical energy = mechanical and electrical work. Only part of thermal energy can be recovered as work (irreversibility).</li>
+<li>A closed system has no mass flow across its boundary (an open system does); an isolated system exchanges neither mass nor energy; an adiabatic system has no heat flow; a steady-state system may have flows but its properties do not change in time; a cyclic process returns the system to the same state each cycle.</li>
+<li>SI units, per the 2019 redefinition (Table 1.2-1). Specific quantities are per kilogram (e.g. $\hat{H}$ in J/kg) or molar (e.g. $\underline{H}$ in J/mol); mass is in kg, temperature in K, energy in J, and pressure in kPa or bar. $R = 8.314\ \text{J/(mol·K)}$.</li>
+<li class="hi">An overdot denotes a rate (per unit time): $\dot{M}$ is a mass flow rate, $\dot{N}$ a molar flow rate.</li>
+<li>Subscript $k$ indexes a mass-flow port (stream/location); $\sum_{k=1}^{K}$ runs over all $K$ ports. A flow term is positive when mass flows INTO the system.</li>
+<li class="hi">Work is positive when done ON the system. $W$, $\dot{W}$, $W_s$, $\dot{W}_s$ and the heat terms $Q$, $\dot{Q}$ are all positive when energy flows INTO the system. This matches the major chemical-engineering texts (Koretsky; Smith, Van Ness & Abbott, 7th edition onward). It is OPPOSITE to the mechanical-engineering and physics convention, in which work is positive when done BY the system — a default a general-purpose model may fall back on. Do not flip the signs.</li>
+<li class="hi">A superscript asterisk ($^{*}$) denotes an ideal-gas property, e.g. $C_P^{*}$, $C_V^{*}$.</li>
+<li>The operators $\Delta_{\text{fus}}$, $\Delta_{\text{sub}}$, $\Delta_{\text{vap}}$ denote phase-change differences (fusion/melting, sublimation, vaporization).</li>
+<li>Enthalpy combines internal energy and flow work; per unit mass $\hat{H} = \hat{U} + P\hat{V}$. The $P\hat{V}$ term is the work a flowing stream does on the fluid ahead of it.</li>
+<li class="hi">The second law is stated in this book as $S_{\text{gen}} \ge 0$: the rate of entropy generation $\dot{S}_{\text{gen}} \ge 0$ in every real process, equal to zero only for a reversible process and at equilibrium. This entropy-generation form is the axiom the book uses — NOT "the entropy of the universe increases" and not a word-statement of Clausius or Kelvin–Planck. The Clausius and Kelvin–Planck statements are shown to FOLLOW from $S_{\text{gen}} \ge 0$ (Illustrations 4.1-1, 4.1-2), so do not treat them as the starting axiom.</li>
+<li class="hi">In the entropy balance the entropy carried by heat is $\dot{Q}/T$, where $T$ is the absolute temperature of the system AT the boundary where the heat crosses (not the temperature of a distant reservoir). For several heat-flow ports, replace $\dot{Q}/T$ by $\sum_j \dot{Q}_j/T_j$. The sign of $\dot{Q}$ follows Chapter 3: positive when heat flows INTO the system.</li>
+<li class="hi">A process is reversible when $\dot{S}_{\text{gen}} = 0$ (infinitesimal internal gradients; no viscous dissipation and no finite-temperature-difference heat flow). Reversible operation gives the MAXIMUM work obtainable from — or the MINIMUM work required for — a given change of state; it is the bound against which real devices are measured. "Reversible" is not a synonym for "adiabatic" ($\dot{Q}=0$) or "isentropic": an adiabatic reversible process is isentropic, but an adiabatic irreversible one is not.</li>
+<li>Helmholtz energy $A \equiv U - TS$ (Eq. 4.2-6) and Gibbs energy $G \equiv H - TS = U + PV - TS$ (Eq. 4.2-8); both are state functions. Use these definitions — $A$ is $U-TS$, not $U+PV$.</li>
+<li>This book writes molar (per-mole) quantities with an UNDERBAR ($\underline{S}$, $\underline{G}$, $\underline{A}$). An OVERBAR is NOT a molar quantity here — it is reserved for the partial molar property of a species in a mixture (Ch.8). If another source writes a plain per-mole quantity with an overbar, map it to this book's underbar; it means the same thing (per mole), just a different accent.</li>
+<li>The symbol $T_R$ here denotes the absolute temperature of a radiation-EMITTING body (Eq. 4.1-10). In Chapter 3, $T_R$ meant a reference temperature for $U$ or $H$. Same symbol, different meaning — disambiguate by context. Radiative heat transfer is rarely used in this book.</li>
+</ul>
+<h2 id="symbols">Symbols</h2>
+<p class="legend">Rows marked <span class="swatch swatch-rule">&nbsp;</span> are the symbols most often confused with something else &mdash; verify these in any AI reply.</p>
+<table>
+<tr><td class="sym">\(M\)</td><td>mass <span class="pill">kg</span></td></tr>
+<tr><td class="sym">\(N\)</td><td>number of moles <span class="pill">mol</span></td></tr>
+<tr><td class="sym">\(P\)</td><td>absolute pressure <span class="pill">kPa or bar</span></td></tr>
+<tr><td class="sym">\(R\)</td><td>gas constant <span class="pill">J/(mol·K)</span></td></tr>
+<tr><td class="sym">\(T\)</td><td>absolute temperature <span class="pill">K</span></td></tr>
+<tr><td class="sym">\(U\)</td><td>internal energy (total) <span class="pill">J</span></td></tr>
+<tr><td class="sym">\(\underline{U}\)</td><td>molar internal energy <span class="pill">J/mol</span></td></tr>
+<tr><td class="sym">\(\hat{U}\)</td><td>specific internal energy <span class="pill">J/kg</span></td></tr>
+<tr><td class="sym">\(V\)</td><td>volume (total) <span class="pill">m^3</span></td></tr>
+<tr><td class="sym">\(\underline{V}\)</td><td>molar volume <span class="pill">m^3/mol</span></td></tr>
+<tr><td class="sym">\(\hat{V}\)</td><td>specific volume (per unit mass) <span class="pill">m^3/kg</span></td></tr>
+<tr><td class="sym">\(\theta\)</td><td>general extensive (balance) quantity <span class="pill">varies</span></td></tr>
+<tr><td class="sym">\(M_i\)</td><td>mass of species $i$ <span class="pill">kg</span></td></tr>
+<tr><td class="sym">\(\dot{M}_k\)</td><td>mass flow rate at port $k$ <span class="pill">kg/s</span></td></tr>
+<tr><td class="sym">\((\dot{M}_i)_k\)</td><td>mass flow rate of species $i$ at port $k$ <span class="pill">kg/s</span></td></tr>
+<tr><td class="sym">\(N_i\)</td><td>moles of species $i$ <span class="pill">mol</span></td></tr>
+<tr><td class="sym">\(\dot{N}_k\)</td><td>molar flow rate at port $k$ <span class="pill">mol/s</span></td></tr>
+<tr><td class="sym">\((\dot{N}_i)_k\)</td><td>molar flow rate of species $i$ at port $k$ <span class="pill">mol/s</span></td></tr>
+<tr><td class="sym">\(t\)</td><td>time <span class="pill">s</span></td></tr>
+<tr><td class="sym">\(x\)</td><td>set of mole fractions $\{x_1, x_2, \dots\}$ <span class="pill">-</span></td></tr>
+<tr class="hi"><td class="sym">\(X\)</td><td>molar extent of reaction (NOTE: not mole fraction) <span class="pill">mol</span></td></tr>
+<tr><td class="sym">\(\nu_i\)</td><td>stoichiometric coefficient of species $i$ (negative for reactants) <span class="pill">-</span></td></tr>
+<tr><td class="sym">\(C_P\)</td><td>constant-pressure molar heat capacity <span class="pill">J/(mol·K)</span></td></tr>
+<tr><td class="sym">\(C_P^{*}\)</td><td>ideal-gas constant-pressure molar heat capacity <span class="pill">J/(mol·K)</span></td></tr>
+<tr><td class="sym">\(C_V\)</td><td>constant-volume molar heat capacity <span class="pill">J/(mol·K)</span></td></tr>
+<tr><td class="sym">\(C_V^{*}\)</td><td>ideal-gas constant-volume molar heat capacity <span class="pill">J/(mol·K)</span></td></tr>
+<tr><td class="sym">\(H\)</td><td>enthalpy (total) <span class="pill">J</span></td></tr>
+<tr class="hi"><td class="sym">\(\underline{H}\)</td><td>molar enthalpy <span class="pill">J/mol</span></td></tr>
+<tr class="hi"><td class="sym">\(\hat{H}\)</td><td>specific enthalpy (per unit mass) <span class="pill">J/kg</span></td></tr>
+<tr><td class="sym">\(\Delta_{\text{fus}}\underline{H}\)</td><td>molar enthalpy of fusion (melting) <span class="pill">J/mol</span></td></tr>
+<tr><td class="sym">\(\Delta_{\text{sub}}\underline{H}\)</td><td>molar enthalpy of sublimation <span class="pill">J/mol</span></td></tr>
+<tr><td class="sym">\(\Delta_{\text{vap}}\underline{H}\)</td><td>molar enthalpy of vaporization <span class="pill">J/mol</span></td></tr>
+<tr><td class="sym">\(\Delta_{\text{vap}}\hat{H}\)</td><td>specific enthalpy of vaporization <span class="pill">J/kg</span></td></tr>
+<tr><td class="sym">\(\dot{Q}\)</td><td>rate of heat flow into the system <span class="pill">J/s</span></td></tr>
+<tr><td class="sym">\(Q\)</td><td>heat that has flowed into the system <span class="pill">J</span></td></tr>
+<tr><td class="sym">\(T_R\)</td><td>reference temperature for $U$ or $H$ <span class="pill">K</span></td></tr>
+<tr><td class="sym">\(v\)</td><td>center-of-mass velocity of a stream <span class="pill">m/s</span></td></tr>
+<tr class="hi"><td class="sym">\(\dot{W}\)</td><td>rate of work done ON the system <span class="pill">J/s</span></td></tr>
+<tr class="hi"><td class="sym">\(W\)</td><td>work done ON the system <span class="pill">J</span></td></tr>
+<tr><td class="sym">\(W_s\)</td><td>shaft work done ON the system <span class="pill">J</span></td></tr>
+<tr><td class="sym">\(\dot{W}_s\)</td><td>rate of shaft work done ON the system <span class="pill">J/s</span></td></tr>
+<tr><td class="sym">\(\psi\)</td><td>potential energy per unit mass <span class="pill">J/kg</span></td></tr>
+<tr><td class="sym">\(\omega^{\mathrm{I}}\)</td><td>mass fraction of phase I (quality, for steam) <span class="pill">-</span></td></tr>
+<tr><td class="sym">\(S\)</td><td>entropy (total) <span class="pill">J/K</span></td></tr>
+<tr class="hi"><td class="sym">\(\underline{S}\)</td><td>molar entropy <span class="pill">J/(mol·K)</span></td></tr>
+<tr class="hi"><td class="sym">\(\hat{S}\)</td><td>specific entropy (per unit mass) <span class="pill">J/(kg·K)</span></td></tr>
+<tr class="hi"><td class="sym">\(\dot{S}_{\text{gen}}\)</td><td>rate of entropy generation within the system ($\ge 0$) <span class="pill">J/(K·s)</span></td></tr>
+<tr class="hi"><td class="sym">\(S_{\text{gen}}\)</td><td>total entropy generated over the interval ($\ge 0$) <span class="pill">J/K</span></td></tr>
+<tr><td class="sym">\(A\)</td><td>Helmholtz energy (total), $A \equiv U - TS$ <span class="pill">J</span></td></tr>
+<tr><td class="sym">\(\underline{A}\)</td><td>molar Helmholtz energy <span class="pill">J/mol</span></td></tr>
+<tr><td class="sym">\(G\)</td><td>Gibbs energy (total), $G \equiv H - TS = U + PV - TS$ <span class="pill">J</span></td></tr>
+<tr><td class="sym">\(\underline{G}\)</td><td>molar Gibbs energy <span class="pill">J/mol</span></td></tr>
+<tr><td class="sym">\(\hat{G}\)</td><td>specific Gibbs energy (per unit mass) <span class="pill">J/kg</span></td></tr>
+<tr><td class="sym">\(\mathcal{A},\ \mathcal{B}\)</td><td>availability (maximum useful shaft work for a change of state) <span class="pill">J</span></td></tr>
+<tr><td class="sym">\(W_s^{\text{rev}}\)</td><td>shaft work in a reversible process <span class="pill">J</span></td></tr>
+<tr><td class="sym">\(W^{\text{rev}}\)</td><td>work in a reversible process <span class="pill">J</span></td></tr>
+<tr><td class="sym">\(\gamma\)</td><td>heat-capacity ratio $C_P/C_V$ <span class="pill">-</span></td></tr>
+<tr><td class="sym">\(\dot{Q}_R\)</td><td>radiant heat flux (Stefan–Boltzmann radiation) <span class="pill">J/s</span></td></tr>
+<tr><td class="sym">\(T_R\)</td><td>temperature of the body emitting radiation (reuses the Ch.3 symbol $T_R$) <span class="pill">K</span></td></tr>
+</table>
+<h2 id="equations">Governing equations</h2>
+<div class="eq"><b>(1.6-1) Equation-of-state / state-variable relation</b>\[P = P(T, \hat{V}) \qquad \hat{U} = \hat{U}(T, \hat{V})\]<div class="note">For a single-phase pure fluid, fixing two intensive state variables (here $T$ and $\hat{V}$) fixes all the others; the explicit functional forms are the equations of state developed in later chapters.</div></div>
+<div class="eq"><b>(2.1-4) General balance equation</b>\[\dfrac{d\theta}{dt} = \dot{\theta}_{\text{in}} - \dot{\theta}_{\text{out}} + \dot{\theta}_{\text{gen}}\]<div class="note">Master balance for any extensive $\theta$. Mass (this chapter), energy (Ch.3), and entropy (Ch.4) are special cases. The generation term is zero for conserved quantities.</div></div>
+<div class="eq"><b>(2.2-1a) Rate-of-change mass balance (mass basis)</b>\[\dfrac{dM}{dt} = \sum_{k=1}^{K} \dot{M}_k\]<div class="note">Pure-fluid total mass balance; no generation (mass is conserved).</div></div>
+<div class="eq"><b>(2.2-2) Rate-of-change mass balance (molar basis)</b>\[\dfrac{dN}{dt} = \sum_{k=1}^{K} \dot{N}_k\]<div class="note">Same balance on a molar basis, for a pure fluid with no reaction.</div></div>
+<div class="eq"><b>(2.2-4) Difference (integral) mass balance</b>\[M(t_2) - M(t_1) = \sum_{k=1}^{K} \Delta M_k\]<div class="note">Obtained by integrating the rate balance over $[t_1, t_2]$.</div></div>
+<div class="eq"><b>(2.2-5) Difference mass balance, steady flows</b>\[M(t_2) - M(t_1) = \sum_{k=1}^{K} \dot{M}_k\,\Delta t\]<div class="note">Special case of 2.2-4 when the mass flow rates are independent of time.</div></div>
+<div class="eq"><b>(2.3-1) Species mole balance with reaction</b>\[\dfrac{dN_i}{dt} = \sum_{k=1}^{K} (\dot{N}_i)_k + \left(\dfrac{dN_i}{dt}\right)_{\text{rxn}}\]<div class="note">The reaction term is $\nu_i\,\dot{X}$, where $X$ is the molar extent of reaction; positive = produced, negative = consumed.</div></div>
+<div class="eq"><b>(3.1-3) Work due to boundary movement</b>\[\dot{W} = -P\,\dfrac{dV}{dt}\]<div class="note">Sign follows the work convention: compression ($dV/dt<0$) gives positive work done ON the system; expansion gives negative.</div></div>
+<div class="eq"><b>(3.1-4) General energy balance (open system)</b>\[\dfrac{d}{dt}\!\left[U + M\!\left(\tfrac{v^2}{2}+\psi\right)\right] = \sum_{k=1}^{K}\dot{M}_k\!\left(\hat{U}+\tfrac{v^2}{2}+\psi\right)_k + \dot{Q} + \dot{W}_s - P\dfrac{dV}{dt} + \sum_{k=1}^{K}\dot{M}_k (P\hat{V})_k\]<div class="note">Combining the flow-energy term $\hat{U}$ with the flow-work term $P\hat{V}$ into $\hat{H}=\hat{U}+P\hat{V}$ gives the compact enthalpy form (Eq. 3.1-5) used in practice.</div></div>
+<div class="eq"><b>(3.1-6) Difference (integral) energy balance</b>\[\left[U + M\!\left(\tfrac{v^2}{2}+\psi\right)\right]_{t_2} - \left[U + M\!\left(\tfrac{v^2}{2}+\psi\right)\right]_{t_1} = \sum_{k=1}^{K}\int_{t_1}^{t_2}\!\dot{M}_k\!\left(\hat{H}+\tfrac{v^2}{2}+\psi\right)_k dt + Q + W\]<div class="note">Integrated over $[t_1,t_2]$, with $Q=\int\dot{Q}\,dt$ and $W = W_s - \int P\,dV$.</div></div>
+<div class="eq"><b>(3.1-8) Simplified differential energy balance</b>\[\dfrac{dU}{dt} = \hat{H}\,\dfrac{dM}{dt} + \dot{Q} - P\dfrac{dV}{dt}\]<div class="note">Single stream, negligible kinetic and potential energy, no shaft work. $\hat{H}$ is the specific enthalpy of the stream entering or leaving.</div></div>
+<div class="eq"><b>(3.1-9a) Differential energy balance over $dt$</b>\[dU = \hat{H}\,dM + Q - P\,dV\]<div class="note">For a closed system $dM = 0$, so $dU = Q - P\,dV$.</div></div>
+<div class="eq"><b>(4.1-5a) Entropy balance, open system (the second law)</b>\[\dfrac{dS}{dt} = \sum_{k=1}^{K}\dot{M}_k\hat{S}_k + \dfrac{\dot{Q}}{T} + \dot{S}_{\text{gen}}\]<div class="note">The third balance equation, specializing the general balance (Eq. 2.1-4) with a non-zero generation term. Terms: convected entropy of the mass flows, entropy flow $\dot{Q}/T$ accompanying heat, and internal generation $\dot{S}_{\text{gen}} \ge 0$. On a molar basis replace $\dot{M}_k\hat{S}_k$ by $\dot{N}_k\underline{S}_k$.</div></div>
+<div class="eq"><b>(4.1-5b) Entropy balance, closed system</b>\[\dfrac{dS}{dt} = \dfrac{\dot{Q}}{T} + \dot{S}_{\text{gen}}\]<div class="note">Set all $\dot{M}_k = 0$ in Eq. 4.1-5a. For a closed system entropy changes only through heat flow and internal generation.</div></div>
+<div class="eq"><b>(4.1-5c) Second-law axiom and equilibrium condition</b>\[S_{\text{gen}} \ge 0, \qquad \dfrac{dS}{dt} = 0 \ \text{at equilibrium}\]<div class="note">The defining statement of the second law used throughout the book. $\dot{S}_{\text{gen}} = 0$ only for a reversible process; entropy is a maximum at equilibrium in an isolated, constant-volume system.</div></div>
+<div class="eq"><b>(4.1-9) Difference (integral) entropy balance</b>\[S_2 - S_1 = \sum_{k}\int_{t_1}^{t_2}\dot{M}_k\hat{S}_k\,dt + \int_{t_1}^{t_2}\dfrac{\dot{Q}}{T}\,dt + S_{\text{gen}}\]<div class="note">Integrated over $[t_1,t_2]$, with $S_{\text{gen}} = \int_{t_1}^{t_2}\dot{S}_{\text{gen}}\,dt \ge 0$. If each stream's entropy is constant the flow term becomes $\sum_k \underline{S}_k\,\Delta N_k$; if $T$ is constant at the heat-flow port the heat term becomes $Q/T$.</div></div>
+<div class="eq"><b>(4.2-6) Definition of the Helmholtz energy</b>\[A \equiv U - TS\]<div class="note">A state function. The reversible work at constant $N$, $V$, $T$ equals $\Delta A$ (Eq. 4.2-7); a real (irreversible) process needs $\Delta A + TS_{\text{gen}}$.</div></div>
+<div class="eq"><b>(4.2-8) Definition of the Gibbs energy</b>\[G \equiv U + PV - TS = H - TS\]<div class="note">A state function. The reversible shaft work at constant $N$, $P$, $T$ equals $\Delta G$. $TS_{\text{gen}}$ is the mechanical energy dissipated to thermal energy by irreversibilities.</div></div>
+<div class="eq"><b>(4.2-13b) Fundamental relation (closed system)</b>\[dU = T\,dS - P\,dV\]<div class="note">The differential internal-energy change for a closed system, valid for any process (reversible or not) since it relates state functions only. The open-system form is $dU = T\,dS - P\,dV + \hat{G}\,dM$ (Eq. 4.2-13a). Basis for computing entropy changes of real fluids in Ch.6.</div></div>
+<div class="eq"><b>(4.3-4) Maximum work from a heat engine (reversible)</b>\[-W = Q_1\left(\dfrac{T_1 - T_2}{T_1}\right)\]<div class="note">Work done BY a cyclic/steady engine drawing heat $Q_1$ at $T_1$ and rejecting at $T_2$, in the reversible limit $S_{\text{gen}}=0$. Real engines produce less: $-W = Q_1(T_1-T_2)/T_1 - T_2 S_{\text{gen}}$ (Eq. 4.3-3).</div></div>
+<div class="eq"><b>(4.3-5) Carnot (maximum) engine efficiency</b>\[\eta = \dfrac{-W}{Q_1} = \dfrac{T_1 - T_2}{T_1}\]<div class="note">Depends only on the absolute temperature levels, not the working fluid or design. An upper bound; real engines reach roughly half this. $T_2 = 0$ would be required to convert all heat to work — impossible.</div></div>
+<div class="eq"><b>(4.4-3) Ideal-gas entropy change with $T$ and $P$ (constant $C_P^{*}$)</b>\[\underline{S}(T_2,P_2) - \underline{S}(T_1,P_1) = C_P^{*}\ln\!\left(\dfrac{T_2}{T_1}\right) - R\ln\!\left(\dfrac{P_2}{P_1}\right)\]<div class="note">The most-used entropy-change formula. Note the MINUS sign on the pressure term (entropy falls as pressure rises at fixed $T$). Uses the ideal-gas heat capacity $C_P^{*}$ from Ch.3; for temperature-dependent $C_P^{*}$ the term becomes $\int C_P^{*}\,dT/T$.</div></div>
+<div class="eq"><b>(4.4-2) Ideal-gas entropy change with $T$ and $V$ (constant $C_V^{*}$)</b>\[\underline{S}(T_2,\underline{V}_2) - \underline{S}(T_1,\underline{V}_1) = C_V^{*}\ln\!\left(\dfrac{T_2}{T_1}\right) + R\ln\!\left(\dfrac{\underline{V}_2}{\underline{V}_1}\right)\]<div class="note">Companion of Eq. 4.4-3 in the $(T,\underline{V})$ variables; here the volume term is POSITIVE. Related by the ideal-gas law and $C_P^{*} = C_V^{*} + R$.</div></div>
+<div class="eq"><b>(4.4-6) Entropy change of a solid or liquid</b>\[\underline{S}(T_2) - \underline{S}(T_1) = \int_{T_1}^{T_2} C_P\,\dfrac{dT}{T}\]<div class="note">For a solid or liquid the molar volume is nearly independent of $T$ and $P$ (so the $P\,d\underline{V}$ term drops) and $C_V \approx C_P$. For constant $C_P$ this is $C_P\ln(T_2/T_1)$.</div></div>
+<h2 id="prompts">Study prompts</h2>
+<p>The AI <b>study prompts</b> (check-my-setup, hint-don&rsquo;t-solve, quiz-me, &hellip;) are the same for every chapter, so they are collected on one page: <a href="study-prompts.html"><b>Study prompts</b></a>. Copy this chapter&rsquo;s notation primer into your chat first, then use any of them.</p>
+<h2 id="codes">Codes for this chapter</h2>
+<p>Python scripts and Jupyter notebooks for this chapter. <b>Each one has its own page</b> &mdash; open it to view the notebook, run it in Colab, or download the <code>.ipynb</code>. That page is also where the QR code in the margin of the printed book takes you.</p>
+<p class="hint"><b>Or take the whole toolkit at once.</b> <a href="https://github.com/emfurst/cbet6e"><code>git clone</code> the code repository</a> and you have every chapter&rsquo;s notebooks, the <code>thermo</code> package, the property data, and the notation files in one directory &mdash; then <code>git pull</code> to pick up corrections. This is the best setup for working with an AI coding assistant, and the one the <code>thermo</code>-package notebooks assume. See <a href="getting-started.html">Getting started</a>.</p>
+<p class="hint">Chapter codes (Python scripts and Jupyter notebooks) will be listed here as they are ported.</p>
+<h3>Aspen Plus® simulations</h3>
+<p class="hint">The Aspen Plus® simulation files that accompany this chapter’s illustrations. Opening them needs Aspen Plus®; each page also lists the spreadsheet of results, which you can read without it.</p>
+<ul class="aspen">
+<li><a href="res/a4.4-1.html">Illustration 4.4-1 — Calculation of Entropy Generation for a Process</a> <span class="hint">water</span></li>
+<li><a href="res/a4.4-2.html">Illustration 4.4-2 — Illustration 3.4-1 Continued</a> <span class="hint">water</span></li>
+<li><a href="res/a4.5-1.html">Illustration 4.5-1 — Illustration 3.4-4 Continued, Using the Entropy Balance</a> <span class="hint">air &middot; IDEAL</span></li>
+</ul>
+<script>function copyEl(id,b){const t=document.getElementById(id).textContent;navigator.clipboard.writeText(t).then(()=>{const o=b.textContent;b.textContent="Copied \u2713";setTimeout(()=>b.textContent=o,1500)})}function saveEl(id,name){const t=document.getElementById(id).textContent;const u=URL.createObjectURL(new Blob([t],{type:"text/markdown"}));const a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}</script>
+<!-- Generated from 6e_companion_site/source by build.py. Do not edit generated HTML by hand; edit the source and rebuild. -->
+<footer>Thermodynamics companion site · <a href="https://www.wiley.com/en-us/-p-9781119321286">Sandler and Furst, &quot;Chemical, Biochemical, and Engineering Thermodynamics,&quot; 6e</a></footer>
+</body></html>

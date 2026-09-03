@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thermodynamics companion site — CBET 6e</title>
+<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]}};</script>
+<script async src="vendor/mathjax/tex-mml-svg.js"></script>
+<style>
+ body{font:16px/1.55 -apple-system,Segoe UI,Roboto,sans-serif;max-width:60rem;margin:2rem auto;padding:0 1rem;color:#1a1a1a}
+ h1{margin-bottom:.2rem} .sub{color:#666;margin-top:0}
+ nav a{margin-right:1rem} .pill{background:#eef;border-radius:1rem;padding:.1rem .6rem;font-size:.8rem}
+ /* `priority: high` items — the conventions an assistant most often gets wrong.
+    A faint tint plus an amber marker/rule, not a highlighter-pen fill: the flag
+    has to read as an annotation, not as broken row striping. */
+ .hi{background:#fff8ea}
+ li.hi::marker{color:#c07f0a}
+ ul.conv{padding-left:1.6rem} ul.conv li{padding:.2rem .5rem;margin:.35rem 0}
+ /* reserve the rule's width on every row so flagged rows don't shift 3px right */
+ tr td:first-child{border-left:3px solid transparent}
+ tr.hi td:first-child{border-left-color:#dda63f}
+ .legend{font-size:.85rem;color:#666;margin:.2rem 0 .7rem}
+ /* each legend swatch mimics its own section's cue: an amber bullet for the
+    conventions list, an amber left rule for the symbols table */
+ .swatch{display:inline-block;background:#fff8ea;padding:0 .25rem;color:#c07f0a}
+ .swatch-rule{border-left:3px solid #dda63f;padding:0 .3rem 0 .15rem}
+ table{border-collapse:collapse;width:100%}
+ td{border-bottom:1px solid #eee;padding:.35rem .5rem;vertical-align:top}
+ td.sym{width:9rem;white-space:nowrap} .eq{margin:.6rem 0;padding:.4rem .8rem;border-left:3px solid #ccd}
+ .eq .note{color:#555;font-size:.9rem} code{background:#f5f5f7;padding:.05rem .3rem;border-radius:.2rem}
+ .copy{display:inline-block;background:#2456d6;color:#fff;border:0;border-radius:.4rem;padding:.4rem .8rem;cursor:pointer;font-size:.9rem;text-decoration:none}
+ .copy:hover{background:#1840a8}
+ .ghost{display:inline-block;background:#fff;color:#2456d6;border:1px solid #2456d6;border-radius:.4rem;padding:.4rem .8rem;cursor:pointer;font-size:.9rem;text-decoration:none}
+ .ghost:hover{background:#eef2ff}
+ .actions{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.3rem 0}
+ /* Notebook-page action stack. Full-width tap targets because the commonest way
+    into these pages is a phone scanning a margin QR off the printed page. */
+ .btnstack{max-width:32rem;margin:1rem 0}
+ .btnstack a{display:block;padding:.85rem 1rem;margin:.5rem 0;border:1px solid #c9c9d0;
+      border-radius:.6rem;text-decoration:none;color:inherit;font-weight:600;background:#fff}
+ .btnstack a:hover{background:#f2f2f6;border-color:#2456d6}
+ .btnstack a .k{display:block;font-weight:400;font-size:.85rem;color:#666;margin-top:.1rem}
+ pre.raw{display:none} .prompt{border:1px solid #e3e3e8;border-radius:.5rem;padding:.8rem 1rem;margin:.7rem 0}
+ .prompt h4{margin:.1rem 0} .prompt pre{white-space:pre-wrap;background:#f7f7fa;padding:.6rem;border-radius:.4rem;font-size:.85rem}
+ .hint{background:#f0f4ff;border:1px solid #dde4ff;border-radius:.4rem;padding:.5rem .8rem;margin:.6rem 0;color:#334}
+ /* when .hint is itself a list, give the markers room INSIDE the tinted box —
+    otherwise list-style-position:outside puts 1./2./3. beyond the left border */
+ ol.hint,ul.hint{padding-left:2.1rem} ol.hint li,ul.hint li{margin:.3rem 0}
+ .warn{background:#fff4e5;border:1px solid #ffd9a8;border-radius:.4rem;padding:.5rem .8rem;margin:.6rem 0;color:#5c4300}
+ .toc{font-size:.9rem;margin:.2rem 0 1.2rem;color:#555} .toc a{margin-right:.35rem}
+ .check{color:#1a6} .fail{color:#b44} footer{color:#888;font-size:.85rem;margin-top:3rem;border-top:1px solid #eee;padding-top:1rem}
+</style></head><body>
+<h1>Chemical, Biochemical, and Engineering Thermodynamics Companion Site</h1>
+<p class="sub">Stanley I. Sandler and Eric M. Furst &middot; <a href="https://www.wiley.com/en-us/-p-9781119321286">the book at Wiley</a></p>
+<p>Resources for working with this textbook, in the book&rsquo;s own symbols, units, and conventions: a <b>scientific computing stack</b> for solving and exploring problems, and <b>AI study aids</b> for learning alongside chat assistants.</p>
+<h2>Start here</h2>
+<ul><li><a href="getting-started.html"><b>Getting started with Python &amp; Jupyter</b></a> &mdash; run the notebooks locally or in Google Colab (no install needed).</li><li><a href="using-ai.html"><b>How to use AI with this book</b></a> &mdash; a short, model-agnostic orientation for studying and computing with AI tools.</li><li><a href="study-prompts.html"><b>Study prompts</b></a> &mdash; tested, chapter-independent prompts (check-my-setup, hint-don&rsquo;t-solve, quiz-me, &hellip;) to use after pasting a chapter&rsquo;s notation primer.</li><li><a href="thermo.html"><b>The <code>thermo</code> package</b></a> &mdash; what the book&rsquo;s models look like in Python, module by module, with the full public API.</li></ul>
+<h2>What&rsquo;s here</h2>
+<ol><li><b>A scientific computing stack &mdash; for computing.</b> <b>Python</b> and <b>Jupyter notebooks</b>, the <code>thermo</code> package, and reference data for solving equations of state, fitting data, and plotting &mdash; a core engineering skill you use with or without AI. Run the notebooks on their own, or alongside an AI coding assistant in your editor (Claude Code, Copilot, Cursor) that can execute the cells. Each chapter&rsquo;s notebooks are listed on its page.</li><li><b>AI study aids &mdash; for studying.</b> Each chapter has a <b>notation primer</b> you paste into a chat assistant (Claude, ChatGPT, Gemini, and others) so it answers in this book&rsquo;s symbols, sign conventions, and equations, plus shared <a href="study-prompts.html"><b>study prompts</b></a> for explanations, quizzes, connecting ideas across chapters, and walking through an answer key.</li></ol>
+<p class="hint">Rule of thumb: <b>studying &rarr; grounded chat</b>; <b>computing &rarr; the scientific computing stack</b>. Always check AI output against a worked example, a limiting case, a units check, or a known data point.</p>
+<h2>Using the notation primer</h2>
+<ol><li>Open the chapter you are working on, from the list below.</li><li>Click <b>Copy notation primer for AI</b> and paste it into your chat as the first message.</li><li>Then ask your thermodynamics questions &mdash; or copy one of the <a href="study-prompts.html"><b>study prompts</b></a> and fill in the bracketed parts.</li><li>Starting a new chat? Paste the primer again first.</li></ol>
+<p class="warn"><b>Long-paste warning.</b> Some chat input boxes silently cut off very long pastes. The primer ends with a line reading <code>END OF NOTATION PRIMER</code> and asks the assistant to confirm it received that line &mdash; if it didn&rsquo;t, paste the primer in two halves or attach it as a file.</p>
+<h2>What&rsquo;s on each chapter page</h2>
+<p>Every chapter page has the same two parts:</p>
+<ul><li><b>AI grounding &mdash; notation, symbols, and governing equations.</b> A copy-ready <b>notation primer</b> (and a downloadable <code>chNN-notation.md</code> for coding assistants) that pins the chapter&rsquo;s conventions, symbols, and governing equations in the book&rsquo;s form. It is <b>cumulative</b> &mdash; it already includes earlier chapters&rsquo; notation, so you only need the page for the chapter you are in.</li><li><b>Codes.</b> The Python scripts and Jupyter notebooks relevant to that chapter, with direct download links.</li></ul>
+<p class="hint">The <a href="study-prompts.html"><b>study prompts</b></a> are the same for every chapter, so they have their own page rather than repeating on each &mdash; use them after pasting the chapter&rsquo;s notation primer.</p>
+<h2>Chapters</h2><ul>
+<li><a href="ch01.html">Chapter 1: Introduction</a></li>
+<li><a href="ch02.html">Chapter 2: Conservation of Mass</a></li>
+<li><a href="ch03.html">Chapter 3: Conservation of Energy</a></li>
+<li><a href="ch04.html">Chapter 4: Entropy: An Additional Balance Equation</a></li>
+<li><a href="ch05.html">Chapter 5: Liquefaction, Power Cycles, and Explosions</a></li>
+<li><a href="ch06.html">Chapter 6: The Thermodynamic Properties of Real Substances</a></li>
+<li><a href="ch07.html">Chapter 7: Equilibrium and Stability in One-Component Systems</a></li>
+<li><a href="ch08.html">Chapter 8: The Thermodynamics of Multicomponent Mixtures</a></li>
+<li><a href="ch09.html">Chapter 9: Estimation of the Gibbs Energy and Fugacity of a Component in a Mixture</a></li>
+<li><a href="ch10.html">Chapter 10: Vapor-Liquid Equilibrium in Mixtures</a></li>
+<li><a href="ch11.html">Chapter 11: Other Types of Phase Equilibria in Fluid Mixtures</a></li>
+<li><a href="ch12.html">Chapter 12: Mixture Phase Equilibria Involving Solids</a></li>
+<li><a href="ch13.html">Chapter 13: Chemical Equilibrium</a></li>
+<li><a href="ch14.html">Chapter 14: The Balance Equations for Chemical Reactors, Availability, and Electrochemistry</a></li>
+<li><a href="ch15.html">Chapter 15: Some Additional Biochemical Applications of Thermodynamics</a></li>
+</ul>
+<!-- Generated from 6e_companion_site/source by build.py. Do not edit generated HTML by hand; edit the source and rebuild. -->
+<footer>Thermodynamics companion site · <a href="https://www.wiley.com/en-us/-p-9781119321286">Sandler and Furst, &quot;Chemical, Biochemical, and Engineering Thermodynamics,&quot; 6e</a></footer>
+</body></html>
