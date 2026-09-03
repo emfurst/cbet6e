@@ -239,7 +239,7 @@ def ternary_axes(ax, *, top, left, right, ticks=0.2, minors=2, grid=True,
 
     # --- one axis label per edge, set outside it and turned to match ----------
     # Set well clear of the tick numbers (which sit at 0.55 pad) and of anything
-    # `read_construction` places (1.7 pad), because all three live on the same
+    # `read_construction` places (1.7 pad), because all three sit on the same
     # outward normals.
     if symbol:
         def _sub(name):

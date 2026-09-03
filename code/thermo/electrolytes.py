@@ -64,7 +64,7 @@ reduce to the limiting law. It then prints both the beta a and the delta forms w
 `alpha/3` where the derivation gives `alpha`, so as printed they are 3 times too small
 in the correction term and do *not* reduce to the printed limiting law. Carrying out
 the integration confirms the note: the second term is alpha|z+ z-| sqrt(I) sigma, and
-the factor of 3 lives in sigma, once.
+the factor of 3 is in sigma, once.
 
 The default here is therefore the derived form, and `as_printed=True` reproduces the
 printed one. Which is which is not a matter of taste, and the test does not require any

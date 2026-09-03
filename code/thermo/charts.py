@@ -10,8 +10,8 @@ WHY IT IS HERE. Figures 3.3-1(a), 3.3-1(b), 3.3-2 and 3.3-3 are chapter-3 figure
 but three more charts are *those charts with a process path drawn on them* and
 belong to other chapters: Figure 5.1-3 (the LNG liquefaction path), `c05uf001`
 (the Rankine cycle) and `c06uf002` (the cylinder-discharge window). A figure's
-notebook lives in the figure's own chapter (author, 2026-08-08), so the machinery
-they share cannot live in any one of them. Copied instead, it would be ~1,000
+notebook belongs to the figure's own chapter (author, 2026-08-08), so the machinery
+they share cannot sit in any one of them. Copied instead, it would be ~1,000
 lines duplicated three ways, and the moment a parent chart is redrawn the copies
 diverge silently -- which is the failure the recompute exists to prevent.
 

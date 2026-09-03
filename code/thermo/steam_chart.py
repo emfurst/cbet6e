@@ -32,6 +32,7 @@ the chart. Each is handled at the point it arises and commented there.
 """
 from __future__ import annotations
 
+import math
 import os
 
 import numpy as np
@@ -543,19 +544,42 @@ class SteamTables:
 MOLLIER_P = (P_TRIPLE, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05,
              0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 40.0, 60.0)
 
-# The unlabeled isobars between them. Isobars on a Mollier chart are spaced roughly
-# evenly in ln P, so a set that repeats the SAME pattern in every decade puts them at
-# the same pitch everywhere on the chart -- which is what lets a reader interpolate
-# between two labeled lines the same way wherever they are working. This is the
-# pattern the appendix itself uses between 1 and 10 MPa, where it is densest; below
-# 1 MPa the appendix thins out and `intermediate_isobar` fills the gaps.
-_DECADE_MINOR = (1.2, 1.4, 1.6, 1.8, 2.5, 3.0, 3.5, 4.0, 4.5, 6.0, 7.0, 8.0, 9.0)
+# The unlabeled isobars between them, on the R10 series of ISO preferred numbers.
+#
+# CHANGED 2026-09-02, after delivery, and the reason is measured rather than felt.
+# Until then this was the appendix's OWN superheat columns repeated per decade --
+# 1, 1.2, 1.4, 1.6, 1.8, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8, 9 -- chosen so that every
+# fine line on the chart is a pressure A.III also tabulates. That set is spaced
+# LINEARLY, and isobars on both of these projections are spaced LOGARITHMICALLY, so the
+# gap between neighbors fell by a factor of 2.1 across every decade and then started
+# over. On the page: fine bands from 1.31 to 3.39 mm on the Mollier chart (a 2.6-fold
+# swing) and from 0.82 to 2.38 mm on the temperature-entropy chart, where 0.82 mm is
+# tighter than print can separate. The count in a labeled band ran from 1 to 5, so a
+# reader who learned that a fine line is a fifth of a band was right in half of them.
+#
+# R10 is the fix because it is even in ln P AND round: 10 lines per decade at a ratio
+# of 10^(1/10), every one of them a preferred number, and 1, 2 and 5 fall ON the ladder
+# (N log10(2) = 3.01 and N log10(5) = 6.99 at N = 10), so the labeled set does not move.
+# Measured: 2.81 to 3.76 mm on the Mollier chart, a 1.33-fold swing, and 1.63 to 1.87 mm
+# on the T-S chart. The cost is half the lines and 11 of A.III's 26 columns below 10 MPa
+# no longer drawn -- 1.4, 3, 3.5, 6, 7 and 9 MPa among them, so a reader wanting one of
+# those interpolates. Author's decision; the measurement, the three rejected candidates
+# and the arithmetic are in `code/prototypes/Mollier_isobar_ladder_steam_prototype.ipynb`.
+_DECADE_MINOR = (1.25, 1.6, 2.5, 3.15, 4.0, 6.3, 8.0)   # R10 less the labeled 1, 2, 5
 MOLLIER_P_MINOR = tuple(
+    # A pattern line closer to the triple point than half a step is dropped: P_TRIPLE
+    # is itself a drawn line and 0.00063 would print on top of it. That is what leaves
+    # 0.0008 as the lowest fine line rather than 0.00063.
     sorted(P for k in range(-4, 1) for v in _DECADE_MINOR
-           for P in [round(v * 10.0 ** k, 12)] if P > P_TRIPLE)
-    # above 10 MPa the pattern is not interpolable (see `P_INTERP_MAX`), so these are
-    # the tabulated isobars the appendix happens to carry
-) + (12.5, 15.0, 17.5, 25.0, 30.0, 35.0, 50.0)
+           for P in [round(v * 10.0 ** k, 12)]
+           if math.log(P / P_TRIPLE) > math.log(10.0) / 20)
+    # Above 10 MPa the pattern is not interpolable (see `P_INTERP_MAX`), so these are
+    # the tabulated isobars the appendix happens to carry -- and R10's nearest
+    # available subset, which drops the 17.5 and 35 MPa lines the old set drew. Their
+    # steps are 0.18 to 0.29 in ln P against R10's 0.23, so the corner stays close to
+    # the pitch of the rest of the chart without inventing a curve the table cannot
+    # support.
+) + (12.5, 15.0, 25.0, 30.0, 50.0)
 
 MOLLIER_T = (100, 200, 300, 400, 500, 600, 700, 800)
 

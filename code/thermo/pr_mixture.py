@@ -160,7 +160,7 @@ class PRMixture(PhiPhiVLE):
         """Vector of component fugacities f_i = x_i phi_i P (Pa)."""
         return np.asarray(x, dtype=float) * self.phi(x, T, P, phase) * P
 
-    # --- the VLE drivers live in phi_phi.PhiPhiVLE ------------------------
+    # --- the VLE drivers are in phi_phi.PhiPhiVLE ------------------------
     # `bubble_pressure`, `dew_pressure`, `bubble_temperature`, `dew_temperature`
     # and `flash` are inherited. They were written here, but they touch this class
     # only through `components` and `phi`, so Chapter 10 shares them with the

@@ -9,7 +9,7 @@ and Sections 10.1 and 10.2 are **one procedure, not two**: Raoult's law is this 
 gamma = 1. That is why `Ideal` is a model here rather than a separate code path -- the
 book presents the ideal and nonideal calculations as different procedures, and they are
 not. Section 10.3 is the same procedure again with both fugacities from an equation of
-state; that lives in `pr_mixture.py`, and see WHAT MAKES THE DIAGRAMS SHARED below.
+state; that is in `pr_mixture.py`, and see WHAT MAKES THE DIAGRAMS SHARED below.
 
     from thermo import PengRobinson
     from thermo.vle import Antoine, ClausiusClapeyron, GammaPhi, Ideal, pxy, txy
@@ -34,7 +34,7 @@ deliberate. A saturation dome exists in order to be drawn. A VLE curve does not:
 Chapter 10 prints these numbers as *tables* (Illustration 10.1-1's x, y and P; the
 L = 1.0 -> 0.0 sweep of Illustration 10.1-5; Table 10.2-3, which Illustration 10.2-6
 generates). Notebooks that want the numbers and draw nothing must not have to import
-matplotlib to get them. The drawing lives in `thermo/vle_chart.py`, which is lazy.
+matplotlib to get them. The drawing is in `thermo/vle_chart.py`, which is lazy.
 
 ## Units
 
@@ -289,7 +289,7 @@ def psat_from_database(name, *, strict=True):
     caller asks for a species and gets back something with `.P(T)` in Pa, without
     having to know which of the three forms the table happened to use for it. With
     `strict`, a species whose fit does not cover the temperature you later ask for is
-    still returned; the range lives in `.Tmin`/`.Tmax` for the caller to check.
+    still returned; the range is in `.Tmin`/`.Tmax` for the caller to check.
 
         >>> hx = psat_from_database("n-hexane")
         >>> round(hx.P(333.15) / 1e5, 4)          # the book says 0.7583 bar at 60 C

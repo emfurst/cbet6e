@@ -223,7 +223,7 @@ bubble/dew/flash, and the curve generators `pxy`, `txy`, `azeotrope`.
 `txy_chart`, `xy_chart`, `tie_lines`, `mark_azeotrope`, `mccabe_thiele`. Lazily loaded,
 so `from thermo import GammaPhi` stays free of matplotlib.
 
-**Why the split is where it is.** The curve *generators* live in `vle.py`, in the
+**Why the split is where it is.** The curve *generators* are in `vle.py`, in the
 physics tier — the opposite of where `ph_chart.py` keeps `dome` and `isotherm`. A
 saturation dome exists in order to be drawn; a VLE curve does not. This chapter prints
 these numbers as **tables** (Illustration 10.1-1's *x*, *y*, *P*; Illustration 10.1-5's

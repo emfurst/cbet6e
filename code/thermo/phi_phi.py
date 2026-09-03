@@ -232,7 +232,7 @@ class PhiPhiVLE:
 
         Newton from the caller's guess is the fast path and handles the ordinary
         subcritical points. When it walks into a single-phase region -- which is
-        where the trivial root lives -- the residual there is NaN rather than
+        where the trivial root appears -- the residual there is NaN rather than
         zero, Newton gives up, and `_bracket` walks outward from the seed to find
         two points at which two phases *do* exist and the residual changes sign.
         Bisection inside that bracket cannot escape it, so the near-critical

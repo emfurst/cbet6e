@@ -584,7 +584,7 @@ on the Dortmund cyclic groups in the legacy `.mat` extraction.
 ## Property charts — `charts`, `ph_chart`, `steam_chart`
 
 Added 2026-08-08. The machinery behind the book's property charts, promoted out of the
-chapter-3 notebooks so that a figure's notebook can live in the figure's own chapter
+chapter-3 notebooks so that a figure's notebook can go in the figure's own chapter
 (author, 2026-08-08) without copying ~1,000 lines three ways.
 
 | module | what it holds | draws |
