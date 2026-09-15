@@ -9,8 +9,8 @@ liquids the pure-component fugacity still cancels, leaving SIS Eq. 11.4-4,
 What is thrown away is the *solvents'* equilibrium: the section assumes the mutual
 solubility of the two solvents is unchanged by the solute, either because the solvents
 are nearly immiscible or because so little solute was added. That assumption is the
-only difference between this module and `thermo.lle`, and it buys a great deal --
-Eq. 11.4-4 rearranges to Eq. 11.4-5,
+only difference between this module and `thermo.lle`, and it is what reduces the
+problem: Eq. 11.4-4 rearranges to Eq. 11.4-5,
 
     K_x = x_1^I / x_1^II = gamma_1^II / gamma_1^I
 
@@ -170,8 +170,8 @@ def kow_from_gamma(gamma_water_inf, equation="11.4-13"):
 def gamma_from_kow(Kow, equation="11.4-13"):
     """Invert `kow_from_gamma`: gamma_i^(W,inf) from a measured K_OW.
 
-    The paragraph after Eq. 11.4-13 is explicit that this is the point of the
-    correlation -- "knowing any one among the infinite-dilution activity coefficient,
+    The paragraph after Eq. 11.4-13 is explicit that this is what the correlation is
+    for -- "knowing any one among the infinite-dilution activity coefficient,
     octanol-water partition coefficient, and saturation solubility in water, the other
     two can be estimated." The third leg of that triangle is `lle.gamma_from_solubility`.
     """
@@ -195,7 +195,7 @@ def solute_split(n_solute, V_I, V_II, K):
     works in mol and mL.
 
     This is the calculation that decides whether a purification works, and the reason
-    it is worth writing down rather than doing in one's head is that the answer depends
+    to write it down rather than do it in one's head is that the answer depends
     on K and on the *volume ratio* together. A K of 65 still leaves 1.5 % of the solute
     behind when the phases have equal volume, which is why Problem 11.4-2 asks for the
     same extraction in several small batches instead of one large one.

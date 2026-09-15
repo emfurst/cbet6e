@@ -22,8 +22,8 @@ state; that is in `pr_mixture.py`, and see WHAT MAKES THE DIAGRAMS SHARED below.
 
 **WHAT MAKES THE DIAGRAMS SHARED.** Every solver below has the same name and the same
 signature as its counterpart on `PRMixture` -- `bubble_pressure(x, T) -> (P, y)`,
-`flash(z, T, P) -> (beta, x, y)`, and so on. That is deliberate and it is the whole
-reason `pxy` and `txy` at the bottom of this module take a *model* rather than being
+`flash(z, T, P) -> (beta, x, y)`, and so on. That is deliberate, and it is why `pxy`
+and `txy` at the bottom of this module take a *model* rather than being
 methods: they never learn whether they were handed a `GammaPhi` or a `PRMixture`, so
 Chapter 10's low-pressure diagrams and Section 10.3's high-pressure diagrams come out
 of one generator. It is the same trick as `ActivityModel.gamma(x, T)` in Chapter 9.
@@ -197,7 +197,7 @@ class ClausiusClapeyron(VaporPressure):
 
     This is what Illustration 10.1-1 prints, and the reason `B` is named `dHvap`
     is that in this form it *is* the enthalpy of vaporization in J/mol (SIS
-    Eq. 7.7-5a), which is worth having visible rather than buried as a fitted
+    Eq. 7.7-5a), so this form keeps it visible rather than buried as a fitted
     constant:
 
         >>> C5 = ClausiusClapeyron(10.422, 26799.0)     # n-pentane
@@ -250,7 +250,8 @@ class Riedel(VaporPressure):
     The last term contains the answer, so this one is solved rather than evaluated.
     Fixed-point iteration from the D = 0 estimate converges in a few passes over the
     range the table covers; it is the only one of the three forms that cannot be
-    written down explicitly, which is worth knowing before trusting a vectorized call.
+    written down explicitly, which a caller has to know before trusting a vectorized
+    call.
     """
 
     def __init__(self, A, B, C, D, *, unit=BAR):
@@ -264,7 +265,8 @@ class Riedel(VaporPressure):
         T = np.asarray(T, dtype=float)
         # The iteration is exponential in its own output, so a starting temperature
         # well outside the fit range can run away before it converges. Overflow is
-        # allowed to produce inf quietly and the caller sees a non-finite pressure --
+        # allowed to produce inf without raising, and the caller sees a non-finite
+        # pressure --
         # which `T_sat` already treats as "undefined here" -- rather than a screenful
         # of RuntimeWarnings in the middle of a notebook.
         with np.errstate(over="ignore", invalid="ignore"):
@@ -322,7 +324,7 @@ class TabulatedPsat(VaporPressure):
     Illustration 10.2-1 is the case: benzene and cyclohexane at 77.6 C are given as
     0.993 and 0.980 bar with no correlation, and the whole illustration is isothermal,
     so no temperature dependence is needed or available.  `T_sat` therefore cannot
-    work on this class and raises rather than returning a wrong answer quietly.
+    work on this class and raises rather than returning a wrong answer.
     """
 
     def __init__(self, P_value, T=None):
@@ -605,7 +607,7 @@ def azeotrope(model, T=None, P=None, bracket=(1e-6, 1.0 - 1e-6)):
     isobaric one (returns `(x1, T)`, T in K). Returns None when the residual y1 - x1
     does not change sign, i.e. there is no azeotrope in range.
 
-    Worth having as a function rather than read off a plot: Chapter 10 prints
+    A function rather than a value read off a plot, because Chapter 10 prints
     azeotropic compositions and pressures to three and four figures, and those printed
     values are checkable only if the crossing can be located numerically.
     It finds **one** crossing. The hexafluorobenzene-benzene system of Table 10.2-4

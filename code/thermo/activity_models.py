@@ -7,7 +7,8 @@ behind **one interface**:
     model.gamma(x, T)   ->  activity coefficients, dimensionless
     model.gex(x, T)     ->  molar excess Gibbs energy, J/mol
 
-That uniformity is the point of the module, not an accident of style. Section 9.11 --
+That uniformity is what the module exists to provide, not an accident of style.
+Section 9.11 --
 the payoff of the chapter -- is a pair of tables recommending one model over another
 for a given kind of mixture. With a common interface those recommendations can be
 *demonstrated*: the same data, the same call, seven curves. Without it they can only
@@ -92,7 +93,8 @@ for the activity coefficients, derived from it. Those two must satisfy
 exactly, at every composition -- and it is an *independent* check on the algebra,
 because the two printed expressions look nothing alike. `check_gibbs_duhem` runs it.
 It is how the UNIQUAC residual term in this module was verified against SIS
-Eqs. 9.5-21 and 9.5-23b, and it is worth running in a notebook rather than trusting:
+Eqs. 9.5-21 and 9.5-23b, and running it in a notebook is what settles it rather
+than trusting it:
 the same identity, applied to the 5e's own hand-drawn tangent construction in Table
 8.6-4, misses by up to 16 J/mol (see `fitting.py`).
 
@@ -322,7 +324,7 @@ class OneConstantMargules(ActivityModel):
         """Least squares on both species' RT ln gamma at once.
 
         One parameter against two curves, so the fit cannot follow both unless the
-        data really are symmetric -- which is the whole content of Illustration
+        data really are symmetric -- which is all that Illustration
         9.5-1's answer for this model.
         """
         x1 = np.asarray(x1, float)
@@ -480,8 +482,8 @@ class VanLaar(ActivityModel):
     with the temperature range over which each pair applies).
 
     When alpha = beta the model collapses to the one-constant Margules form
-    ln gamma_1 = alpha x2^2 -- the note printed under Table 9.5-1, and worth checking
-    in a notebook rather than believing:
+    ln gamma_1 = alpha x2^2 -- the note printed under Table 9.5-1. Check it
+    in a notebook rather than believing it:
 
         >>> vl, m = VanLaar(0.5, 0.5), OneConstantMargules(0.5 * R * 300.0)
         >>> bool(np.allclose(vl.gamma([0.3, 0.7], 300.0), m.gamma([0.3, 0.7], 300.0)))
@@ -644,7 +646,7 @@ class Wilson(ActivityModel):
         L_ii = 1. Dimensionless.
 
     **Wilson cannot predict liquid-liquid immiscibility** for any parameter values
-    -- the reason Chapter 11 reaches for NRTL or UNIQUAC instead. The model is not
+    -- the reason Chapter 11 uses NRTL or UNIQUAC instead. The model is not
     broken; the limitation is structural, and Sec. 9.11 says so.
 
     **One instance is one temperature** -- see the module docstring. Wilson is the

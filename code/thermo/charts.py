@@ -51,7 +51,14 @@ LW = {
     # tier. The minor isobars need none of this: at 0.25 gray they are near-black, and
     # separate from any grid tint on ink alone.
     "H_minor": 0.5,                # constant enthalpy  (T-S)
-    "T_minor_mollier": 0.55,       # isotherms          (Mollier)
+    # The Mollier minor isotherms are the EXCEPTION to the paragraph above, and the
+    # reason is that they stopped being gray. Drawn in GRAY_MINOR they had to be heavier
+    # than the grid to be told from it, and 0.55 pt was still not enough: on the printed
+    # chart they read as grid lines marking enthalpy (author, 2026-09-15). In black they
+    # separate on INK, which is what the minor isobars have always done -- so the weight
+    # can drop to the 0.3 a minor tier takes everywhere else in this table, and the
+    # family reads as fine lines rather than as a tone.
+    "T_minor_mollier": 0.3,        # isotherms          (Mollier), drawn BLACK
 }
 
 GRAY, GRAY_MINOR = "0.40", "0.62"
@@ -59,7 +66,7 @@ GRAY, GRAY_MINOR = "0.40", "0.62"
 # The grid is read as much as the curves are, so it gets the same two-tier
 # treatment: a labeled major division and five subdivisions inside it. Five is what
 # makes the subdivisions land on round numbers -- 0.5/5 = 0.1 kJ/(kg K) and
-# 100/5 = 20 kJ/kg -- which is the whole point of a grid you interpolate by eye.
+# 100/5 = 20 kJ/kg -- which is why a grid you interpolate by eye is divided this way.
 GRID_MAJOR = dict(color="0.70", lw=0.45)
 GRID_MINOR = dict(color="0.87", lw=0.25)
 
@@ -196,8 +203,8 @@ def label_end(ax, x, y, text, *, size=6.5, color="k", end="last", ha="left",
               pad=0.6):
     """Write `text` at the first or last point of the polyline inside the axes.
 
-    The fallback when a curve leaves the frame before reaching any height worth
-    labeling: put the value on the end of the line instead.
+    The fallback when a curve leaves the frame below the lowest labeled height:
+    put the value on the end of the line instead.
     """
     x, y = np.asarray(x, float), np.asarray(y, float)
     (xlo, xhi), (ylo, yhi) = sorted(ax.get_xlim()), sorted(ax.get_ylim())

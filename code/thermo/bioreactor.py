@@ -60,7 +60,7 @@ time, in a different order each time -- which is where the printed slips live
 Illustration 15.7-11's nitrogen balance as `Y_N/S = 0.15 * Y_N/S`). Here the four
 balances are assembled as `A y = b` over whichever factors are unknown and solved
 once, so the order never matters and an over- or under-specified problem **raises**
-instead of quietly returning one arbitrary solution of many.
+instead of returning one arbitrary solution of many with nothing to mark the choice.
 """
 from __future__ import annotations
 
@@ -80,7 +80,7 @@ _TOKEN = re.compile(r"([A-Z][a-z]?)(\d*\.?\d*)")
 
 
 def parse_formula(formula):
-    """{element: count} from a formula string. Fractional counts are the point.
+    """{element: count} from a formula string. Fractional counts are expected here.
 
     `CH1.8O0.5N0.2` is the Roels average biomass and is not a molecule -- it is an
     elemental analysis normalized to one carbon. A formula parser that insists on

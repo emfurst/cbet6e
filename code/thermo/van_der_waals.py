@@ -2,8 +2,8 @@
 
 The book's first cubic equation of state (SIS Eq. 6.4-1 and Sec. 7.3), refactored
 from `code/ch7/vapor_pressure_n_butane.ipynb` -- the notebook behind Figure 7.5-2,
-where the van der Waals vapor pressure is the control case that shows what the
-Peng-Robinson temperature dependence alpha(T) buys.
+where the van der Waals vapor pressure is the control case that shows how much of the
+accuracy comes from the Peng-Robinson temperature dependence alpha(T).
 
 The API mirrors `PengRobinson` so that one calculation can be handed either
 equation. In particular `a(T)` is a method here too, even though the van der Waals
@@ -32,8 +32,8 @@ class VanDerWaals(CubicEOS):
     ----------
     Tc, Pc : critical temperature (K) and pressure (Pa)
     omega  : accepted and stored for API symmetry with `PengRobinson`; the van
-             der Waals equation does not use the acentric factor, which is the
-             whole of its trouble with vapor pressure (Fig. 7.5-2, curve a)
+             der Waals equation does not use the acentric factor, which is why it
+             predicts vapor pressure poorly (Fig. 7.5-2, curve a)
     name   : optional label
     cp     : optional ideal-gas Cp coefficients (a, b, c, d), J/(mol K)
     """

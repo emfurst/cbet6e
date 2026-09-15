@@ -160,6 +160,80 @@ class PRMixture(PhiPhiVLE):
         """Vector of component fugacities f_i = x_i phi_i P (Pa)."""
         return np.asarray(x, dtype=float) * self.phi(x, T, P, phase) * P
 
+    # --- departure functions ---------------------------------------------
+    def dadT_mix(self, x, T):
+        """d a_mix / dT at fixed composition, in J m^3 / (mol^2 K).
+
+        The mixing rule is quadratic in the a_ij and k_ij carries no
+        temperature, so the derivative passes straight through it:
+
+            d a_ij / dT = (1 - k_ij) (a_i' a_j + a_i a_j') / (2 sqrt(a_i a_j))
+
+        and d a_mix / dT = sum_i sum_j x_i x_j (d a_ij / dT). Each pure a_i'(T)
+        comes from `PengRobinson.dadT`, which is exact for the PRSV kappa(T) as
+        well as for the standard one.
+        """
+        x = np.asarray(x, dtype=float)
+        a = self.a_pure(T)
+        da = np.array([c.dadT(T) for c in self.components])
+        d_aij = ((1.0 - self.kij) * (np.outer(da, a) + np.outer(a, da))
+                 / (2.0 * np.sqrt(np.outer(a, a))))
+        return float(x @ d_aij @ x)
+
+    def departure_H(self, x, T, P, phase="vapor"):
+        """(H - H_ideal-gas-mixture) at (T, P, x), J/mol -- SIS Eq. 10.3-8a.
+
+        This is the book's own printed equation, not a generalization of the
+        pure one: Section 10.3 sets it out as
+
+            H(T,P,x) - H_IGM(T,P,x) = RT(Z_mix - 1)
+                + [T (da_mix/dT) - a_mix] / (2 sqrt2 b_mix)
+                  ln[(Z_mix + (1+sqrt2) B_mix) / (Z_mix + (1-sqrt2) B_mix)]
+
+        which is the pure form (Eq. 6.4-29) with a, b and da/dT replaced by
+        their one-fluid mixture values -- and the 5e solution to Problem
+        10.3-4, which asks the student to derive Eq. 10.3-8, says exactly that:
+        "the derivation of Eqs. 10.3-8 is identical to the derivation of
+        eqns. 6.4-29 & 30." The mixture enters the cubic only through A and B,
+        so the integral that produces the departure is the same integral.
+
+        The reference is the IDEAL GAS MIXTURE at the same T, P and x -- the
+        book writes H_IGM and says so in the text below Eq. 10.3-8b. So this
+        carries no heat of mixing term, and
+        H_mix = sum_i x_i H_i^ideal-gas(T) + departure_H is the whole enthalpy
+        an energy balance needs.
+        """
+        _, B = self._AB(x, T, P)
+        Z = self.Z(x, T, P, phase)
+        return (R * T * (Z - 1)
+                + (T * self.dadT_mix(x, T) - self.a_mix(x, T))
+                / (2 * _SQRT2 * self.b_mix(x)) * self._log_term(Z, B))
+
+    def departure_S(self, x, T, P, phase="vapor"):
+        """(S - S_ideal-gas-mixture) at (T, P, x), J/(mol K) -- SIS Eq. 10.3-8b.
+
+        The companion of Eq. 10.3-8a above, the pure form (Eq. 6.4-30) with the
+        mixture a, b and da/dT.
+
+        The reference is again the ideal gas MIXTURE at the same T, P and x,
+        which already contains the ideal entropy of mixing. So the
+        -R sum_i x_i ln x_i term does NOT appear here, and putting it in would
+        count it twice: the full mixture entropy is
+
+            S_mix = sum_i x_i S_i^ideal-gas(T, P) - R sum_i x_i ln x_i
+                    + departure_S
+
+        with the mixing term supplied by the caller, alongside the ideal-gas
+        heat capacity integral. This is the same convention `ln_phi` already
+        uses, where f_i -> x_i P in the ideal limit, and the two are checked
+        against each other by G^dep = RT sum_i x_i ln phi_i = H^dep - T S^dep.
+        """
+        _, B = self._AB(x, T, P)
+        Z = self.Z(x, T, P, phase)
+        return (R * np.log(Z - B)
+                + self.dadT_mix(x, T) / (2 * _SQRT2 * self.b_mix(x))
+                * self._log_term(Z, B))
+
     # --- the VLE drivers are in phi_phi.PhiPhiVLE ------------------------
     # `bubble_pressure`, `dew_pressure`, `bubble_temperature`, `dew_temperature`
     # and `flash` are inherited. They were written here, but they touch this class

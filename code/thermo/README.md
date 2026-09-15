@@ -165,6 +165,9 @@ P, y = mix.bubble_pressure([0.4, 0.6], 373.15)          # bubble P (Pa) + incipi
 P, x = mix.dew_pressure([0.6, 0.4], 373.15)             # dew P (Pa) + incipient liquid
 T, y = mix.bubble_temperature([0.4, 0.6], 1.013e5)      # bubble T (K)
 beta, x, y = mix.flash([0.4, 0.6], 373.15, 1.064e5)     # isothermal flash: vapor frac + phases
+mix.departure_H([0.4, 0.6], 373.15, 1.1e5)              # H - H_IGM, J/mol   (SIS Eq. 10.3-8a)
+mix.departure_S([0.4, 0.6], 373.15, 1.1e5)              # S - S_IGM, J/(mol K)(SIS Eq. 10.3-8b)
+mix.dadT_mix([0.4, 0.6], 373.15)                        # d a_mix / dT at fixed composition
 ```
 
 van der Waals one-fluid mixing rules with binary interaction parameters `kij`
@@ -173,6 +176,48 @@ Chapter-10 φ–φ VLE drivers (bubble/dew P & T, Rachford–Rice flash). Verifi
 near-ideal benzene/toluene pair: bubble P within 0.3% of Raoult's law, equal
 component fugacities in both phases to ~1e-14, dew inverts the bubble exactly, and
 the flash mass balance closes with single-phase edges (β→0/1) correct.
+
+### Mixture departure functions
+
+**`departure_H` and `departure_S` are SIS Eqs. 10.3-8a and 10.3-8b**, the book's own
+printed mixture forms — the pure Eqs. 6.4-29/6.4-30 with $a$, $b$ and $da/dT$ replaced by
+their one-fluid mixture values. The 5e solution to **Problem 10.3-4**, which asks the
+student to derive Eq. 10.3-8, says exactly that: *"the derivation of Eqs. 10.3-8 is
+identical to the derivation of eqns. 6.4-29 & 30."*
+
+> **The reference is the ideal gas MIXTURE at the same $T$, $P$ and $\underline{x}$.**
+> The book writes $\underline{H}^{\mathrm{IGM}}$ and $\underline{S}^{\mathrm{IGM}}$ and
+> says so in the text below Eq. 10.3-8b. So `departure_S` carries **no**
+> $-R\sum_i x_i \ln x_i$ term — the ideal-gas-mixture reference already contains it, and
+> a caller who adds it counts the entropy of mixing twice. The full mixture entropy is
+> $\sum_i x_i \underline{S}_i^{\mathrm{IG}}(T,P) - R\sum_i x_i \ln x_i +$ `departure_S`.
+
+**Validated in `code/ch10/validation/pr_mixture_departures_validation.ipynb`**, which is
+the audit trail and states its own limits. Seven checks, over 5 mixtures × 20 $(T,P)$
+states × 2 phase roots:
+
+| check | what it reaches | agreement |
+|---|---|---|
+| the printed equations, read off 5e pages 586–587 | **which** equation, and the reference state | term for term |
+| pure-fluid limit against `PengRobinson` | the one-fluid rules collapsing | **exact**, 0.0 |
+| $H^{\mathrm{dep}} - TS^{\mathrm{dep}} = RT\sum_i x_i \ln\bar{\phi}_i$, via `ln_phi` | $a_{\mathrm{mix}}$, $b_{\mathrm{mix}}$, $Z$ — anchored to Illustration 9.4-3 | 2.4e-15, 190/200 states |
+| $S^{\mathrm{dep}} = -(\partial G^{\mathrm{dep}}/\partial T)_{P,\underline{x}}$, numerically | `dadT_mix` | 4.9e-8 at $h = T/10^5$, converging as $O(h^2)$ |
+| identical components, at every composition | the quadratic form and its cross terms | 4.6e-13 J/mol, 180 points |
+| the low-pressure virial limit | `dadT_mix`, by a **separate derivation** | 1.1e-7 at 1 Pa |
+| Illustration 6.5-1's nitrogen, through the pure class | a printed number reaching this code | exact |
+
+> **Two cautions travel with every number these return.** First, **no published value
+> for a mixture departure exists to compare against** — Section 10.3 states Eqs. 10.3-8
+> and never evaluates them, Appendix C lists none for any chapter, and the 5e solution
+> manual computes none. Second, in $H^{\mathrm{dep}} - TS^{\mathrm{dep}}$ the two $da/dT$
+> terms **cancel identically**, so the machine-precision agreement in row three says
+> nothing at all about the temperature derivative. Rows four and six exist for that
+> reason and are the only two that see it.
+
+**There is no `flash_PH` / `flash_PS` yet.** An adiabatic or isentropic flash is
+`departure_H` plus the isothermal `flash` plus a root-find on $T$; the validation
+notebook assembles one for a Joule-Thomson valve and it closes to 4.5e-13 J/mol. The
+wrapper is still on `ROADMAP.md`.
 
 ### $k_{ij}$ from the book's own table
 

@@ -156,8 +156,8 @@ def _gex_over_RT_from_gamma(m, x1, T):
     """SUM_i x_i ln gamma_i at x1 -- G^ex/RT *as the activity coefficients imply it*.
 
     Not `model.gex_over_RT`, and the difference is deliberate. For most models in
-    `activity_models` those two are the same function written twice, which is the
-    whole point of `check_gibbs_duhem`. For a model that is **thermodynamically
+    `activity_models` those two are the same function written twice, which is what
+    `check_gibbs_duhem` exists to test. For a model that is **thermodynamically
     inconsistent** -- the printed variants of Flory-Huggins Eq. 9.5-18, which exist in
     that module precisely so the book's own numbers can be reproduced -- they are not,
     and then only this one is the right choice: Eq. 11.2-2 is written in activity
@@ -431,7 +431,7 @@ def lle_flash(model, z, T, K0=None, max_iter=500, tol=1e-12, min_gap=1e-4):
 
     with the Rachford-Rice equation for `psi`, which is the same machinery as the
     vapor-liquid flash of SIS Eq. 10.1-7 -- only the source of K differs, which is
-    the point Sec. 11.2 makes when it says the two-phase-liquid problem is "six
+    what Sec. 11.2 says when it says the two-phase-liquid problem is "six
     coupled equations" for a ternary and is best done on a computer.
 
     **The initial K cannot come from vapor pressures.** SIS p. 630 is explicit about
@@ -509,12 +509,13 @@ def tie_line_split(z, xI, xII, total=1.0):
     rule, solved by least squares over **all** the species rather than by picking
     one and hoping the data are consistent.
 
-    That choice is the point. Illustration 11.2-8 balances on water alone and
+    That choice is what this argument controls. Illustration 11.2-8 balances on water
+    alone and
     Illustration 11.2-1 on both species; when the compositions have been read off a
     triangular diagram by eye, as they are throughout Sec. 11.2, the balances on
     different species do not agree, and which one you pick moves the answer. The
     residual returned by `numpy.linalg.lstsq` is the size of that disagreement, so
-    it is worth looking at rather than discarding.
+    read it rather than discarding it.
     """
     z = np.asarray(z, dtype=float)
     xI, xII = np.asarray(xI, dtype=float), np.asarray(xII, dtype=float)
@@ -571,8 +572,8 @@ def solubility_at_T(x1, T1, T2, hex_):
 
     `hex_` is the partial molar excess enthalpy of the solute in J/mol, taken
     independent of temperature and composition. Positive H^ex gives solubility
-    rising with temperature and negative H^ex gives it falling, which is the whole
-    content of the equation.
+    rising with temperature and negative H^ex gives it falling, which is all the
+    equation states.
     """
     return np.asarray(x1, dtype=float) * np.exp(-hex_ / R * (1.0 / T2 - 1.0 / T1))
 
@@ -587,7 +588,7 @@ def vlle_binary(model, T, gp=None, rtol=1e-6, **kw):
     `model` is a `GammaPhi` (from which the activity model is taken), or an activity
     model with the `GammaPhi` passed separately as `gp`.
 
-    Sec. 11.3's own method, and one worth not automating away: solve the
+    Sec. 11.3's own method, and it is left un-automated on purpose: solve the
     liquid-liquid problem, then take a **bubble point on either liquid**, because a
     vapor in equilibrium with one coexisting liquid is in equilibrium with the other.
     This function does both and requires them to agree to `rtol` -- which is not

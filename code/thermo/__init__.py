@@ -14,7 +14,7 @@ yield-factor form, closed by an energy balance built from heats of combustion an
 bounded by the second law. Import it by name -- `from thermo.bioreactor import
 Fermentation` -- since nothing in the core namespace needs it.
 
-    from thermo import PengRobinson, VanDerWaals, UNIFAC, VanLaar, NRTL
+    from thermo import PengRobinson, RedlichKwong, SoaveRedlichKwong, VanDerWaals, UNIFAC
 
 See code/thermo/README.md. Reads reference data from code/data/.
 
@@ -33,13 +33,15 @@ wants the equation of state. Import them by name when you need them:
     from thermo.ternary import ternary_axes, tie_line, check_labels
 
 `thermo.charts` also resolves as an attribute (`thermo.charts.label_at`), which is
-what makes the lazy hook below worth having rather than just documenting the
+why the lazy hook below exists rather than a line documenting the
 submodule path.
 """
 import importlib
 
 from .cubic import CubicEOS
 from .peng_robinson import PengRobinson
+from .redlich_kwong import RedlichKwong
+from .soave_redlich_kwong import SoaveRedlichKwong
 from .van_der_waals import VanDerWaals
 from .pr_mixture import PRMixture
 from .unifac import UNIFAC
@@ -106,7 +108,9 @@ def __dir__():
     return sorted(list(globals()) + list(_LAZY))
 
 
-__all__ = ["CubicEOS", "PengRobinson", "VanDerWaals", "PRMixture", "UNIFAC",
+__all__ = ["CubicEOS", "PengRobinson", "RedlichKwong", "SoaveRedlichKwong",
+           "VanDerWaals",
+           "PRMixture", "UNIFAC",
            "ActivityModel", "OneConstantMargules", "TwoConstantMargules",
            "RedlichKisterGex", "VanLaar", "Wilson", "NRTL", "FloryHuggins",
            "UNIQUACModel", "RegularSolution", "fit_binary",

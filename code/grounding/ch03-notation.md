@@ -17,6 +17,7 @@ Notation is written in LaTeX.
 - SI units, per the 2019 redefinition (Table 1.2-1). Specific quantities are per kilogram (e.g. $\hat{H}$ in J/kg) or molar (e.g. $\underline{H}$ in J/mol); mass is in kg, temperature in K, energy in J, and pressure in kPa or bar. $R = 8.314\ \text{J/(mol·K)}$.
 - An overdot denotes a rate (per unit time): $\dot{M}$ is a mass flow rate, $\dot{N}$ a molar flow rate.
 - Subscript $k$ indexes a mass-flow port (stream/location); $\sum_{k=1}^{K}$ runs over all $K$ ports. A flow term is positive when mass flows INTO the system.
+- The UNDERBAR has two readings, and which one applies depends on the symbol it is drawn under. Under a QUANTITY it means PER MOLE — $\underline{V}$ is molar volume, $\underline{U}$ molar internal energy (Ch.1). Under a COMPOSITION VARIABLE it means THE SET of mole fractions — $\underline{x} = \{x_1, x_2, x_3, \dots\}$ is the composition of a phase, against $x_i$, the mole fraction of one species. Sec. 9.1 puts it in one clause: the book uses "the notation $\underline{x}$ to represent all the mole fractions", and a property written $\theta(T, P, \underline{x})$ is therefore a function of the whole composition rather than of one species. Ch.10 introduces $\underline{y}$, the vapor-phase set, under the same rule.
 - Work is positive when done ON the system. $W$, $\dot{W}$, $W_s$, $\dot{W}_s$ and the heat terms $Q$, $\dot{Q}$ are all positive when energy flows INTO the system. This matches the major chemical-engineering texts (Koretsky; Smith, Van Ness & Abbott, 7th edition onward). It is OPPOSITE to the mechanical-engineering and physics convention, in which work is positive when done BY the system — a default a general-purpose model may fall back on. Do not flip the signs.
 - A superscript asterisk ($^{*}$) denotes an ideal-gas property, e.g. $C_P^{*}$, $C_V^{*}$.
 - The operators $\Delta_{\text{fus}}$, $\Delta_{\text{sub}}$, $\Delta_{\text{vap}}$ denote phase-change differences (fusion/melting, sublimation, vaporization).
@@ -45,7 +46,7 @@ Notation is written in LaTeX.
 | `\dot{N}_k` | molar flow rate at port $k$ | mol/s |
 | `(\dot{N}_i)_k` | molar flow rate of species $i$ at port $k$ | mol/s |
 | `t` | time | s |
-| `x` | set of mole fractions $\{x_1, x_2, \dots\}$ | - |
+| `\underline{x}` | set of mole fractions of all species $\{x_1, x_2, x_3, \dots\}$; the underbar marks the SET, not a per-mole quantity — see the convention underbar_two_readings | - |
 | `X` | molar extent of reaction (NOTE: not mole fraction) | mol |
 | `\nu_i` | stoichiometric coefficient of species $i$ (negative for reactants) | - |
 | `C_P` | constant-pressure molar heat capacity | J/(mol·K) |

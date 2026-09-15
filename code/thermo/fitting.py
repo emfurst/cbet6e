@@ -17,7 +17,7 @@ and the partial molar properties then follow from the *slope* of that curve
     thetabar_1 - theta_1 = x2^2 SUM_i a_i [(x1-x2)^i + 2 i x1 (x1-x2)^(i-1)]
     thetabar_2 - theta_2 = x1^2 SUM_i a_i [(x1-x2)^i - 2 i x2 (x1-x2)^(i-1)]
 
-Two things about that are worth saying out loud, because they are the whole reason
+Two things about that decide how the results are read, and they are why
 this module exists rather than a call to `numpy.polyfit`.
 
 **The derivative is much more sensitive to the order than the fit is.** Adding a
@@ -163,7 +163,7 @@ class RedlichKister:
         """Leave-one-out cross-validated rms error at this order.
 
         `rms` always falls as terms are added; this does not, so it is the one
-        that can say a term is not paying for itself.
+        that can say a term has not reduced the error enough to keep.
         """
         x1 = np.asarray(x1, dtype=float)
         dmix = np.asarray(dmix, dtype=float)
@@ -183,7 +183,7 @@ class RedlichKister:
         `inf_dilution_1`, `inf_dilution_2`, `fit`. The point of collecting them
         together is the comparison the notebooks make: `rms` improves smoothly
         while the two infinite-dilution numbers wander, and choosing an order on
-        `rms` alone quietly picks an endpoint value.
+        `rms` alone picks an endpoint value and reports no reason for it.
         """
         out = []
         for n in orders:

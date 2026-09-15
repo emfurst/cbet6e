@@ -13,7 +13,8 @@ WHY THIS IS ITS OWN MODULE. These solvers were written inside `PRMixture`, where
 mixing rule is van der Waals one-fluid. Chapter 10 needs the identical solvers driven by
 the **Wong-Sandler** rule (Figs. 10.3-9 to 10.3-13), and `wong_sandler.py` importing them
 from `pr_mixture.py` would say the Wong-Sandler rule depends on the van der Waals one --
-which is false, and is the kind of import that quietly turns a package into a tangle.
+which is false, and is the kind of import that turns a package into a tangle with no
+error to mark the moment it happens.
 Both mixing rules now inherit from here instead, which is also the chapter's own thesis:
 **one procedure, three ways of getting the fugacities.** Sections 10.1 and 10.2 reach it
 through `thermo.vle.GammaPhi`, whose solvers carry these same names and signatures, so
@@ -182,7 +183,7 @@ class PhiPhiVLE:
         `(a, b)` with f(a) and f(b) of opposite sign, or None.
 
         A blind ladder over the whole pressure range does not work here, and
-        that is worth stating because it is the obvious thing to try. The window
+        that is stated here because it is the obvious thing to try. The window
         in which two phases exist can be **narrower than one rung** near a mixture
         critical point -- for carbon dioxide/isopentane at 377.65 K and
         x = 0.59 it is a few bar wide, on a range that runs to hundreds -- so a

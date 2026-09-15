@@ -15,7 +15,7 @@ still not the right choice here:
   - It is a **new student-facing dependency**, and `code/pyproject.toml` is
     deliberately a short list of floors with no lock file, so that a student in
     2032 still gets an environment that resolves. A triangle is about a hundred lines
-    of geometry, which is not worth a dependency.
+    of geometry, which does not justify a dependency.
   - The house rules for printed art are specific and this module has to obey them:
     **pure black ink**, no tints ([[black-not-gray]]); **Computer Modern**, set by
     `charts.use_book_style` ([[figure-typography-cm]]); and **nothing below 7 pt**
@@ -167,7 +167,7 @@ def ternary_axes(ax, *, top, left, right, ticks=0.2, minors=2, grid=True,
 
     Nothing else in the book stages gray art, and `charts.GRID_MAJOR`/`GRID_MINOR`
     are unused by any staged figure -- this module was about to be the first, which is
-    what makes the gate worth having.
+    why the gate is here.
 
     **Label sizes are floored at 7 pt.** A long species name on a 3.3 in figure is
     the failure recorded in [[no-figure-text-below-7pt]]: the fix is a SHORTER NAME,

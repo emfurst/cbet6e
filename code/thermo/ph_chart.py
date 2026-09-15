@@ -248,7 +248,7 @@ def isochore_T(f, Vhat, n):
 
 
 def isochore(f, Vhat, P_lim, n=300):
-    """Constant specific volume, m^3/kg. Parametrised by T: PR is explicit in P."""
+    """Constant specific volume, m^3/kg. Parameterized by T: PR is explicit in P."""
     Vm = Vhat * f.M / 1e3                             # m^3/mol
     H, P = [], []
     for t in isochore_T(f, Vhat, n):

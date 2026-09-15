@@ -141,7 +141,7 @@ def ln_x_gamma(T, T_m, dH_fus, dCp=0.0):
 def ideal_solubility(T, T_m, dH_fus, dCp=0.0):
     """Saturation mole fraction of a solid in a liquid for gamma_1 = 1 -- Eq. 12.1-8.
 
-    Illustration 12.1-1's Comment is the reason this is worth a function of its own:
+    Illustration 12.1-1's Comment is the reason this has a function of its own:
     for naphthalene in n-hexane at 20 C it returns 0.269 against a measured 0.09, "a
     factor of 3 too large," and that failure is the whole motivation for Sec. 12.1's
     activity-coefficient machinery.
@@ -197,7 +197,7 @@ def solubility(T, T_m, dH_fus, gamma, dCp=0.0, x0=None, tol=1e-10, max_iter=200)
 def activity_coefficient(x_sat, T, T_m, dH_fus, dCp=0.0):
     """gamma_1 of a dissolved solid from its *measured* saturation solubility.
 
-    Eq. 12.1-6 rearranged, and Illustration 12.1-3 is the point of it: for
+    Eq. 12.1-6 rearranged, and Illustration 12.1-3 is what it is for: for
     benzo[a]pyrene in water at 25 C, from x = 3.37e-10, it returns 3.74e8. Because the
     solubility is so small this is also the infinite-dilution value, which is what
     Sec. 12.5 then uses to get an air-water partition coefficient.
@@ -274,7 +274,7 @@ def poynting(V_solid, P, P_sat, T, R=R):
     """exp[V^S (P - P^sat) / RT], the Poynting factor of Eqs. 12.1-15 and 12.1-17.
 
     Pass SI (m^3/mol, Pa) or the book's units with `R=83.14` (cc bar / mol K), cc/mol
-    and bar. Illustration 12.1-6's fourth Comment is worth reading before dropping it:
+    and bar. Read Illustration 12.1-6's fourth Comment before dropping it:
     the factor reaches 3.5 there, so it is not a correction that can be neglected at
     supercritical pressures.
     """

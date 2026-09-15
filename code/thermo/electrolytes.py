@@ -52,7 +52,7 @@ is the only way the arithmetic can be checked.
 `DebyeHuckel.ln_solvent_activity` is Appendix A9.3: the activity coefficient of the
 *solvent*, which the salt's fixes through the Gibbs-Duhem equation. Section 11.5 needs
 it, because the osmotic pressure of a salt solution is a logarithm of the solvent
-activity and its fourth decimal place is worth tenths of a bar.
+activity and its fourth decimal place amounts to tenths of a bar.
 
 **The appendix's own two equations disagree with its own note by a factor of 3, and
 this module follows the note.** Written with
@@ -80,7 +80,7 @@ concentrated: at 0.1554 molal -- physiological saline -- gamma_water is 1.000 45
 derived against 1.000 10 printed, and at 6 molal the water activity is 0.7589 against
 0.7444. Illustration A9.3-1's printed table and Illustration 11.5-4's
 gamma_water = 1.000 13 both follow the printed form, so a notebook reproducing those
-printed numbers wants `as_printed=True` and one computing an osmotic pressure does not.
+printed numbers needs `as_printed=True` and one computing an osmotic pressure does not.
 
 ## Reused by Chapter 15
 
@@ -267,7 +267,7 @@ class Electrolyte:
 #: Fig. 9.10-1. Build any other with `Electrolyte(...)` directly; there is
 #: deliberately no formula parser here, because guessing the dissociation of an
 #: arbitrary formula string is exactly the kind of silent wrong answer this
-#: package tries not to produce.
+#: package is written to avoid.
 ELECTROLYTES = {
     "HCl":   Electrolyte("HCl", nu_plus=1, z_plus=1, nu_minus=1, z_minus=-1),
     "NaCl":  Electrolyte("NaCl", nu_plus=1, z_plus=1, nu_minus=1, z_minus=-1),
@@ -500,7 +500,7 @@ class DebyeHuckel:
         Appendix A9.3 is emphatic about this one: "it is important to correctly
         compute the mole fraction of the solvent," because the ions are separate
         species. For a strong 1:1 salt in water it is 55.51/(55.51 + 2M), and the
-        factor of 2 is the whole point.
+        factor of 2 is the difference this argument controls.
         """
         M = np.asarray(M, dtype=float)
         return moles_solvent_per_kg / (moles_solvent_per_kg + self.salt.nu * M)

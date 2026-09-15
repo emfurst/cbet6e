@@ -86,7 +86,7 @@ def _roomiest(comp, curve, bound, *, margin=0.12, n=81):
     P-x-y at 50 C the bubble line runs from 0.19 to 1.56 bar, so "Liquid" placed a
     fixed 6 % below the top of the frame floats far above the curve at mid-composition
     while "Vapor" lands directly on the dew line. Both were wrong in the same figure,
-    in opposite directions, which is what a geometry-blind rule buys.
+    in opposite directions, which is how a geometry-blind rule fails.
 
     `margin` keeps the search away from the pure ends, where the region closes to
     nothing and a centered label would overhang the frame.
@@ -141,7 +141,7 @@ def _outermost(ax, abscissa, start, *, toward, window=0.06):
 
     Returns the ordinate of the artist nearest `toward` (the frame edge the label
     will be placed against), or `start` if nothing drawn goes past it. Every line
-    and marker series already on the axes is considered, which is the point: a
+    and marker series already on the axes is considered, and that is deliberate: a
     chart helper knows the curves it drew itself and nothing about what the
     notebook added afterwards.
 
@@ -173,14 +173,14 @@ def _envelope(ax, x1, y1, v, *, unit, species, ylabel, liquid_side,
 
     The two diagrams are the same picture with the ordinate swapped and the phases on
     opposite sides -- `liquid_side` is 'upper' for P-x-y and 'lower' for T-x-y. That
-    inversion is the point of Illustration 10.2-2's closing Comment, and putting it in
+    inversion is what Illustration 10.2-2's closing Comment is about, and putting it in
     one parameter rather than two functions is what keeps the two charts consistent.
 
     The region labels are placed where each region is actually widest (see
     `_roomiest`), which is right often enough to be the default and never a reason to
     accept a bad one: pass `region_pos=((xl, vl), (xv, vv))` in data units to put them
     exactly where you want, `region_labels` to rename them, or `regions=False` to drop
-    them. A figure whose labels are worth arguing about is a figure worth tuning.
+    them. Labels a reader would argue about are labels to set by hand.
 
     On an AZEOTROPIC system, expect to use one of those. A maximum-pressure azeotrope
     puts the top of the frame just above the azeotropic point, so the liquid region is
@@ -419,7 +419,7 @@ def mark_azeotrope(ax, x_az, v_az, *, unit=BAR, text="azeotrope", size=6.5,
                    offset=(0.03, 0.0)):
     """Mark an azeotrope on an envelope or x-y diagram.
 
-    Worth marking explicitly rather than leaving the reader to spot the maximum:
+    Marked explicitly rather than left for the reader to spot the maximum:
     Illustration 10.2-2 prints its azeotropic composition and pressure to three and
     four figures, and a printed number the figure does not point at is a number
     nobody checks. (In the 5e that number was wrong; see the chapter notes.)

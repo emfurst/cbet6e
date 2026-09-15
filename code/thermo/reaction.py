@@ -514,7 +514,7 @@ class Reaction:
     def _enthalpy_constant(self):
         """The constant in dH_rxn(T) = const + da T + db T^2/2 + ... -- Eq. 13.1-21.
 
-        Worth its own name because the chapter prints it twice for the same reaction
+        It has its own name because the chapter prints it twice for the same reaction
         and in two different guises: Illustration 13.1-3 gives it as 56 189 J/mol, and
         gives the coefficient of (1/T - 1/T1) in ln Ka as -6758.4, which is this constant
         over -R. Reproducing both from one expression is the check that this is right.
@@ -858,7 +858,7 @@ def equilibrium_extent(reaction, T, initial, P=None, basis="TP", Ka=None,
     basis : {'TP', 'TV'}
         Constant temperature and pressure, or constant temperature and volume. The
         chapter's Illustration 13.1-4 does the same reaction both ways and gets different
-        answers -- parts (a) and (c) -- which is the point of having the option.
+        answers -- parts (a) and (c) -- which is why the option exists.
     Ka : float, optional
         Use this equilibrium constant instead of computing one from Appendix A. Needed
         when the book quotes an experimental value, as in Illustrations 13.1-5 and
@@ -1001,8 +1001,8 @@ def multireaction_extents(reactions, T, initial, P=None, basis="TP", Ka=None,
     mole numbers are N_i = N_i,0 + sum_j nu_ij X_j (Eq. 13.3-1). Returns a dict with the
     extents, the composition and the residuals.
 
-    The coupled set is where a bare Newton solve earns its bad reputation, on two
-    counts. The residuals are logarithms, so an iterate that pushes any mole number
+    The coupled set is where a bare Newton solve fails, and it fails on two counts.
+    The residuals are logarithms, so an iterate that pushes any mole number
     negative makes them undefined rather than merely wrong -- so the feasible region
     `N_i,0 + sum_j nu_ij X_j >= 0` is imposed as a constraint, not hoped for. And the
     obvious starting point, all extents zero, is **degenerate**: with no product present
@@ -1092,7 +1092,7 @@ def multireaction_extents(reactions, T, initial, P=None, basis="TP", Ka=None,
     # For an ideal mixture G is strictly convex in the extents, so there is only one
     # feasible root -- the equilibrium state. Distinct starts landing on distinct
     # feasible roots would contradict that, so it is checked rather than assumed, and it
-    # raises instead of quietly returning whichever one came first.
+    # raises instead of returning whichever one came first.
     starts = []
     if guess is not None:
         starts.append(np.asarray(guess, dtype=float))
@@ -1175,7 +1175,7 @@ def formation_gibbs_T(species, T, mode="full"):
     formation reaction from the element reference states, and that reaction is carried to
     T by exactly the same integration as any other -- `Reaction.delta_G`.
 
-    This is checkable, and it is worth checking: for any balanced reaction,
+    This is checkable, and the package checks it: for any balanced reaction,
     sum_i nu_i dG_f,i(T) must equal that reaction's own `delta_G(T)`. The two paths share
     no arithmetic beyond the Cp table -- the element terms have to cancel for them to
     agree -- so it tests the element bookkeeping in `elements` as well.
@@ -1343,7 +1343,7 @@ def ellingham(reactions, T, mode="full", per_mole_O2=False):
     Appendix A.II's Cp correlations were fitted over roughly 273-1800 K. The classical
     Ellingham diagram runs to 2000 K and beyond, and a line drawn out there is an
     extrapolation. It is also drawn straight through melting and boiling points, where
-    the real dG has a kink that these correlations know nothing about, since Appendix
+    the real dG has a kink that these correlations do not represent, since Appendix
     A.IV carries one state of aggregation per species.
     """
     import pandas as pd
@@ -1411,8 +1411,9 @@ def adiabatic_reaction_temperature(reaction, initial, T_in, P=None, Ka=None,
 
     Notes
     -----
-    ** THE BRACKET IS DIRECTIONAL, AND THAT IS THE POINT. ** Two curves crossing on a
-    plot is the situation where a solver happily returns the wrong root: X_energy(T_in)
+    ** THE BRACKET IS DIRECTIONAL, AND IT HAS TO BE. ** Two curves crossing on a
+    plot is the situation where a solver returns the wrong root and converges:
+    X_energy(T_in)
     is exactly zero, so T = T_in is ALWAYS a root of the difference when X_eq(T_in)
     happens to be near zero, and an undirected bracket can converge on it. The default
     bracket therefore starts one degree away from T_in, on the side the sign of

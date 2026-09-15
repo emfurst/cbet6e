@@ -630,9 +630,17 @@ def mollier(ax, st, *, S_lim=(4.5, 9.5), H_lim=(2000, 4200),
     S_edge = S_lim[1]
 
     # --- minor lines first, so the labeled majors sit on top of them ---
+    # BLACK, NOT GRAY_MINOR. The chart's ordinate is enthalpy, so its horizontal grid
+    # lines ARE the enthalpy lines a reader interpolates; in GRAY_MINOR (0.62) against a
+    # major grid of 0.70 the minor isotherms could not be told from them, whatever the
+    # weight. Ink separates them where tint cannot -- the same fix the minor isobars two
+    # loops below have always used -- and the weight then drops to 0.3 pt so a black
+    # line does not shout. The MAJOR isotherms stay GRAY: they are labeled, they are a
+    # full 1.0 pt, and taking them to black would put them level with the isobars, which
+    # are black at the same weight.
     for Tv in isotherms_minor:
         S, H, _ = st.isotherm(Tv, extend_to=S_edge)
-        ax.plot(S, H, "-", color=GRAY_MINOR, lw=LW["T_minor_mollier"], zorder=1)
+        ax.plot(S, H, "-", color="k", lw=LW["T_minor_mollier"], zorder=1)
     for x in qualities_minor:
         S, H = st.quality_line(x)
         ax.plot(S, H, "--", color=GRAY_MINOR, lw=LW["x_minor"], zorder=1,

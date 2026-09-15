@@ -140,10 +140,11 @@ APPENDIX_A2_CP = {
 # IN PRINT as of 2026-08-04: the author added `deliverables/manuscript/bapp01.docx`
 # and put these two rows into the "Combustion Gases (Low Temperature Range)" block,
 # each one above its 273-1800 K sibling and distinguished by the Temperature Range
-# column. No new block heading -- A.II's range column does the work.
+# column. No new block heading -- the two rows differ in their range column.
 #
 # THE VALUES BELOW ARE EXACTLY WHAT THE APPENDIX PRINTS, at its own 3-decimal
-# precision, NOT the full-precision fit. That is deliberate and it is the whole point:
+# precision, NOT the full-precision fit. That is deliberate, and it is why this
+# row exists:
 # a reader who types the printed row into these notebooks must reproduce the printed
 # Table 6.4-4. Rounding the fit to the printed precision costs at most 0.0023 J/(mol K)
 # in Cp*, which is nothing beside the 0.17 the row already carries.
@@ -245,12 +246,12 @@ TABLE_6_6_1 = {
 # Stored as an upper-triangular edge list, not a matrix: the table is 65% blank, and
 # a blank is *not* zero.
 #
-# THE BLANKS ARE THE POINT. Table 9.4-1's own footnote reads: "Blanks indicate no
+# THE BLANKS CARRY INFORMATION. Table 9.4-1's own footnote reads: "Blanks indicate no
 # data are available from which the k12 could be evaluated. In such case use estimates
 # from mixtures of similar compounds." A k_ij silently defaulted to zero is a
 # different mixture, not a missing decimal -- so `pr_kij_matrix` returns the pairs it
 # could not find alongside the matrix, and `PRMixture.from_database` warns rather than
-# filling in quietly.
+# filling the gap unreported.
 #
 # Verified against the book's own three worked values: k = 0.010 for ethane/n-butane
 # (Illustration 9.4-3), 0.09 for methane/carbon dioxide (Illustration 9.4-4), and

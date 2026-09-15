@@ -120,7 +120,7 @@ class VirialFit:
     coeffs : the polynomial coefficients of Pi/C_S in C_S, lowest order first, in
         Pa L/g, Pa L^2/g^2, ...
     stderr : standard errors of `coeffs`, from the least-squares covariance.
-    m_S_stderr, B2_stderr : those errors propagated. Reported because they are the
+    m_S_stderr, B2_stderr : those errors propagated. Reported because they decide how
         point: the intercept of an osmometry series is usually well determined and
         its slope usually is not, and a B2 quoted without them cannot be compared
         with another laboratory's.

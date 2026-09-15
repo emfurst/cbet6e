@@ -65,7 +65,7 @@ class UNIFAC:
         self.main = dict(zip(subs.subgroup_no, subs.main_group_no))  # subgroup -> main group
         # Kept so that coverage can be ASKED about rather than discovered by crashing.
         # The two sets do not cover the same subgroups, and a reader switching kinds
-        # deserves to see that before the KeyError, not after it.
+        # needs to see that before the KeyError, not after it.
         self.subgroup_names = dict(zip(subs.subgroup_no, subs.subgroup_name))
 
         inter = load_unifac_interactions(kind)

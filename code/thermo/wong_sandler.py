@@ -271,7 +271,7 @@ class WongSandler(PhiPhiVLE):
                       activity coefficient model's G^ex at low pressure?
         ``diagonal``  does the combining rule reduce to the pure B_i at i = j?
 
-        **This is the whole content of the section, run as arithmetic.** The mixing
+        **This is all the section contains, run as arithmetic.** The mixing
         rules were *derived* by imposing these two, so their holding is not evidence
         that the derivation is right -- it is evidence that this implementation of it
         is. With no printed number anywhere in Sec. 9.9 to check against, it is the
