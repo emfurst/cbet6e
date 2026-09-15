@@ -1,0 +1,6 @@
+# Test/preview deployment — not for indexing.
+# Students reach these pages by QR code or direct link, so nothing is lost by
+# staying out of search results. Revisit once Wiley confirms what may be
+# published publicly (see ../deliverables/MANIFEST.md and DEPLOY.md).
+User-agent: *
+Disallow: /
