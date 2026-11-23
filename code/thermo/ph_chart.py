@@ -163,6 +163,8 @@ def dome(f, n=400):
     The critical point does not need the loop (`ChartFluid.crit`), so append it:
     both branches then end on the one point they are required to share.
     """
+    if hasattr(f, "ph_dome"):                 # a blend supplies its own (ph_chart_blend)
+        return f.ph_dome()
     T = sat_T(f, n)
     rows = [f.sat(t) for t in T]
     Pc, Hc, Sc, _ = f.crit()
@@ -173,6 +175,8 @@ def dome(f, n=400):
 
 def isotherm(f, T, P_lim, n=260):
     """[(H, P_MPa), ...] segments along one isotherm; a sub-critical one is 3 pieces."""
+    if hasattr(f, "ph_isotherm"):
+        return f.ph_isotherm(T, P_lim)
     Plo, Phi = P_lim[0] * 1e6, P_lim[1] * 1e6
     segs = []
     if T < f.Tc:
@@ -192,6 +196,8 @@ def isotherm(f, T, P_lim, n=260):
 
 def isentrope(f, S0, P_lim, n=220):
     """Constant-entropy line: at each pressure, find the state with entropy S0."""
+    if hasattr(f, "ph_isentrope"):
+        return f.ph_isentrope(S0, P_lim)
     P = np.geomspace(P_lim[0] * 1e6, P_lim[1] * 1e6, n)
     H, keep = [], []
     for p in P:
@@ -249,6 +255,8 @@ def isochore_T(f, Vhat, n):
 
 def isochore(f, Vhat, P_lim, n=300):
     """Constant specific volume, m^3/kg. Parameterized by T: PR is explicit in P."""
+    if hasattr(f, "ph_isochore"):
+        return f.ph_isochore(Vhat, P_lim)
     Vm = Vhat * f.M / 1e3                             # m^3/mol
     H, P = [], []
     for t in isochore_T(f, Vhat, n):
@@ -272,6 +280,8 @@ def quality(f, x, n=250):
     Every quality line ends at the critical point too -- at Tc the lever has zero
     length, so all of them converge there.
     """
+    if hasattr(f, "ph_quality"):
+        return f.ph_quality(x)
     T = sat_T(f, n)
     rows = [f.sat(t) for t in T]
     Pc, Hc, _, _ = f.crit()
@@ -285,7 +295,8 @@ def quality(f, x, n=250):
 def ph_chart(ax, f, *, H_lim, P_lim=(0.1, 20), isotherms=(), isotherms_minor=(),
              isentropes=(), volumes=(), qualities=(), H_grid=50, H_minors=5,
              T_label_P=None, S_label_P=None, V_label_P=None, x_label_P=None,
-             family_labels=None, label_fmt=None, mark_critical=False, title=None):
+             family_labels=None, label_fmt=None, mark_critical=False, title=None,
+             T_celsius=False):
     """Draw one P-H chart on `ax`.
 
     Each family is labeled at its OWN pressure -- isotherms high, isentropes in the
@@ -305,14 +316,23 @@ def ph_chart(ax, f, *, H_lim, P_lim=(0.1, 20), isotherms=(), isotherms_minor=(),
     how the printed figures are drawn: the dome closing on it, and the quality lines
     converging there, already say where it is. Turn it on when the critical point is
     what is being discussed rather than something to be read past.
+
+    `T_celsius=True` takes every isotherm value (and a `"T"` entry in
+    `family_labels`) in degrees Celsius, and labels it that way. Refrigerant charts
+    are read in Celsius; the book's cryogenic charts are in kelvin.
+
+    A BLEND is drawn by the same call: pass a `thermo.ph_chart_blend.BlendChartFluid`
+    as `f`. It supplies its own dome and curve families, in which every isotherm
+    slopes across the two-phase region by the blend's temperature glide.
     """
+    T_off = 273.15 if T_celsius else 0.0
     ax.set_xlim(*H_lim)
     ax.set_yscale("log")
     ax.set_ylim(*P_lim)
     H_right = H_lim[1] - 0.04 * (H_lim[1] - H_lim[0])
 
     for T in isotherms_minor:
-        for H, P in isotherm(f, T, P_lim):
+        for H, P in isotherm(f, T + T_off, P_lim):
             ax.plot(H, P, "-", color=GRAY_MINOR, lw=LW["T_minor"], zorder=1)
 
     for x in qualities:
@@ -350,7 +370,7 @@ def ph_chart(ax, f, *, H_lim, P_lim=(0.1, 20), isotherms=(), isotherms_minor=(),
             label_family(H, P, fam_text("S", S), S_label_P, S, GRAY)
 
     for T in isotherms:
-        segs = isotherm(f, T, P_lim)
+        segs = isotherm(f, T + T_off, P_lim)
         for H, P in segs:
             ax.plot(H, P, "-", color="k", lw=LW["T"], zorder=4)
         H, P = max(segs, key=lambda s: float(np.nanmax(s[0])))
@@ -360,7 +380,7 @@ def ph_chart(ax, f, *, H_lim, P_lim=(0.1, 20), isotherms=(), isotherms_minor=(),
     for spec in (family_labels or []):
         kind, value, at_P, text = spec
         if kind == "T":
-            segs = isotherm(f, value, P_lim)
+            segs = isotherm(f, value + T_off, P_lim)
             H, P = max(segs, key=lambda s: float(np.nanmax(s[0])))
         elif kind == "S":
             H, P = isentrope(f, value, P_lim)

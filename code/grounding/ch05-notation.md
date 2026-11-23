@@ -192,3 +192,4 @@ modify the cells directly rather than narrating code you cannot execute.
 - `ch3/LJ_interaction_energy_figure.ipynb` — Figure 3.3-5: the interaction energy between two molecules
 - `ch5/Linde_liquefaction_CH4_figure.ipynb` — Figure 5.1-3: the liquefaction path of Illustration 5.1-1
 - `ch5/Rankine_cycle_steam_figure.ipynb` — Illustration 5.2-1: the Rankine cycle on the steam T-S chart
+- `ch5/PH_chart_R448A_example.ipynb` — A pressure-enthalpy chart for R-448A, a refrigerant blend

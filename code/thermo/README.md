@@ -51,7 +51,7 @@ it. That split, and everything still to be built, is [`ROADMAP.md`](ROADMAP.md).
 | `ionization` | ionization, acidity, the charge on biomolecules | 13, 15 |
 | [`bioreactor`](#bioreactors--bioreactor-sec-157) | fermenter atom balances, energy balance, second-law analysis | 15 |
 | **Charts and diagrams** | | |
-| [`charts`, `ph_chart`, `steam_chart`](#property-charts--charts-ph_chart-steam_chart) | the book's property charts | 3, 5, 6 |
+| [`charts`, `ph_chart`, `steam_chart`](#property-charts--charts-ph_chart-steam_chart) | the book's property charts; `ph_chart_blend` for refrigerant blends | 3, 5, 6 |
 | `vle_chart` | the drawing layer for Chapter 10's phase diagrams | 10 |
 | [`ternary`](#triangular-composition-diagrams--ternary) | triangular composition diagrams | 11 |
 | **Data** | | |
@@ -637,6 +637,7 @@ chapter-3 notebooks so that a figure's notebook can go in the figure's own chapt
 | `charts` | the drawing craft: line weights, chart-paper grids, the label-placement layer, `use_book_style()` | — |
 | `ph_chart` | `ChartFluid` (a per-kilogram PR wrapper on the chart's datum) + the dome / isotherm / isentrope / isochore / quality families | Figs. **3.3-2**, **3.3-3**; **5.1-3**; **`c06uf002`** |
 | `steam_chart` | `SteamTables` — Appendix A.III digitized — and the isobar / isotherm / isenthalp / quality families built from it | Figs. **3.3-1a**, **3.3-1b**; **`c05uf001`** |
+| `ph_chart_blend` | `BlendChartFluid` — a fixed-composition `PRMixture` on the IIR datum: traced phase envelope, mixture critical point, a two-phase grid, and the same five families, which `ph_chart` draws unchanged | the R-448A chart (`ch5/PH_chart_R448A_example.ipynb`; not a printed figure) |
 
 ```python
 from thermo.charts import use_book_style
@@ -658,6 +659,17 @@ reader is about to be taught.
 It lands on exactly one family — the constant-volume curves in the compressed-liquid
 region — which should not be read quantitatively there. The dome, isotherms and
 isentropes are unaffected.
+
+**A blend is drawn by the same `ph_chart` call** (added 2026-11-23). `BlendChartFluid`
+supplies its own dome and families (`ph_chart` asks the fluid for them first), and
+`ph_chart(..., T_celsius=True)` labels the isotherms in degrees Celsius. Two things differ
+from a pure fluid, and both are commented in the module. The bubble- and dew-point drivers
+of `phi_phi` fall to the trivial root above about half the critical pressure, so the
+envelope is **traced by continuation** (Michelsen 1980) through the mixture critical point.
+And the critical point is located by interpolating ln K through zero, **never by stepping
+onto it**: at ln K = 0 the trivial solution holds at every (T, P) and the Jacobian is
+singular. For R-448A, PR's saturated-liquid density is 4–8 % *low* (0–40 °C), not high.
+Validated against CoolProp 8.1's R-448A model in `code/ch5/validation/R448A_reference_check.ipynb`.
 
 **These modules are loaded lazily** (`thermo/__init__.py`, PEP 562), so
 `from thermo import PengRobinson` does not pull matplotlib. None of the three imports

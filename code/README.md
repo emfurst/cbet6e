@@ -128,6 +128,7 @@ four is the anchor for one printed problem (1.9–1.12) and ends with a *Your tu
 |---|---|
 | `Linde_liquefaction_CH4_figure.ipynb` | Figure 5.1-3: the liquefaction path of Illustration 5.1-1 |
 | `Rankine_cycle_steam_figure.ipynb` | The Rankine cycle of Illustration 5.2-1, drawn on the steam chart |
+| `PH_chart_R448A_example.ipynb` | A pressure–enthalpy chart for the refrigerant blend R-448A, $-80$ to $220\ ^\circ$C, from Peng–Robinson with four binary parameters. A zeotropic blend boils across a range of temperature, so every isotherm slopes across the dome by the glide (6–7 K at evaporator pressures, zero at the mixture critical point). Checked against a reference refrigeration cycle: C.O.P. within 2 % |
 
 **`ch6/` — thermodynamic properties of real substances (Peng–Robinson EOS)**
 | Notebook | What it teaches |

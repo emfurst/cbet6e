@@ -23,7 +23,8 @@ Sec. 9.6, which takes group counts. `thermo.UNIQUACModel` is the molecular model
 Sec. 9.5, which takes r and q -- exported under that name so the two do not collide;
 it is `thermo.activity_models.UNIQUAC` in its own module.
 
-The chart modules — `charts`, `ph_chart`, `steam_chart`, `vle_chart`, `ternary` —
+The chart modules — `charts`, `ph_chart`, `ph_chart_blend`, `steam_chart`, `vle_chart`,
+`ternary` —
 are loaded **lazily**, so
 the line above stays matplotlib-free and costs nothing extra in a notebook that only
 wants the equation of state. Import them by name when you need them:
@@ -92,7 +93,7 @@ from .ionization import (WeakAcid, PolyproticAcid, AminoAcid, IonizableGroup,
                          zwitterion_constants, apparent_K, pK_at_temperature,
                          LYSOZYME, TABLE_13_5_1)
 
-_LAZY = {"charts", "ph_chart", "steam_chart", "vle_chart", "ternary"}
+_LAZY = {"charts", "ph_chart", "ph_chart_blend", "steam_chart", "vle_chart", "ternary"}
 
 
 def __getattr__(name):
@@ -154,4 +155,4 @@ __all__ = ["CubicEOS", "PengRobinson", "RedlichKwong", "SoaveRedlichKwong",
            "titration_weak_acid", "amino_acid_titration", "water_titration_pH",
            "protein_charge", "isoelectric_point", "zwitterion_constants",
            "apparent_K", "pK_at_temperature", "LYSOZYME", "TABLE_13_5_1",
-           "charts", "ph_chart", "steam_chart", "vle_chart", "ternary"]
+           "charts", "ph_chart", "ph_chart_blend", "steam_chart", "vle_chart", "ternary"]

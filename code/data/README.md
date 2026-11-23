@@ -15,8 +15,17 @@ survive independent of VB6, Access, MATLAB, and Mathcad. One-time export with
 This is the same credit line carried in the printed Appendix B of earlier editions,
 where it described the Visual Basic `PROPERTY` program that shipped this database; it
 appears in the 6e Appendix B and is reproduced here so the attribution travels with the
-data files themselves. The printed Appendix A tables — A.II (ideal-gas heat capacities)
-and A.IV (enthalpies and Gibbs energies of formation) — are drawn from this database.
+data files themselves.
+
+**The printed Appendix A.II is a DIFFERENT SET and is not drawn from this file.**
+Corrected 2026-09-16, having said the opposite. A.II tabulates $a$, $b\times10^{2}$,
+$c\times10^{5}$, $d\times10^{9}$ over 105 rows and credits *Hougen, Watson and Ragatz,
+Chemical Process Principles*, Part 1 (1954) in its own footnote; the `Cp` columns here
+are Reid-Prausnitz-Poling's, as `thermo/data.py` has always said. The two agree in
+value at 298 K for most species, as two independent fits to one quantity will, and
+share no coefficients: n-butane is A.II `(3.954, 0.37126, -1.8326e-4, 3.4979e-8)`
+against this file's `(9.487, 0.3313, -1.108e-4, -2.822e-9)`. Appendix A.IV **is**
+joined to this data, through `react_property.csv`.
 
 **License note.** The `thermo` package and the notebooks in this repository are released
 under the repository's own license; **that license does not extend to the underlying
@@ -25,8 +34,17 @@ or redistribution.
 
 ## `pure_property.csv` — 618 pure compounds
 
-Pure-component constants. The `Cp*` columns are the **Appendix A.II ideal-gas
-heat-capacity polynomial** coefficients.
+Pure-component constants. The `Cp*` columns are the **Reid-Prausnitz-Poling**
+ideal-gas heat-capacity coefficients, in SI and unscaled — *not* Appendix A.II's, which
+is a different set in a different form (see above).
+
+**Audited by `solution-manual/tools/dataaudit.py`**, which checks this file against the
+identities it must obey — `Molwt` against `Formula`, `Zc` against $P_cV_c/RT_c$,
+$P^{vap}(T_b)$ against 1 atm, $C_P^*(298)$ per atom, $T_{fp}<T_b<T_c$ — reports its own
+coverage per test, and declares the rows that fail for a correct reason. **Thirty-four
+cells were corrected on 2026-09-16** after that audit was first written; the defect
+classes were a dropped exponent, a misplaced decimal, a sign, and a letter O typed for a
+zero. Run it before trusting a number out of this file, and after changing one.
 
 | Column | Meaning | Units |
 |---|---|---|
