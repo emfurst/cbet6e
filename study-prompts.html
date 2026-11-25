@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Study prompts</title>
+<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]}};</script>
+<script async src="vendor/mathjax/tex-mml-svg.js"></script>
+<style>
+ body{font:16px/1.55 -apple-system,Segoe UI,Roboto,sans-serif;max-width:60rem;margin:2rem auto;padding:0 1rem;color:#1a1a1a}
+ h1{margin-bottom:.2rem} .sub{color:#666;margin-top:0}
+ nav a{margin-right:1rem} .pill{background:#eef;border-radius:1rem;padding:.1rem .6rem;font-size:.8rem}
+ /* `priority: high` items — the conventions an assistant most often gets wrong.
+    A faint tint plus an amber marker/rule, not a highlighter-pen fill: the flag
+    has to read as an annotation, not as broken row striping. */
+ .hi{background:#fff8ea}
+ li.hi::marker{color:#c07f0a}
+ ul.conv{padding-left:1.6rem} ul.conv li{padding:.2rem .5rem;margin:.35rem 0}
+ /* reserve the rule's width on every row so flagged rows don't shift 3px right */
+ tr td:first-child{border-left:3px solid transparent}
+ tr.hi td:first-child{border-left-color:#dda63f}
+ .legend{font-size:.85rem;color:#666;margin:.2rem 0 .7rem}
+ /* each legend swatch mimics its own section's cue: an amber bullet for the
+    conventions list, an amber left rule for the symbols table */
+ .swatch{display:inline-block;background:#fff8ea;padding:0 .25rem;color:#c07f0a}
+ .swatch-rule{border-left:3px solid #dda63f;padding:0 .3rem 0 .15rem}
+ table{border-collapse:collapse;width:100%}
+ td{border-bottom:1px solid #eee;padding:.35rem .5rem;vertical-align:top}
+ td.sym{width:9rem;white-space:nowrap} .eq{margin:.6rem 0;padding:.4rem .8rem;border-left:3px solid #ccd}
+ .eq .note{color:#555;font-size:.9rem} code{background:#f5f5f7;padding:.05rem .3rem;border-radius:.2rem}
+ .copy{display:inline-block;background:#2456d6;color:#fff;border:0;border-radius:.4rem;padding:.4rem .8rem;cursor:pointer;font-size:.9rem;text-decoration:none}
+ .copy:hover{background:#1840a8}
+ .ghost{display:inline-block;background:#fff;color:#2456d6;border:1px solid #2456d6;border-radius:.4rem;padding:.4rem .8rem;cursor:pointer;font-size:.9rem;text-decoration:none}
+ .ghost:hover{background:#eef2ff}
+ .actions{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.3rem 0}
+ /* Notebook-page action stack. Full-width tap targets because the commonest way
+    into these pages is a phone scanning a margin QR off the printed page. */
+ .btnstack{max-width:32rem;margin:1rem 0}
+ .btnstack a{display:block;padding:.85rem 1rem;margin:.5rem 0;border:1px solid #c9c9d0;
+      border-radius:.6rem;text-decoration:none;color:inherit;font-weight:600;background:#fff}
+ .btnstack a:hover{background:#f2f2f6;border-color:#2456d6}
+ .btnstack a .k{display:block;font-weight:400;font-size:.85rem;color:#666;margin-top:.1rem}
+ pre.raw{display:none} .prompt{border:1px solid #e3e3e8;border-radius:.5rem;padding:.8rem 1rem;margin:.7rem 0}
+ .prompt h4{margin:.1rem 0} .prompt pre{white-space:pre-wrap;background:#f7f7fa;padding:.6rem;border-radius:.4rem;font-size:.85rem}
+ .hint{background:#f0f4ff;border:1px solid #dde4ff;border-radius:.4rem;padding:.5rem .8rem;margin:.6rem 0;color:#334}
+ /* when .hint is itself a list, give the markers room INSIDE the tinted box —
+    otherwise list-style-position:outside puts 1./2./3. beyond the left border */
+ ol.hint,ul.hint{padding-left:2.1rem} ol.hint li,ul.hint li{margin:.3rem 0}
+ .warn{background:#fff4e5;border:1px solid #ffd9a8;border-radius:.4rem;padding:.5rem .8rem;margin:.6rem 0;color:#5c4300}
+ .toc{font-size:.9rem;margin:.2rem 0 1.2rem;color:#555} .toc a{margin-right:.35rem}
+ .check{color:#1a6} .fail{color:#b44} footer{color:#888;font-size:.85rem;margin-top:3rem;border-top:1px solid #eee;padding-top:1rem}
+</style></head><body>
+<nav><a href="index.html">&larr; Index</a></nav>
+<h1>Study prompts</h1>
+<p class="sub">Tested prompts for studying with an AI chat assistant — the same for every chapter.</p>
+<p>These prompts are chapter-independent. They assume you have already pasted the chapter&rsquo;s <b>notation primer</b> into the chat first (copy it from that chapter&rsquo;s page), so the assistant answers in this book&rsquo;s symbols and conventions. Copy one, fill in the bracketed parts, and adapt freely.</p>
+<p class="hint">Each prompt lists a <b>check</b> to run on the reply and a <b>common failure</b> to watch for &mdash; AI output is a starting point, not an answer key. New to this? See <a href="using-ai.html">How to use AI with this book</a>.</p>
+<div class="prompt"><h4>Quiz me <span class="pill">study</span></h4><button class="copy" onclick="copyEl('p0',this)">📋 Copy prompt</button><pre id="p0">Write 5 questions on this chapter to test my understanding: a mix of
+concept and setup questions, not just plug-and-chug. For multiple choice,
+use options labeled (a)-(e), make exactly one correct, vary which letter
+is correct, and avoid giveaway distractors. Give the answer key separately,
+AFTER I answer, not inline.
+
+CHAPTER / TOPIC: &lt;name it&gt;</pre><div class="check">Check: Verify the keyed answers against the chapter — generated questions can have wrong keys.</div><div class="fail">Common failure: Models produce malformed multiple choice (all &quot;a&quot;, repeated letters) or an inline answer key.</div></div>
+<div class="prompt"><h4>Reconcile notation with another source <span class="pill">before</span></h4><button class="copy" onclick="copyEl('p1',this)">📋 Copy prompt</button><pre id="p1">I am reading another source that uses different notation from the primer
+above. Map ITS symbols to THIS book&#x27;s notation, term by term, and flag any
+symbol that means something different in the two sources (e.g. sign
+conventions, what an overbar means). Do not silently translate.
+
+OTHER SOURCE NOTATION: &lt;paste or describe&gt;</pre><div class="check">Check: Confirm the work-sign convention specifically — it differs between common thermo texts.</div><div class="fail">Common failure: Models map symbols by shape and miss that the same symbol carries a different convention.</div></div>
+<div class="prompt"><h4>Explain this in different language <span class="pill">during</span></h4><button class="copy" onclick="copyEl('p2',this)">📋 Copy prompt</button><pre id="p2">Explain the following concept in a different way than my textbook does —
+a physical picture, an analogy, or a worked micro-example. Keep it
+consistent with the notation and conventions in the primer above.
+
+CONCEPT: &lt;paste concept or passage&gt;</pre><div class="check">Check: If the explanation contradicts the primer&#x27;s conventions, it is wrong — say so and re-ask.</div><div class="fail">Common failure: Analogies sometimes import a different sign or reference-state convention.</div></div>
+<div class="prompt"><h4>Check my setup (don&#x27;t solve) <span class="pill">before</span></h4><button class="copy" onclick="copyEl('p3',this)">📋 Copy prompt</button><pre id="p3">Here is a problem and MY setup for it. Do NOT solve it or compute a number.
+Critique only the setup: Is the system/boundary chosen well? Are the right
+balances written? Is the model/equation-of-state choice justified? Are the
+assumptions stated and admissible? List anything missing or inconsistent.
+
+PROBLEM: &lt;paste problem&gt;
+MY SETUP: &lt;paste your system, boundary, assumptions, equations&gt;</pre><div class="check">Check: If it starts computing a numerical answer, stop it — that is not what you asked for.</div><div class="fail">Common failure: Models often ignore the instruction and solve the whole problem anyway.</div></div>
+<div class="prompt"><h4>Hint, don&#x27;t solve <span class="pill">during</span></h4><button class="copy" onclick="copyEl('p4',this)">📋 Copy prompt</button><pre id="p4">I want to solve this myself. Give me only the NEXT hint — one step — and
+then stop and wait. Do not reveal the full solution or the final answer.
+If I am heading in the wrong direction, tell me that without giving the fix.
+
+PROBLEM: &lt;paste problem&gt;
+WHERE I AM: &lt;what you have tried&gt;</pre><div class="check">Check: Ask for the next hint only after attempting the step yourself.</div><div class="fail">Common failure: Models tend to give the whole solution despite the instruction, especially on later turns.</div></div>
+<div class="prompt"><h4>Sanity / limiting-case check <span class="pill">after</span></h4><button class="copy" onclick="copyEl('p5',this)">📋 Copy prompt</button><pre id="p5">Here is my answer and the problem. Do NOT redo my algebra. Instead check
+whether the result is physically reasonable: test a limiting case, do a
+units check, and tell me if the sign and order of magnitude are what you
+would expect. Flag anything suspicious; do not just agree.
+
+PROBLEM: &lt;paste problem&gt;
+MY ANSWER: &lt;paste answer with units&gt;</pre><div class="check">Check: A model that only says &quot;looks right&quot; has not done the check — push for the limiting case and the units.</div><div class="fail">Common failure: Models (especially eager-to-please ones) rubber-stamp the answer instead of testing it.</div></div>
+<div class="prompt"><h4>Walk me through this answer key <span class="pill">during</span></h4><button class="copy" onclick="copyEl('p6',this)">📋 Copy prompt</button><pre id="p6">Here is a problem and the answer key, which skips steps. Walk me through
+the reasoning between the steps shown, in this book&#x27;s notation. Where the
+key makes a choice (a model, a reference state, an approximation), name it
+and say why.
+
+PROBLEM: &lt;paste&gt;     ANSWER KEY: &lt;paste&gt;</pre><div class="check">Check: Cross-check the filled-in steps against a worked example in the chapter.</div><div class="fail">Common failure: Models may invent plausible intermediate steps that do not match the key&#x27;s actual method.</div></div>
+<div class="prompt"><h4>Connect this to another chapter <span class="pill">study</span></h4><button class="copy" onclick="copyEl('p7',this)">📋 Copy prompt</button><pre id="p7">How does the concept below connect to &lt;chapter / topic N&gt;? Make the
+connection explicit using this book&#x27;s notation. If there is no real
+connection, say so plainly — do not manufacture one.
+
+CONCEPT: &lt;paste&gt;</pre><div class="check">Check: Ask it to point to the specific equation or definition that links them.</div><div class="fail">Common failure: Models invent connections that sound plausible but are not in the material.</div></div>
+<nav><a href="index.html">&larr; Index</a></nav>
+<script>function copyEl(id,b){const t=document.getElementById(id).textContent;navigator.clipboard.writeText(t).then(()=>{const o=b.textContent;b.textContent="Copied \u2713";setTimeout(()=>b.textContent=o,1500)})}</script>
+<!-- Generated from 6e_companion_site/source by build.py. Do not edit generated HTML by hand; edit the source and rebuild. -->
+<footer>Thermodynamics companion site · <a href="https://www.wiley.com/en-us/-p-9781119321286">Sandler and Furst, &quot;Chemical, Biochemical, and Engineering Thermodynamics,&quot; 6e</a></footer>
+</body></html>

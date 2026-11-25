@@ -1,0 +1,486 @@
+MM "25.0" FLAVOR "NO" VERSION "25.0" DATETIME "Tue Apr 24 17:11:43 2012" 
+MACHINE "WIN-NT/VC"  ; 
+startlibrary
+version1
+NumLibs = 2
+Built-In
+ACM Built-In
+NumCats = 9
+Mixers/Splitters
+active
+Separators
+active
+Heat Exchangers
+active
+Columns
+active
+Reactors
+active
+Pressure Changers
+active
+Manipulators
+active
+Solids
+active
+User Models
+active
+endlibrary
+; 
+4
+>VERSION 0
+B1COND
+Heater
+Built-In
+HEATER
+>VERSION 0
+B3BLR
+Heater
+Built-In
+HEATER
+>VERSION 0
+B4COMP
+Compr
+Built-In
+COMPR
+>VERSION 0
+B1
+Valve
+Built-In
+VALVE
+? SETUP MAIN ? \ TITLE TITLE = "Illustration 5.2-2" \ \ "RUN-CLASS" RUN-CLASS
+ = FLOWSHEET \ \ SIMULATE INTERACTIVE = NO MOLEFLOW = MOLEFLOW PROPERTIES = ( 
+GASPROPS ) TFFFILE = "GAS_M" VISITED = 1 \ ? SETUP GLOBAL ? \ "IN-UNITS" 
+INSET = METGAS \ \ "STREAM-CLASS" SCLASS = CONVEN BASIS = MOLE \ ? SETUP 
+DIAGNOSTICS ? ? SETUP "SIM-OPTIONS" ? ; "METGAS_MOLE" ; ? SETUP "UNITS-SET" 
+ENGGAS ? \ DESCRIPTION DESCRIPTION = 
+"English Units for gas processing applications" \ \ MMLOCAL \ \ UNITSET 
+BASESET = ENG ( 2 2 2 2 2 2 2 2 2 2 11 15 8 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+2 2 6 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 5 2 6 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 ) \ ? SETUP "UNITS-SET" METCBAR ? \ 
+DESCRIPTION DESCRIPTION = "Matric units with C, BAR, GCAL/HR, and CUM" \ \ 
+MMLOCAL \ \ UNITSET BASESET = MET ( 3 3 3 3 3 3 3 3 3 3 3 7 18 3 3 5 3 3 3 5 
+3 4 3 3 3 3 1 3 3 3 4 3 7 3 3 3 1 1 4 4 3 3 3 3 3 3 3 3 3 3 3 3 14 3 3 3 3 3 
+3 3 3 3 3 4 3 3 3 3 3 3 3 3 3 3 5 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 
+3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1001 1001 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 ) \ ? 
+SETUP "UNITS-SET" METCKGCM ? \ DESCRIPTION DESCRIPTION = 
+"Metric Units with C, KG/SQCM, GCAL/HR, and CUM" \ \ MMLOCAL \ \ UNITSET 
+BASESET = MET ( 3 3 3 3 3 3 3 3 3 3 3 7 18 3 3 5 3 3 3 8 3 4 3 3 3 3 1 3 3 3 
+4 3 7 3 3 3 3 3 4 4 3 3 3 3 3 3 3 3 3 3 3 3 14 3 3 3 3 3 3 3 3 3 3 4 3 3 3 3 
+3 3 3 3 3 3 8 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 
+3 3 3 3 3 1001 1001 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 ) \ ? SETUP "UNITS-SET" 
+METGAS ? \ DESCRIPTION DESCRIPTION = 
+"Metric Units for gas processing applications" \ \ MMLOCAL \ \ UNITSET 
+BASESET = MET ( 3 3 3 3 3 3 3 3 3 8 5 7 18 3 3 5 3 7 3 5 3 4 3 3 3 3 1 3 3 3 
+4 3 7 3 3 3 1 1 4 4 3 3 1 3 3 3 3 3 3 3 7 3 14 3 3 3 3 1 3 3 3 3 3 1 3 3 3 3 
+3 3 3 3 3 3 5 3 3 3 4 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 
+3 3 3 3 3 1001 1001 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 ) \ ? SETUP "UNITS-SET" 
+"SI-CBAR" ? \ DESCRIPTION DESCRIPTION = 
+"International System Units with C, BAR, and /HR" \ \ MMLOCAL \ \ UNITSET 
+BASESET = SI ( 1 1 1 1 1 1 1 1 1 3 3 7 1 1 1 1 1 1 1 5 1 4 1 1 1 1 1 1 1 1 4 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 4 5 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ) \ ? SETUP "ACCOUNT-INFO" ? ? SETUP 
+"RUN-CONTROL" ? ? SETUP DESCRIPTION ? \ DESCRIP DESCRIP = ( 
+"Gas Processing with Metric Units:" 
+"C, bar, tonne/hr, MMscmh, Gcal/hr, cum/hr." " " "Property Method: PENG-ROB" 
+" " "Flow basis for input: Mole" " " "Stream report composition: Mole flow" ) 
+\ ? ODATABANKS ? \ ODATABANKS AUTO-PARAM = YES \ ? DATABANKS ? \ DATABANKS 
+FILE-SYM-NAM = ( "APV73 PURE25" "APV73 AQUEOUS" "APV73 SOLIDS" 
+"APV73 INORGANIC" ) \ ? COMPONENTS MAIN ? \ COMPONENTS CID = "C2H2F-01" ANAME
+ = C2H2F4 OUTNAME = "C2H2F-01" DBNAME1 = "1,1,1,2-TETRAFLUOROETHANE" ANAME1
+ = "C2H2F4" \ ? COMPONENTS "COMP-LIST" GLOBAL ? ? SOLVE ? ? "DYN-OPTIONS" ? ? 
+FLOWSHEET GLOBAL ? \ BLOCK BLKID = B1COND BLKTYPE = HEATER MDLTYPE = "Heater" 
+IN = ( 4TURB M0-1 ) OUT = ( 1COND M0-1 ) \ \ BLOCK BLKID = B3BLR BLKTYPE = 
+HEATER MDLTYPE = "Heater" IN = ( 2VALV M0-1 ) OUT = ( 3BOIL M0-1 ) \ \ BLOCK 
+BLKID = B4COMP BLKTYPE = COMPR MDLTYPE = "Compr" IN = ( 3BOIL M0-1 ) OUT = ( 
+4TURB M0-1 ) \ \ BLOCK BLKID = B1 BLKTYPE = VALVE MDLTYPE = "Valve" IN = ( 
+1COND M0-1 ) OUT = ( 2VALV M0-1 ) \ \ "DEF-STREAM" SCLASS = CONVEN \ ? 
+PROPERTIES MAIN ? \ GPROPERTIES GBASEOPSET = "PENG-ROB" GOPSETNAME = "PENG-ROB" 
+PARCON = -1 \ ? PROPERTIES "OPTION-SETS" "PENG-ROB" ? \ PARAM BASE = "PENG-ROB" 
+\ ? PROPERTIES "USER-PROPS" ? \ ALLOWSYSTEM SYSALLOWED = NO \ \ PROP-LIST 
+PARAMNAME = PRKIJ DIM = "CONVEN-BI-PARAMS" NEL = 1 \ ? PROPERTIES 
+"MOLEC-STRUCT" "C2H2F-01" ? ? PROPERTIES PARAMETERS BINARY SCALAR "PRKIJ-1" ? 
+; "METGAS_MOLE" ; \ PROP-LIST PARAMNAME = PRKIJ SETNO = 1 UNITROW = 0 \ ? 
+PROPERTIES PARAMETERS BINARY SCALAR "RKTKIJ-1" ? ; "METGAS_MOLE" ; \ 
+PROP-LIST PARAMNAME = RKTKIJ SETNO = 1 UNITROW = 0 \ ? PROPERTIES PARAMETERS 
+BINARY "T-DEPENDENT" "ANDKIJ-1" ? ; "ENG_MOLE" ; \ PROP-LIST PARAMNAME = 
+ANDKIJ SETNO = 1 UNITROW = 0 TUNITROW = 22 TUNITLABEL = F NEL = 2 \ ? 
+PROPERTIES PARAMETERS BINARY "T-DEPENDENT" "ANDMIJ-1" ? ; "ENG_MOLE" ; \ 
+PROP-LIST PARAMNAME = ANDMIJ SETNO = 1 UNITROW = 0 TUNITROW = 22 TUNITLABEL
+ = F NEL = 2 \ ? PROPERTIES PARAMETERS BINARY "T-DEPENDENT" "PRKBV-1" ? ; 
+"ENG_MOLE" ; \ PROP-LIST PARAMNAME = PRKBV SETNO = 1 UNITROW = 0 TUNITROW = 22 
+TUNITLABEL = F BDBANK = ( "APV73 EOS-LIT" ) NEL = 5 \ ? PROPERTIES PARAMETERS 
+BINARY "T-DEPENDENT" "PRLIJ-1" ? ; "ENG_MOLE" ; \ PROP-LIST PARAMNAME = PRLIJ 
+SETNO = 1 UNITROW = 0 TUNITROW = 22 TUNITLABEL = F NEL = 8 \ ? "PROP-SET" 
+MAIN CRITICAL ? ; "METGAS_MOLE" ; \ P1 ID = TCMX \ \ P1 ID = PCMX \ \ P1 ID
+ = VCMX \ \ P2 SYSPRES = YES \ \ DESCRIPTION DESCRIPTION = 
+"Pseudo critical properties (mole frac averaged)" \ ? "PROP-SET" MAIN 
+GASPROPS ? ; "METGAS_MOLE" ; \ P1 ID = ZMX \ \ P1 ID = VMX UNITS = ( "cum/hr" 
+) \ \ P1 ID = MOLEFLMX UNITS = ( MMscmh ) \ \ P1 ID = CPCVMX \ \ P2 SUBSTREAM
+ = MIXED PHASE = ( V ) SYSPRES = YES \ \ DESCRIPTION DESCRIPTION = 
+"Compressibility, volume flow, heat capacity ratio" \ ? "PROP-SET" MAIN 
+HXDESIGN ? ; "SI_MOLE" ; \ P1 ID = MASSVFRA \ \ P1 ID = MASSFLMX UNITS = ( 
+"kg/sec" ) \ \ P1 ID = HMX UNITS = ( "J/kg" ) \ \ P1 ID = RHOMX UNITS = ( 
+"kg/cum" ) \ \ P1 ID = CPMX UNITS = ( "J/kg-K" ) \ \ P1 ID = PCMX UNITS = ( 
+"N/sqm" ) \ \ P1 ID = MUMX UNITS = ( "N-sec/sqm" ) \ \ P1 ID = KMX UNITS = ( 
+"Watt/m-K" ) \ \ P1 ID = SIGMAMX UNITS = ( "N/m" ) \ \ P1 ID = MWMX \ \ P2 
+PHASE = ( T V L ) SYSPRES = YES \ \ DESCRIPTION DESCRIPTION = 
+"Thermal and transport, for heat exchanger design" \ ? "PROP-SET" MAIN 
+HXDSGN2 ? ; "SI_MOLE" ; \ P1 ID = MASSVFRA \ \ P1 ID = MASSFLMX UNITS = ( 
+"kg/sec" ) \ \ P1 ID = HMX UNITS = ( "J/kg" ) \ \ P1 ID = RHOMX UNITS = ( 
+"kg/cum" ) \ \ P1 ID = CPMX UNITS = ( "J/kg-K" ) \ \ P1 ID = PCMX UNITS = ( 
+"N/sqm" ) \ \ P1 ID = MUMX UNITS = ( "N-sec/sqm" ) \ \ P1 ID = KMX UNITS = ( 
+"Watt/m-K" ) \ \ P1 ID = SIGMAMX UNITS = ( "N/m" ) \ \ P1 ID = MWMX \ \ P2 
+PHASE = ( T V L1 L2 ) SYSPRES = YES \ \ DESCRIPTION DESCRIPTION = 
+"Thermal and transport, for heat exchanger design" \ ? "PROP-SET" MAIN TDEW ? 
+; "METGAS_MOLE" ; \ P1 ID = TDEW \ \ P2 SYSPRES = YES \ \ DESCRIPTION 
+DESCRIPTION = "Dew point temperature at current pressure" \ ? "PROP-SET" MAIN 
+THERMAL ? ; "METGAS_MOLE" ; \ P1 ID = HMX UNITS = ( "kcal/kg" ) \ \ P1 ID = 
+CPMX UNITS = ( "cal/gm-K" ) \ \ P1 ID = KMX \ \ P2 SUBSTREAM = MIXED PHASE = 
+( V L ) SYSPRES = YES \ \ DESCRIPTION DESCRIPTION = 
+"Enthalpy, heat capacity, and thermal conductivity" \ ? "PROP-SET" MAIN 
+THERMAL2 ? ; "METGAS_MOLE" ; \ P1 ID = HMX UNITS = ( "kcal/kg" ) \ \ P1 ID = 
+CPMX UNITS = ( "cal/gm-K" ) \ \ P1 ID = KMX \ \ P2 SUBSTREAM = MIXED PHASE = 
+( V L1 L2 ) SYSPRES = YES \ \ DESCRIPTION DESCRIPTION = 
+"Enthalpy, heat capacity, and thermal conductivity" \ ? "PROP-SET" MAIN 
+TXPORT ? ; "METGAS_MOLE" ; \ P1 ID = RHOMX UNITS = ( "kg/cum" ) \ \ P1 ID = 
+MUMX UNITS = ( cP ) \ \ P1 ID = SIGMAMX \ \ P2 SUBSTREAM = MIXED PHASE = ( V 
+L ) SYSPRES = YES \ \ DESCRIPTION DESCRIPTION = 
+"Density, viscosity, and surface tension" \ ? "PROP-SET" MAIN TXPORT2 ? ; 
+"METGAS_MOLE" ; \ P1 ID = RHOMX UNITS = ( "kg/cum" ) \ \ P1 ID = MUMX UNITS
+ = ( cP ) \ \ P1 ID = SIGMAMX \ \ P2 SUBSTREAM = MIXED PHASE = ( V L1 L2 ) 
+SYSPRES = YES \ \ DESCRIPTION DESCRIPTION = 
+"Density, viscosity, and surface tension" \ ? "PROP-SET" MAIN VLE ? ; 
+"METGAS_MOLE" ; \ P1 ID = PHIMX \ \ P1 ID = GAMMA \ \ P1 ID = PL \ \ P2 
+SUBSTREAM = MIXED PHASE = ( V L ) SYSPRES = YES \ \ DESCRIPTION DESCRIPTION
+ = "Fugacity, activity, and vapor pressure" \ ? "STREAM-NAMES" ? ? BLOCK 
+HEATER B1COND ? ; "METGAS_MOLE" ; ; HEATER ; \ PARAM TEMP = 55. <22> <4> 
+VFRAC = 0. <0> <0> \ ? BLOCK HEATER B3BLR ? ; "METGAS_MOLE" ; ; HEATER ; \ 
+PARAM TEMP = 55. <22> <4> PRES = 14.93 <20> <5> NPHASE = 1 PHASE = L \ \ 
+"BLOCK-OPTION" BLKOPFREWAT = NO \ ? BLOCK COMPR B4COMP ? ; "METGAS_MOLE" ; ; 
+ICON2 ; \ PARAM TYPE = ISENTROPIC OPT-SPEC = PRES PRES = 14.93 <20> <5> SEFF
+ = 1. <0> <0> MODEL-TYPE = COMPRESSOR \ ? BLOCK VALVE B1 ? ; "METGAS_MOLE" ; 
+; VALVE3 ; ? "EO-CONV-OPTI" ? \ DMO-PARAMS MODE = DEFAULT \ \ DMO-PARAMS MODE
+ = SIMULATION \ \ DMO-PARAMS MODE = "PARAMETER-ESTIMATION" \ \ DMO-PARAMS 
+MODE = RECONCILIATION \ \ DMO-PARAMS MODE = OPTIMIZATION \ \ LSSQP-PARAMS 
+MODE-L = DEFAULT \ \ LSSQP-PARAMS MODE-L = SIMULATION \ \ LSSQP-PARAMS MODE-L
+ = "PARAMETER-ESTIMATION" \ \ LSSQP-PARAMS MODE-L = RECONCILIATION \ \ 
+LSSQP-PARAMS MODE-L = OPTIMIZATION \ \ NSOLVE-PARAM NSOLVE-MODE = DEFAULT \ \ 
+NSOLVE-PARAM NSOLVE-MODE = SIMULATION \ \ NSOLVE-PARAM NSOLVE-MODE = 
+"PARAMETER-ESTIMATION" \ \ XSLP-PARAMS XSLP-MODE = DEFAULT \ \ XSLP-PARAMS 
+XSLP-MODE = SIMULATION \ \ XSLP-PARAMS XSLP-MODE = "PARAMETER-ESTIMATION" \ \ 
+XSLP-PARAMS XSLP-MODE = RECONCILIATION \ \ XSLP-PARAMS XSLP-MODE = 
+OPTIMIZATION \ ? REPORT "BLOCK-REPORT" ? ? REPORT "STREAM-REPOR" ? \ OPTIONS 
+MOLEFLOW = MOLEFLOW PROPERTIES = ( GASPROPS ) \ 
+
+ GRAPHICS_BACKUP
+PFS V 5.00
+$CONFIG
+paramdata APV73 ENRTL-RK
+paramdata APV73 VLE-IG
+paramdata APV73 VLE-RK
+paramdata APV73 VLE-HOC
+paramdata APV73 LLE-LIT
+paramdata APV73 LLE-ASPEN
+paramdata APV73 VLE-LIT
+paramdata APV73 BINARY
+paramdata APV73 EOS-LIT
+paramdata APV73 HENRY-AP
+paramdata APV73 SRK-ASPEN
+paramdata APV73 PC-SAFT
+paramdata APV73 POLYPCSF
+paramdata APV73 HYSYS
+purebank APV73 PURE25
+purebank APV73 AQUEOUS
+purebank APV73 SOLIDS
+purebank APV73 INORGANIC
+regdbank 1
+ftn_check 1
+autoblockid 1
+autostreamid 1
+showblockid 1
+showstreamid 1
+autoplacement 1
+grid 2
+gridresolution 0.100000
+scale 0
+streamprefix 
+blockprefix B
+labelscale 1.000000
+qwformat %.0f
+tempformat %.0f
+presformat %.0f
+flowformat %.0f
+strmqwformat %.0f
+vflowformat %.0f
+mflowformat %.0f
+vfracformat %.2f
+pseudobatch 0
+partial 1
+animation 1
+runanyway 0
+tooldrawvisible 0
+browserheight 7650
+browserwidth 12345
+browsertreewidth 3600
+polyplusenabled 1
+dynaplusenabled 1
+bfracenabled 1
+rtfenabled 1
+rspenabled 1
+initializeicarus 0
+pinchenabled 0
+linklimit 5000
+material_color 0
+material_style 983041
+material_width 1
+heat_color 0
+heat_style 983042
+heat_width 1
+heat_termid Q
+work_color 0
+work_style 983043
+work_width 1
+work_termid W
+connections_color 9
+connections_style 983044
+connections_width 1
+measurements_color 4
+measurements_style 983044
+measurements_width 1
+displayeoconn 0
+displayeomeas 1
+displayeomeastype 2
+displayothermanipconn 0
+showeoviews 0
+eoautosave 1
+allow_system_userprops 0
+copy_estimation 1
+copy_retrieved 1
+purge_incomp_params 0
+set_default_biparams 0
+set_default_dataset1 0
+set_default_dataset0 1
+bestinput 0
+autosmrun 0
+genallpropset 0
+strmresformdefault 0
+roottype 0
+exchangerfile 1
+streamformat 1
+runsettingfile 1
+usermodelfile 1
+fortranfile 0
+allow_system_autoparam 1
+timeout 1000
+#
+#
+PFSVData {A0DFFFE6-908E-11CE-A964-0000C08C668E}
+# of PFS Objects = 9
+SIZE -5.49588 -0.9 -0.8 1.8
+BLOCK
+ID: B1COND
+Version: 1
+ICON: "HEATER"
+Flag 0
+Section GLOBAL
+At -2.704455 -0.397324
+Label At 0.304455 -0.402676
+Annotation At -0.225000 -0.325000
+Scale 1.000000 Modifier 0
+BLOCK
+ID: B3BLR
+Version: 1
+ICON: "HEATER"
+Flag 0
+Section GLOBAL
+At -2.704455 1.401672
+Label At 0.004455 0.398328
+Annotation At -0.225000 -0.325000
+Scale 1.000000 Modifier 1
+BLOCK
+ID: B4COMP
+Version: 1
+ICON: "ICON2"
+Flag 0
+Section GLOBAL
+At -4.400000 0.500000
+Label At -1.095880 0.003344
+Annotation At -0.375000 -0.400000
+Scale 1.000000 Modifier 0
+BLOCK
+ID: B1
+Version: 1
+ICON: "VALVE3"
+Flag 0
+Section GLOBAL
+At -1.100000 0.600000
+Label At 0.200000 0.150000
+Scale 1.000000 Modifier 0
+STREAM
+ID: 3BOIL
+Version: 2
+Flag 0
+Port 0 B3BLR o1
+Port 1 B4COMP i1
+GLOBAL 117
+TYPE 0 TERMINAL 0
+At -3.856263 1.180936
+Label At 0.037488 0.000000
+ROUTE 0 0
+r r -3.856263 1.180936 0
+x x -2.925023 1.180936 0
+y 0 -2.925023 1.182609 0
+x x -2.825023 1.182609 0
+t l -2.725023 1.182609 0
+$ D 0.202354 -0.218331
+$ C 0.000000 0.0
+$ $ 0.0 0.0
+ROUTE 1 0
+r r -3.856263 1.180936 0
+x x -4.712526 1.180936 0
+y y -4.712526 0.888092 0
+t u -4.712526 0.788092 0
+$ C 1.000000 0.0
+$ $ 0.0 0.0
+At 0.000000 0.000000
+Label At 0.000000 0.000000
+ROUTE 0 1
+$ $ 0.0 0.0
+ROUTE 1 1
+$ $ 0.0 0.0
+At 0.000000 0.000000
+Label At 0.000000 0.000000
+ROUTE 0 2
+$ $ 0.0 0.0
+ROUTE 1 2
+$ $ 0.0 0.0
+STREAM
+ID: 4TURB
+Version: 2
+Flag 0
+Port 0 B4COMP o1
+Port 1 B1COND i1
+GLOBAL 117
+TYPE 0 TERMINAL 0
+At -3.643703 -0.400733
+Label At 0.035695 0.000000
+ROUTE 0 0
+r r -3.643703 -0.400733 0
+x y -4.087405 -0.400733 0
+y y -4.087405 0.235038 0
+t d -4.087405 0.335038 0
+$ C 1.000000 0.0
+$ $ 0.0 0.0
+ROUTE 1 0
+r r -3.643703 -0.400733 0
+x x -3.128611 -0.400733 0
+y x -3.128611 -0.398057 0
+x x -3.028610 -0.398057 0
+t l -2.928611 -0.398057 0
+$ C 1.000000 0.0
+$ $ 0.0 0.0
+At 0.000000 0.000000
+Label At 0.000000 0.000000
+ROUTE 0 1
+$ $ 0.0 0.0
+ROUTE 1 1
+$ $ 0.0 0.0
+At 0.000000 0.000000
+Label At 0.000000 0.000000
+ROUTE 0 2
+$ $ 0.0 0.0
+ROUTE 1 2
+$ $ 0.0 0.0
+STREAM
+ID: 1COND
+Version: 2
+Flag 0
+TYPE 0 TERMINAL 0
+At -1.850000 0.210535
+Label At 0.000000 0.000000
+ROUTE 0 0
+r r -1.850000 0.210535 0
+y x -1.850000 -0.178529 0
+x 0 -2.272502 -0.178529 0
+t r -2.472502 -0.178529 0
+$ D 0.009030 0.219528
+$ C 0.000000 0.0
+$ $ 0.0 0.0
+ROUTE 1 0
+r r -1.850000 0.210535 0
+y y -1.850000 0.599600 0
+x x -1.400150 0.599600 0
+t l -1.200150 0.599600 0
+$ C 1.000000 0.0
+$ $ 0.0 0.0
+At 0.000000 0.000000
+Label At 0.000000 0.000000
+ROUTE 0 1
+$ $ 0.0 0.0
+ROUTE 1 1
+$ $ 0.0 0.0
+At 0.000000 0.000000
+Label At 0.000000 0.000000
+ROUTE 0 2
+$ $ 0.0 0.0
+ROUTE 1 2
+$ $ 0.0 0.0
+STREAM
+ID: 2VALV
+Version: 2
+Flag 0
+TYPE 0 TERMINAL 0
+At -1.698794 1.399589
+Label At -0.036800 0.000000
+ROUTE 0 0
+r r -1.698794 1.399589 0
+x y -1.195270 1.399589 0
+y 0 -1.195270 0.862724 0
+t u -1.195270 0.662724 0
+$ D -0.195320 0.062024
+$ C 0.000000 0.0
+$ $ 0.0 0.0
+ROUTE 1 0
+r r -1.698794 1.399589 0
+x x -2.280299 1.399589 0
+y x -2.280299 1.400939 0
+t r -2.480299 1.400939 0
+$ C 1.000000 0.0
+$ $ 0.0 0.0
+At 0.000000 0.000000
+Label At 0.000000 0.000000
+ROUTE 0 1
+$ $ 0.0 0.0
+ROUTE 1 1
+$ $ 0.0 0.0
+At 0.000000 0.000000
+Label At 0.000000 0.000000
+ROUTE 0 2
+$ $ 0.0 0.0
+ROUTE 1 2
+$ $ 0.0 0.0
+LEGEND
+Version: 2
+Dim: -3.83915 -9.4 -3.07427 -9.55513
+Size: 0.00614054
+Font: 1 0 =Times New Roman
+# of PFS Objects = 0
+VIEWPORT -5.800674 0.904794 2.639978 -1.062767
+LAYOUT
+TableFormat 1
+Pages 1 1 1 1
+PAGESETUP
+PAPERSIZE 1
+PAPERSOURCE 1
+ORIENTATION 1
+PRINTPAGENO 1 1
+LEFTMARGIN 0.5"
+RIGHTMARGIN 0.5"
+TOPMARGIN 0.5"
+BOTTOMMARGIN 0.5"
+VISIBILITY 0.030000
+PFDFLAG 255 255
+PFDMODE 0
+SCALE 0.006141
